@@ -33,8 +33,8 @@ struct ContentView: View {
                         .scaledToFit().border(.green)
                     
                     if let observation = self.observation {
-                        HeadView(observation: observation)
-                            .scaledToFit().border(.red)
+                        HeadView(observation: observation, imageSize: image.size)
+                            .border(.red)
                     }
                 }.frame(width: w, height: h)
             }

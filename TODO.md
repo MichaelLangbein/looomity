@@ -1,7 +1,7 @@
 #  TODOs
 
-- Head-view
-    - Allow to switch between rotating and panning
+
+- Between image and scenekit-view, add spritekit-view with 2d landmarks
 - Buttons
     - Analyze button states:
         - no image: disabled
