@@ -15,10 +15,24 @@
 		3E382B4F2916944100CCA2AF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */; };
 		3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B55291699D400CCA2AF /* ImagePickerView.swift */; };
 		3E382B582916A28000CCA2AF /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B572916A28000CCA2AF /* HeadView.swift */; };
-		3E382B5A2916A51D00CCA2AF /* DetectFace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B592916A51D00CCA2AF /* DetectFace.swift */; };
+		3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B592916A51D00CCA2AF /* VisionHelpers.swift */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
 		3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E58849C29170A660063647C /* Loomis_Head.usdz */; };
+		3EC9F098291ECC050021F146 /* LooomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC9F097291ECC050021F146 /* LooomityTests.swift */; };
+		3EC9F09E291ECC0B0021F146 /* BoxPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC9F08F291EC8750021F146 /* BoxPlacementTests.swift */; };
+		3EC9F0A0291ED0810021F146 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC9F09F291ED0810021F146 /* SceneKitHelpers.swift */; };
+		3EC9F0A4291ED5C40021F146 /* GradientDescentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC9F0A3291ED5C40021F146 /* GradientDescentTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3EC9F099291ECC050021F146 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E382B3B2916943F00CCA2AF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E382B422916943F00CCA2AF;
+			remoteInfo = Looomity;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3E35BF1929179BFC00F3AA45 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
@@ -32,13 +46,25 @@
 		3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3E382B55291699D400CCA2AF /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		3E382B572916A28000CCA2AF /* HeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
-		3E382B592916A51D00CCA2AF /* DetectFace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectFace.swift; sourceTree = "<group>"; };
+		3E382B592916A51D00CCA2AF /* VisionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionHelpers.swift; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
 		3E58849C29170A660063647C /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = Loomis_Head.usdz; path = ../../../../Downloads/Loomis_Head.usdz; sourceTree = "<group>"; };
+		3EC9F08F291EC8750021F146 /* BoxPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxPlacementTests.swift; sourceTree = "<group>"; };
+		3EC9F095291ECC050021F146 /* LooomityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LooomityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3EC9F097291ECC050021F146 /* LooomityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LooomityTests.swift; sourceTree = "<group>"; };
+		3EC9F09F291ED0810021F146 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
+		3EC9F0A3291ED5C40021F146 /* GradientDescentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescentTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3E382B402916943F00CCA2AF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3EC9F092291ECC050021F146 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -53,6 +79,7 @@
 			children = (
 				3E35BF1929179BFC00F3AA45 /* TODO.md */,
 				3E382B452916943F00CCA2AF /* Looomity */,
+				3EC9F096291ECC050021F146 /* LooomityTests */,
 				3E382B442916943F00CCA2AF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				3E382B432916943F00CCA2AF /* Looomity.app */,
+				3EC9F095291ECC050021F146 /* LooomityTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,18 +96,13 @@
 		3E382B452916943F00CCA2AF /* Looomity */ = {
 			isa = PBXGroup;
 			children = (
-				3E58849C29170A660063647C /* Loomis_Head.usdz */,
-				3E382B462916943F00CCA2AF /* LooomityApp.swift */,
-				3E382B482916943F00CCA2AF /* ContentView.swift */,
-				3E35BF1A29179E5C00F3AA45 /* StartPage.swift */,
-				3E35BF1C2917A22600F3AA45 /* HelpView.swift */,
-				3E382B592916A51D00CCA2AF /* DetectFace.swift */,
-				3E382B4A2916944100CCA2AF /* Assets.xcassets */,
 				3E382B4C2916944100CCA2AF /* Looomity.entitlements */,
+				3E58849C29170A660063647C /* Loomis_Head.usdz */,
+				3E382B4A2916944100CCA2AF /* Assets.xcassets */,
+				3E382B462916943F00CCA2AF /* LooomityApp.swift */,
+				3EC9F0A2291ED1740021F146 /* views */,
+				3EC9F0A1291ED1310021F146 /* helpers */,
 				3E382B4D2916944100CCA2AF /* Preview Content */,
-				3E382B55291699D400CCA2AF /* ImagePickerView.swift */,
-				3E382B572916A28000CCA2AF /* HeadView.swift */,
-				3E5884982916FEE70063647C /* GradientDescent.swift */,
 			);
 			path = Looomity;
 			sourceTree = "<group>";
@@ -90,6 +113,38 @@
 				3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		3EC9F096291ECC050021F146 /* LooomityTests */ = {
+			isa = PBXGroup;
+			children = (
+				3EC9F08F291EC8750021F146 /* BoxPlacementTests.swift */,
+				3EC9F0A3291ED5C40021F146 /* GradientDescentTests.swift */,
+				3EC9F097291ECC050021F146 /* LooomityTests.swift */,
+			);
+			path = LooomityTests;
+			sourceTree = "<group>";
+		};
+		3EC9F0A1291ED1310021F146 /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3E5884982916FEE70063647C /* GradientDescent.swift */,
+				3EC9F09F291ED0810021F146 /* SceneKitHelpers.swift */,
+				3E382B592916A51D00CCA2AF /* VisionHelpers.swift */,
+			);
+			path = helpers;
+			sourceTree = "<group>";
+		};
+		3EC9F0A2291ED1740021F146 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				3E382B482916943F00CCA2AF /* ContentView.swift */,
+				3E382B572916A28000CCA2AF /* HeadView.swift */,
+				3E35BF1C2917A22600F3AA45 /* HelpView.swift */,
+				3E382B55291699D400CCA2AF /* ImagePickerView.swift */,
+				3E35BF1A29179E5C00F3AA45 /* StartPage.swift */,
+			);
+			path = views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +167,24 @@
 			productReference = 3E382B432916943F00CCA2AF /* Looomity.app */;
 			productType = "com.apple.product-type.application";
 		};
+		3EC9F094291ECC050021F146 /* LooomityTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3EC9F09B291ECC050021F146 /* Build configuration list for PBXNativeTarget "LooomityTests" */;
+			buildPhases = (
+				3EC9F091291ECC050021F146 /* Sources */,
+				3EC9F092291ECC050021F146 /* Frameworks */,
+				3EC9F093291ECC050021F146 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3EC9F09A291ECC050021F146 /* PBXTargetDependency */,
+			);
+			name = LooomityTests;
+			productName = LooomityTests;
+			productReference = 3EC9F095291ECC050021F146 /* LooomityTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -124,6 +197,10 @@
 				TargetAttributes = {
 					3E382B422916943F00CCA2AF = {
 						CreatedOnToolsVersion = 14.1;
+					};
+					3EC9F094291ECC050021F146 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 3E382B422916943F00CCA2AF;
 					};
 				};
 			};
@@ -141,6 +218,7 @@
 			projectRoot = "";
 			targets = (
 				3E382B422916943F00CCA2AF /* Looomity */,
+				3EC9F094291ECC050021F146 /* LooomityTests */,
 			);
 		};
 /* End PBXProject section */
@@ -156,6 +234,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3EC9F093291ECC050021F146 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -164,7 +249,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E35BF1B29179E5C00F3AA45 /* StartPage.swift in Sources */,
-				3E382B5A2916A51D00CCA2AF /* DetectFace.swift in Sources */,
+				3EC9F0A0291ED0810021F146 /* SceneKitHelpers.swift in Sources */,
+				3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */,
 				3E382B492916943F00CCA2AF /* ContentView.swift in Sources */,
 				3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */,
 				3E382B582916A28000CCA2AF /* HeadView.swift in Sources */,
@@ -174,7 +260,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3EC9F091291ECC050021F146 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3EC9F098291ECC050021F146 /* LooomityTests.swift in Sources */,
+				3EC9F0A4291ED5C40021F146 /* GradientDescentTests.swift in Sources */,
+				3EC9F09E291ECC0B0021F146 /* BoxPlacementTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3EC9F09A291ECC050021F146 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E382B422916943F00CCA2AF /* Looomity */;
+			targetProxy = 3EC9F099291ECC050021F146 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3E382B502916944100CCA2AF /* Debug */ = {
@@ -295,6 +399,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Looomity/Preview Content\"";
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -307,7 +412,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
@@ -331,6 +436,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Looomity/Preview Content\"";
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -343,7 +449,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
@@ -355,6 +461,47 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3EC9F09C291ECC050021F146 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LooomityTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Looomity.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Looomity";
+			};
+			name = Debug;
+		};
+		3EC9F09D291ECC050021F146 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LooomityTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Looomity.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Looomity";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -375,6 +522,15 @@
 			buildConfigurations = (
 				3E382B532916944100CCA2AF /* Debug */,
 				3E382B542916944100CCA2AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3EC9F09B291ECC050021F146 /* Build configuration list for PBXNativeTarget "LooomityTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3EC9F09C291ECC050021F146 /* Debug */,
+				3EC9F09D291ECC050021F146 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
