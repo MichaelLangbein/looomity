@@ -53,6 +53,7 @@ struct HeadView : UIViewRepresentable {
 
         // Size of head in meters
         let w: Float = 0.25
+        let h: Float = 0.30
         
         // aspect-ratio's
         let arImg = Float(imageSize.width / imageSize.height)
@@ -60,7 +61,7 @@ struct HeadView : UIViewRepresentable {
         let arCam = Float(sceneFrame.width / sceneFrame.height)
         
         let cWorld = getHeadPosition(
-            w: w,
+            w: w, h: h,
             arImg: arImg, arCam: arCam,
             topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
             projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)

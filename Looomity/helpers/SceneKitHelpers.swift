@@ -10,12 +10,14 @@ import SceneKit
 
 /// Calculate world-coordinates of head
 /// - parameter w: width of head in meters
+/// - parameter h: height of head in meters
 /// - parameter arImg: aspect ratio of underlying image
 /// - parameter arCam: aspect ratio of scene
 /// - parameter projectionT: transforms from camera-space into clipping-space
 /// - parameter viewT: transforms from world-space into camera-space
 func getHeadPosition(
-    w: Float, arImg: Float, arCam: Float,
+    w: Float, h: Float,
+    arImg: Float, arCam: Float,
     topImg: Float, rightImg: Float, bottomImg: Float, leftImg: Float,
     projectionTransform: SCNMatrix4, viewTransform: SCNMatrix4
 ) -> SCNVector4 {
@@ -41,6 +43,9 @@ func getHeadPosition(
     let aClip = midpoint(tl, bl)
     let bClip = midpoint(tr, br)
     let cClip = midpoint(aClip, bClip)
+    let dClip = midpoint(tl, tr)
+    let eClip = midpoint(bl, br)
+    let fClip = midpoint(dClip, eClip)
     
     // Projecting out of clipping space into camera space.
     // Accounts for focal length, near and far, and other camera-parameters.
@@ -49,26 +54,40 @@ func getHeadPosition(
     let a = matMul(projectionInverse, aClip)  // direction towards point a
     let b = matMul(projectionInverse, bClip)  // direction towards point b
     let c = matMul(projectionInverse, cClip)  // direction towards point c
+    let d = matMul(projectionInverse, dClip)
+    let e = matMul(projectionInverse, eClip)
+    let f = matMul(projectionInverse, fClip)
     
     let magA = magnitude(a)
     let magB = magnitude(b)
     let magC = magnitude(c)
+    let magD = magnitude(d)
+    let magE = magnitude(e)
+    let magF = magnitude(f)
     
     // Angle between a and b.
     // Used to calculate at what distance from origin the head must be.
     // Assumes that the head-bounding-box is orthogonal to the ray towards c.
     let sigma = acos( dot(a, b) / (magA * magB) )
     let l = w / (2.0 * tan(sigma / 2.0))
+    // angle between d and e.
+    let sigma2 = acos( dot(d, e) / (magD * magE) )
+    let l2 = h / (2.0 * tan(sigma2 / 2.0))
     
     // Scaling normalized c by l
     let cNorm = scalarProd(1.0 / magC, c)
     let cCam = scalarProd(l, cNorm)
+    let fNorm = scalarProd(1.0 / magF, f)
+    let fCam = scalarProd(l2, fNorm)
     
     // Transforming out of camera-space into world-space
     let viewInverse = SCNMatrix4Invert(viewTransform)
     let cWorld = matMul(viewInverse, cCam)
+    let fWorld = matMul(viewInverse, fCam)
     
-    return cWorld
+    let ray = midpoint(cWorld, fWorld)
+    
+    return ray
 }
 
 func matMul(_ matrix: SCNMatrix4, _ vector: SCNVector4) -> SCNVector4 {

@@ -30,28 +30,13 @@
             filePath = "LooomityTests/BoxPlacementTests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
             landmarkName = "testPlacement()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "811D5847-63AE-49C2-B6E5-74B75BD8F4E5 - f2085ea83afcad9b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "LooomityTests.BoxPlacementTests.diff(Swift.Float, Swift.Float) -&gt; Swift.Float"
-                  moduleName = "LooomityTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "119"
-                  endingLineNumber = "119"
-                  offsetFromSymbolStart = "44">
-               </Location>
-               <Location
-                  uuid = "811D5847-63AE-49C2-B6E5-74B75BD8F4E5 - 49de9c6b8632e762"
+                  uuid = "811D5847-63AE-49C2-B6E5-74B75BD8F4E5 - 49de9c6b8632e8a8"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -61,9 +46,24 @@
                   urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "118"
-                  endingLineNumber = "118"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
                   offsetFromSymbolStart = "4834">
+               </Location>
+               <Location
+                  uuid = "811D5847-63AE-49C2-B6E5-74B75BD8F4E5 - 49de9c6b8632e8a8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LooomityTests.BoxPlacementTests.testPlacement() -&gt; ()"
+                  moduleName = "LooomityTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "128"
+                  endingLineNumber = "128"
+                  offsetFromSymbolStart = "4928">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -78,8 +78,8 @@
             filePath = "LooomityTests/BoxPlacementTests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
             landmarkName = "testPlacement()"
             landmarkType = "7">
          </BreakpointContent>
@@ -94,8 +94,8 @@
             filePath = "LooomityTests/BoxPlacementTests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "105"
-            endingLineNumber = "105"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
             landmarkName = "testPlacement()"
             landmarkType = "7">
          </BreakpointContent>
@@ -110,44 +110,13 @@
             filePath = "LooomityTests/BoxPlacementTests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
             landmarkName = "setUp()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D987332B-A97D-45B4-A9D6-252497A097EF"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LooomityTests/BoxPlacementTests.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "87"
-            endingLineNumber = "87"
-            landmarkName = "tearDownWithError()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "D987332B-A97D-45B4-A9D6-252497A097EF - 887ebfd12d83d547"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "LooomityTests.BoxPlacementTests.tearDownWithError() throws -&gt; ()"
-                  moduleName = "LooomityTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "88"
-                  endingLineNumber = "88"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  uuid = "D987332B-A97D-45B4-A9D6-252497A097EF - 311aac55a9cf1331"
+                  uuid = "0CB21BE2-C379-41BC-A50F-017E088D3071 - 311aac55a9cf1331"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -159,9 +128,120 @@
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "87"
                   endingLineNumber = "87"
-                  offsetFromSymbolStart = "6181">
+                  offsetFromSymbolStart = "5794">
+               </Location>
+               <Location
+                  uuid = "0CB21BE2-C379-41BC-A50F-017E088D3071 - 311aac55a9cf1331"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LooomityTests.BoxPlacementTests.setUp() -&gt; ()"
+                  moduleName = "LooomityTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "87"
+                  endingLineNumber = "87"
+                  offsetFromSymbolStart = "5844">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D987332B-A97D-45B4-A9D6-252497A097EF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LooomityTests/BoxPlacementTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "setUp()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8A2F181-17C3-4F1C-9579-839BCF5C3033"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LooomityTests/BoxPlacementTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
+            landmarkName = "setUp()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A4906074-54E4-4BEC-8F23-B00FC40C5D55"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "LooomityTests/BoxPlacementTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
+            landmarkName = "testPlacement()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A4906074-54E4-4BEC-8F23-B00FC40C5D55 - 49de9c6b8632e7ee"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LooomityTests.BoxPlacementTests.testPlacement() -&gt; ()"
+                  moduleName = "LooomityTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "122"
+                  endingLineNumber = "122"
+                  offsetFromSymbolStart = "4598">
+               </Location>
+               <Location
+                  uuid = "A4906074-54E4-4BEC-8F23-B00FC40C5D55 - 49de9c6b8632e7cf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "LooomityTests.BoxPlacementTests.testPlacement() -&gt; ()"
+                  moduleName = "LooomityTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michaellangbein/Desktop/code/Looomity/LooomityTests/BoxPlacementTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "121"
+                  endingLineNumber = "121"
+                  offsetFromSymbolStart = "4692">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B4F5E922-DACB-4A64-8613-FD35F6B6D6BE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Looomity/views/HeadView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
+            landmarkName = "makeUIView(context:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

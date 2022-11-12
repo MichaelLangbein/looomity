@@ -12,8 +12,9 @@ import SceneKit
 
 final class BoxPlacementTests: XCTestCase {
     
-    // width of head in meters
+    // dimensions of head in meters
     private var w: Float = 0.25
+    private var h: Float = 0.30
     // image dimensions
     private var wImg = 300
     private var hImg = 450
@@ -39,16 +40,16 @@ final class BoxPlacementTests: XCTestCase {
         camera.zNear = 0.01
         camera.zFar = 100
         camera.usesOrthographicProjection = false
+        camera.projectionDirection = self.hImg > self.wImg ? .vertical : .horizontal
         let cameraNode = SCNNode()
         cameraNode.camera = camera
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
         scene.rootNode.addChildNode(cameraNode)
+        sceneView.pointOfView = cameraNode
         
         // Plane - facing the camera directly
-        let w = w
-        let h = 1.2 * w
         let tlPoint = SCNNode(geometry: SCNSphere(radius: 0.1))
         let trPoint = SCNNode(geometry: SCNSphere(radius: 0.1))
         let brPoint = SCNNode(geometry: SCNSphere(radius: 0.1))
@@ -58,13 +59,15 @@ final class BoxPlacementTests: XCTestCase {
         brPoint.position = SCNVector3(x:  w/2.0, y: -h/2.0, z: 0)
         blPoint.position = SCNVector3(x: -w/2.0, y: -h/2.0, z: 0)
         let planeNode = SCNNode()
+        planeNode.look(at: SCNVector3(x: 0, y: 0, z: 1))
         planeNode.addChildNode(tlPoint)
         planeNode.addChildNode(trPoint)
         planeNode.addChildNode(brPoint)
         planeNode.addChildNode(blPoint)
-        scene.rootNode.addChildNode(planeNode)
-        planeNode.position = SCNVector3(x: 1, y: 1, z: -3)
+        planeNode.position = SCNVector3(x: 1, y: 3, z: -3)
         planeNode.look(at: cameraNode.position)
+        scene.rootNode.addChildNode(planeNode)
+        
         tlPoint.name = "tl"
         trPoint.name = "tr"
         brPoint.name = "br"
@@ -72,19 +75,25 @@ final class BoxPlacementTests: XCTestCase {
         planeNode.name = "Plane"
         
         // projecting plane onto 2d-image-space
-        let tlWorld = tlPoint.worldPosition
-        let trWorld = trPoint.worldPosition
-        let brWorld = brPoint.worldPosition
-        let blWorld = blPoint.worldPosition
-        let tlImgCoords = sceneView.projectPoint(tlWorld)
-        let trImgCoords = sceneView.projectPoint(trWorld)
-        let brImgCoords = sceneView.projectPoint(brWorld)
-        let blImgCoords = sceneView.projectPoint(blWorld)
+        // seems that plane was flipped around y axis ...
+        // ... formerly left points are now right
+        let trWorld = tlPoint.worldPosition
+        let tlWorld = trPoint.worldPosition
+        let blWorld = brPoint.worldPosition
+        let brWorld = blPoint.worldPosition
         
-        self.topImg = tlImgCoords.y / Float(self.hImg)
-        self.rightImg = trImgCoords.x / Float(self.wImg)
-        self.bottomImg = brImgCoords.y / Float(self.hImg)
-        self.leftImg = blImgCoords.x / Float(self.wImg)
+        // image coordinates are:
+        // x: left(0) -> right(high)
+        // y: top(0) -> bottom(high)
+        let blImgCoords = sceneView.projectPoint(tlWorld)
+        let brImgCoords = sceneView.projectPoint(trWorld)
+        let trImgCoords = sceneView.projectPoint(brWorld)
+        let tlImgCoords = sceneView.projectPoint(blWorld)
+        
+        self.topImg     = 1.0 - min(tlImgCoords.y, trImgCoords.y, blImgCoords.y, brImgCoords.y) / Float(self.hImg)
+        self.rightImg   = max(tlImgCoords.x, trImgCoords.x, blImgCoords.x, brImgCoords.x) / Float(self.wImg)
+        self.bottomImg  = 1.0 - max(tlImgCoords.y, trImgCoords.y, blImgCoords.y, brImgCoords.y) / Float(self.hImg)
+        self.leftImg    = min(tlImgCoords.x, trImgCoords.x, blImgCoords.x, brImgCoords.x) / Float(self.wImg)
     }
 
     override func tearDownWithError() throws {
@@ -110,7 +119,8 @@ final class BoxPlacementTests: XCTestCase {
         let planePos = plane.worldPosition
         
         let cWorld = getHeadPosition(
-            w: w, arImg: arImg, arCam: arCam,
+            w: w, h: h,
+            arImg: arImg, arCam: arCam,
             topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
             projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)
         )
