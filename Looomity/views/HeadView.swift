@@ -102,6 +102,7 @@ struct HeadView : UIViewRepresentable {
         figure.name = "Head"
         scene.rootNode.addChildNode(figure)
 
+
         // scene
         self.sceneView.scene = scene
         self.sceneView.allowsCameraControl = true
