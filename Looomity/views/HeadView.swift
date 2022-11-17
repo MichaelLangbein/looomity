@@ -33,27 +33,34 @@ struct HeadView : UIViewRepresentable {
         let yaw = Float(truncating: observation.yaw!)
         let leftImg = Float(observation.boundingBox.minX)
         let rightImg = Float(observation.boundingBox.maxX)
-        let topImg = Float(observation.boundingBox.maxY)
-        let bottomImg = Float(observation.boundingBox.minY)
+        let topImg = Float(observation.boundingBox.minY)
+        let bottomImg = Float(observation.boundingBox.maxY)
 
+        // SceneView
+        self.sceneView.frame = CGRect(x: 0, y: 0, width: self.imageSize.width, height: self.imageSize.height)
+        
         // Scene
         let scene = SCNScene()
-
+        
         // Camera
         let camera = SCNCamera()
         camera.zNear = 0.01
         camera.zFar = 100
         camera.usesOrthographicProjection = false
+        camera.projectionDirection = imageSize.width > imageSize.height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
         cameraNode.camera = camera
+        
+        self.sceneView.pointOfView = cameraNode
+        
 
         // Size of head in meters
-        let w: Float = 0.25
-        let h: Float = 0.30
+        let w: Float = 0.175
+        let h: Float = 0.220
         
         // aspect-ratio's
         let arImg = Float(imageSize.width / imageSize.height)
@@ -132,7 +139,11 @@ struct HeadView : UIViewRepresentable {
     }
 }
 
-
+/**
+ * I have that strange problem of the head being placed sideways.
+ * My suspicion is that this is because the camera looks at the scene vertically.
+ * I hope to fix the problem by first making sure that the image and the 3d-scene cover the exact same frame
+ */
 
 struct HeadView_Previews: PreviewProvider {
     static var previews: some View {
@@ -146,15 +157,23 @@ struct HeadView_Previews: PreviewProvider {
         
         let img = UIImage(named: "TestImage")
         let size = img!.size
+        let ar = size.width / size.height
+        let uiWidth = UIScreen.main.bounds.width
+        let w = 0.8 * uiWidth
+        let h = w / ar
         
         return ZStack {
+            
             Image(uiImage: img!)
                 .resizable()
                 .scaledToFit()
                 .border(.green)
+            
             HeadView(observation: observation, imageSize: size) { renderer, sceneView in
-                print("rendering ...")
-            }.border(.red)
-        }.frame(width: 0.9 * size.width, height: 0.9 * size.height)
+                    print("rendering ...")
+                }
+                .border(.red)
+            
+        }.frame(width: w, height: h)
     }
 }

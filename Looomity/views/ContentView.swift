@@ -30,12 +30,20 @@ struct ContentView: View {
                 ZStack {
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFit().border(.green)
+                        .scaledToFit()
+                        .border(.green)
                     
                     if let observation = self.observation {
+                        
+                        MarkerView(observation: observation, imageSize: image.size)
+                            .frame(width: w, height: h)
+                            .border(.blue)
+                        
                         HeadView(observation: observation, imageSize: image.size)
+                            .frame(width: w, height: h)
                             .border(.red)
                     }
+                    
                 }.frame(width: w, height: h)
             }
             
