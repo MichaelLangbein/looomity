@@ -33,8 +33,8 @@ struct HeadView : UIViewRepresentable {
         let yaw = Float(truncating: observation.yaw!)
         let leftImg = Float(observation.boundingBox.minX)
         let rightImg = Float(observation.boundingBox.maxX)
-        let topImg = Float(observation.boundingBox.minY)
-        let bottomImg = Float(observation.boundingBox.maxY)
+        let topImg = Float(observation.boundingBox.maxY)
+        let bottomImg = Float(observation.boundingBox.minY)
 
         // SceneView
         self.sceneView.frame = CGRect(x: 0, y: 0, width: self.imageSize.width, height: self.imageSize.height)
@@ -50,26 +50,20 @@ struct HeadView : UIViewRepresentable {
         camera.projectionDirection = imageSize.width > imageSize.height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
+        // my head positioning only works with cam at z == 1 ...
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 1)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
         cameraNode.camera = camera
         
         self.sceneView.pointOfView = cameraNode
         
-
-        // Size of head in meters
-        let w: Float = 0.175
-        let h: Float = 0.220
-        
-        // aspect-ratio's
-        let arImg = Float(imageSize.width / imageSize.height)
-        let sceneFrame = self.sceneView.frame
-        let arCam = Float(sceneFrame.width / sceneFrame.height)
+        // Size of face in meters
+        let w: Float = 0.165
+        let h: Float = 0.17
         
         let cWorld = getHeadPosition(
-            w: w, h: h,
-            arImg: arImg, arCam: arCam,
+            w: w, h: h, ar: Float(imageSize.width) / Float(imageSize.height),
             topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
             projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)
         )

@@ -11,13 +11,11 @@ import SceneKit
 /// Calculate world-coordinates of head
 /// - parameter w: width of head in meters
 /// - parameter h: height of head in meters
-/// - parameter arImg: aspect ratio of underlying image
-/// - parameter arCam: aspect ratio of scene
 /// - parameter projectionT: transforms from camera-space into clipping-space
 /// - parameter viewT: transforms from world-space into camera-space
+/// - parameter (top, right, bottom, left)Img: [0, 1]^2, x from left to right, y from bottom to top
 func getHeadPosition(
-    w: Float, h: Float,
-    arImg: Float, arCam: Float,
+    w: Float, h: Float, ar: Float,
     topImg: Float, rightImg: Float, bottomImg: Float, leftImg: Float,
     projectionTransform: SCNMatrix4, viewTransform: SCNMatrix4
 ) -> SCNVector4 {
@@ -28,10 +26,10 @@ func getHeadPosition(
     
     
     // Face-bbox: from relative-image-coordinates to clipspace-x and y.
-    let top     = (2.0 * topImg     - 1.0) * arCam / arImg;
-    let bottom  = (2.0 * bottomImg  - 1.0) * arCam / arImg;
-    let right   = (2.0 * rightImg   - 1.0) * arImg / arCam;
-    let left    = (2.0 * leftImg    - 1.0) * arImg / arCam;
+    let top     = (2.0 * topImg     - 1.0 ) / ar
+    let bottom  = (2.0 * bottomImg  - 1.0 ) / ar
+    let right   =  2.0 * rightImg   - 1.0
+    let left    =  2.0 * leftImg    - 1.0
     
     // Placing face-bbox in clip-space [x, y, 1, 1]
     let tl = imageSpace2ClipSpace(left, top)
@@ -48,7 +46,7 @@ func getHeadPosition(
     let fClip = midpoint(dClip, eClip)
     
     // Projecting out of clipping space into camera space.
-    // Accounts for focal length, near and far, and other camera-parameters.
+    // Accounts for focal length, near and far, and aspect-ratio.
     // Results are not points, but directions (their w == 0)
     let projectionInverse = SCNMatrix4Invert(projectionTransform)
     let a = matMul(projectionInverse, aClip)  // direction towards point a

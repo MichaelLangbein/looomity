@@ -36,7 +36,7 @@ struct MarkerView_Previews: PreviewProvider {
     static var previews: some View {
         let observation = VNFaceObservation(
             requestRevision: 0,
-            boundingBox: CGRect(x: 0.4, y: 0.75, width: 0.125, height: 0.125),
+            boundingBox: CGRect(x: 0.4, y: 0.7, width: 0.125, height: 0.125),
             roll: 0.3,
             yaw: 0.01,
             pitch: -0.3
