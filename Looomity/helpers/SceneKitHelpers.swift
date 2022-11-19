@@ -25,6 +25,10 @@ func getHeadPosition(
     // Calculating head-position
     //----------------------------
     
+    
+    // SceneKit handles aspect-ratio not inside the projection-matrix,
+    // but only outside in the SCNScene.
+    // But we need the complete projection-matrix here.
     var updatedProjectionTransform = projectionTransform
     if (updatedProjectionTransform.m11 == updatedProjectionTransform.m22) {
         print("accounting for aspect ratio")
@@ -81,9 +85,14 @@ func getHeadPosition(
     
     // Scaling normalized c by l
     let cNorm = scalarProd(1.0 / magC, c)
-    let cCam = scalarProd(l, cNorm)
+    var cCam = scalarProd(l, cNorm)
     let fNorm = scalarProd(1.0 / magF, f)
-    let fCam = scalarProd(l2, fNorm)
+    var fCam = scalarProd(l2, fNorm)
+    
+    // transforming those directions into actual positions again,
+    // so that transformation-matrices work on them (translation, rotation, etc)
+    cCam.w = 1.0
+    fCam.w = 1.0
     
     // Transforming out of camera-space into world-space
     let viewInverse = SCNMatrix4Invert(viewTransform)

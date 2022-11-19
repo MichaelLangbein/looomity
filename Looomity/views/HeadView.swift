@@ -50,7 +50,9 @@ struct HeadView : UIViewRepresentable {
         camera.projectionDirection = imageSize.width > imageSize.height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 1)
+        // head-positioning only seems to work with camera at 0/0/0.
+        // did I forget to un-apply the view-matrix?
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
         cameraNode.camera = camera
