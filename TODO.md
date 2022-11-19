@@ -25,7 +25,7 @@
 - placing face: 
     tap on point in image
         detect faces
-        chose rect closest to tap
+        chose rect closest to tap - if none found, place exatly on tap-location
         place head-model
         optional, later: gradient-descent to optimize placement
                         also then: display numeric fit to landmarks (eyes to far apart, nose too short, ...)
