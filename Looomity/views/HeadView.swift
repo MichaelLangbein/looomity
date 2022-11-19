@@ -50,7 +50,6 @@ struct HeadView : UIViewRepresentable {
         camera.projectionDirection = imageSize.width > imageSize.height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
-        // my head positioning only works with cam at z == 1 ...
         cameraNode.position = SCNVector3(x: 0, y: 0, z: 1)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
@@ -85,12 +84,6 @@ struct HeadView : UIViewRepresentable {
         // make white transparent for background,
         // while still obscuring model elements
          applyCustomShader(figure)
-//        let postprocessor = SCNTechnique(dictionary: [
-//            "passes": [
-//                "draw": "DRAW_SCENE",
-//                "program": "whiteToTransparent"
-//            ]
-//        ])
         
         // scaling and repositioning
         figure.scale = SCNVector3(
@@ -106,8 +99,6 @@ struct HeadView : UIViewRepresentable {
 
         // scene
         self.sceneView.scene = scene
-        self.sceneView.allowsCameraControl = true
-        self.sceneView.cameraControlConfiguration.allowsTranslation = true
         self.sceneView.backgroundColor = UIColor.clear
         return self.sceneView
     }

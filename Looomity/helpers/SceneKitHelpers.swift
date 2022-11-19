@@ -11,6 +11,7 @@ import SceneKit
 /// Calculate world-coordinates of head
 /// - parameter w: width of head in meters
 /// - parameter h: height of head in meters
+/// - parameter ar: aspect ratio. Assumed to be the same for SCNScene and UIImage.
 /// - parameter projectionT: transforms from camera-space into clipping-space
 /// - parameter viewT: transforms from world-space into camera-space
 /// - parameter (top, right, bottom, left)Img: [0, 1]^2, x from left to right, y from bottom to top
@@ -24,10 +25,15 @@ func getHeadPosition(
     // Calculating head-position
     //----------------------------
     
+    var updatedProjectionTransform = projectionTransform
+    if (updatedProjectionTransform.m11 == updatedProjectionTransform.m22) {
+        print("accounting for aspect ratio")
+        updatedProjectionTransform.m11 = updatedProjectionTransform.m11 / ar
+    }
     
     // Face-bbox: from relative-image-coordinates to clipspace-x and y.
-    let top     = (2.0 * topImg     - 1.0 ) / ar
-    let bottom  = (2.0 * bottomImg  - 1.0 ) / ar
+    let top     =  2.0 * topImg     - 1.0
+    let bottom  =  2.0 * bottomImg  - 1.0
     let right   =  2.0 * rightImg   - 1.0
     let left    =  2.0 * leftImg    - 1.0
     
@@ -47,8 +53,9 @@ func getHeadPosition(
     
     // Projecting out of clipping space into camera space.
     // Accounts for focal length, near and far, and aspect-ratio.
+    // (Actually not so sure about the latter. Transformation matrices seem to always have m11 == m22 ...)
     // Results are not points, but directions (their w == 0)
-    let projectionInverse = SCNMatrix4Invert(projectionTransform)
+    let projectionInverse = SCNMatrix4Invert(updatedProjectionTransform)
     let a = matMul(projectionInverse, aClip)  // direction towards point a
     let b = matMul(projectionInverse, bClip)  // direction towards point b
     let c = matMul(projectionInverse, cClip)  // direction towards point c
