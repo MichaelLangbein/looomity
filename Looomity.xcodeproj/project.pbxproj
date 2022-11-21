@@ -16,6 +16,8 @@
 		3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B55291699D400CCA2AF /* ImagePickerView.swift */; };
 		3E382B582916A28000CCA2AF /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B572916A28000CCA2AF /* HeadView.swift */; };
 		3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B592916A51D00CCA2AF /* VisionHelpers.swift */; };
+		3E42DB49292B5E21007616CF /* color2alpha.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 3E42DB48292B5E21007616CF /* color2alpha.vsh */; };
+		3E42DB4B292B5E86007616CF /* color2alpha.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 3E42DB4A292B5E86007616CF /* color2alpha.fsh */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
 		3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E58849C29170A660063647C /* Loomis_Head.usdz */; };
 		3E9759D42926DA4500E477F5 /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9759D32926DA4500E477F5 /* MarkerView.swift */; };
@@ -48,6 +50,8 @@
 		3E382B55291699D400CCA2AF /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		3E382B572916A28000CCA2AF /* HeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
 		3E382B592916A51D00CCA2AF /* VisionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionHelpers.swift; sourceTree = "<group>"; };
+		3E42DB48292B5E21007616CF /* color2alpha.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = color2alpha.vsh; path = views/color2alpha.vsh; sourceTree = "<group>"; };
+		3E42DB4A292B5E86007616CF /* color2alpha.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = color2alpha.fsh; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
 		3E58849C29170A660063647C /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = Loomis_Head.usdz; path = ../../../../Downloads/Loomis_Head.usdz; sourceTree = "<group>"; };
 		3E9759D32926DA4500E477F5 /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
@@ -98,6 +102,8 @@
 		3E382B452916943F00CCA2AF /* Looomity */ = {
 			isa = PBXGroup;
 			children = (
+				3E42DB48292B5E21007616CF /* color2alpha.vsh */,
+				3E42DB4A292B5E86007616CF /* color2alpha.fsh */,
 				3E382B4C2916944100CCA2AF /* Looomity.entitlements */,
 				3E58849C29170A660063647C /* Loomis_Head.usdz */,
 				3E382B4A2916944100CCA2AF /* Assets.xcassets */,
@@ -232,6 +238,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */,
+				3E42DB49292B5E21007616CF /* color2alpha.vsh in Resources */,
+				3E42DB4B292B5E86007616CF /* color2alpha.fsh in Resources */,
 				3E382B4F2916944100CCA2AF /* Preview Assets.xcassets in Resources */,
 				3E382B4B2916944100CCA2AF /* Assets.xcassets in Resources */,
 			);

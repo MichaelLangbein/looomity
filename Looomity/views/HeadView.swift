@@ -28,7 +28,7 @@ struct HeadView : UIViewRepresentable {
         self.sceneView.delegate = context.coordinator
         
         // Unwrapping face-detection parameters
-        let roll = Float(truncating: observation.roll!)
+        let roll = Float(truncating: observation.roll!) + Float.pi / 2.0
         let pitch = Float(truncating: observation.pitch!)
         let yaw = Float(truncating: observation.yaw!)
         let leftImg = Float(observation.boundingBox.minX)
@@ -85,7 +85,25 @@ struct HeadView : UIViewRepresentable {
         
         // make white transparent for background,
         // while still obscuring model elements
-         applyCustomShader(figure)
+        camera.technique = SCNTechnique.init(dictionary: [
+            "passes": [
+                "color2alpha", [
+                    "draw": "DRAW_QUAD",
+                    "program": "color2alpha",
+                    "inputs": [
+                        "colorSampler": "COLOR",
+                        "a_position": "a_position-symbol"
+                    ]
+                ]
+            ],
+            "sequence": ["color2alpha"],
+            "symbols": [
+                "a_position-symbol": "vertex"
+            ]
+        ])
+        // Resoures placed at:
+        // https://developer.apple.com/documentation/bundleresources/placing_content_in_a_bundle
+        
         
         // scaling and repositioning
         figure.scale = SCNVector3(
