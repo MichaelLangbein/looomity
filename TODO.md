@@ -33,11 +33,11 @@ Visibility:
 
 ## Implementation
 
-- immediately after loading image:
-    detect faces
-    show subtle rects as an orientation where users may tap
+- immediately after loading image: ....................................... done
+    detect faces ......................................................... done
+    show subtle rects as an orientation where users may tap .............. done
 
-- placing face: 
+- placing face:
     tap on point in image
         chose rect closest to tap - if none found, place exactly on tap-location
         place head-model
@@ -64,7 +64,7 @@ Visibility:
 ## UI-Elements
 
 Buttons:
-    - Select (other) image
+    - Select (other) image .......... done
     - Show/hide models
     - Save
 

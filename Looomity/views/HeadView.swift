@@ -10,69 +10,48 @@ import Vision
 import SceneKit
 
 
+struct HeadView: View {
 
-struct HeadView : UIViewRepresentable {
-    
-    // Parameters for a detected face
+    // Parameters for detected faces
     var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
-    // Called after each rendered frame
-    var onRender: ((SCNSceneRenderer, SCNView) -> Void)?
     
-    // Needs to remain in scope
-    let sceneView = SCNView()
+    var body: some View {
+        
+        SceneKitView(
+            width: Int(imageSize.width),
+            height: Int(imageSize.height),
+            loadNodes: { view, scene, camera in
+                return self.getNodes(scene: scene)
+            }
+        )
+    }
+    
+    func getNodes(scene: SCNScene) -> [SCNNode] {
 
-    func makeUIView(context: Context) -> SCNView {
-        // Having swiftui connect scene-view with the coordinator
-        self.sceneView.delegate = context.coordinator
-
-        // SceneView
-        self.sceneView.frame = CGRect(x: 0, y: 0, width: self.imageSize.width, height: self.imageSize.height)
-        
-        // Scene
-        let scene = SCNScene()
-        
-        // Camera
-        let camera = SCNCamera()
-        camera.zNear = 0.01
-        camera.zFar = 100
-        camera.usesOrthographicProjection = false
-        camera.projectionDirection = imageSize.width > imageSize.height ? .horizontal : .vertical
-        let cameraNode = SCNNode()
-        scene.rootNode.addChildNode(cameraNode)
-        // head-positioning only seems to work with camera at 0/0/0.
-        // did I forget to un-apply the view-matrix?
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
-        cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
-        cameraNode.name = "Camera"
-        cameraNode.camera = camera
-        
-        self.sceneView.pointOfView = cameraNode
-        
-        // ambient light
-        sceneView.autoenablesDefaultLighting = true;
+        // base-elements
+        guard let cameraNode = scene.rootNode.childNodes.first(where: { $0.name == "Camera" }) else { return [] }
+        guard let camera = cameraNode.camera else { return [] }
+        // loading model
+        guard let loadedScene = SCNScene(named: "Loomis_Head.usdz") else { return [] }
+        let figure = loadedScene.rootNode
         
         // Size of face in meters
         let w: Float = 0.165
         let h: Float = 0.17
         
-        // loading model
-        guard let loadedScene = SCNScene(named: "Loomis_Head.usdz") else {
-            return SCNView()
-        }
-        
-        let figure = loadedScene.rootNode
-        
         // scaling and repositioning
         figure.scale = SCNVector3(
-            x: w / figure.boundingSphere.radius,
-            y: w / figure.boundingSphere.radius,
-            z: w / figure.boundingSphere.radius
+            x: 0.5 * w / figure.boundingSphere.radius,
+            y: 0.5 * w / figure.boundingSphere.radius,
+            z: 0.5 * w / figure.boundingSphere.radius
         )
         
         
+        var nodes: [SCNNode] = []
         for observation in observations {
+            
             // Unwrapping face-detection parameters
             let roll = Float(truncating: observation.roll!) // + Float.pi / 2.0
             let pitch = Float(truncating: observation.pitch!)
@@ -85,57 +64,52 @@ struct HeadView : UIViewRepresentable {
             let cWorld = getHeadPosition(
                 w: w, h: h, ar: Float(imageSize.width) / Float(imageSize.height),
                 topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
-                projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)
+                projectionTransform: camera.projectionTransform,
+                viewTransform: SCNMatrix4Invert(cameraNode.transform)
             )
             
             let f = figure.clone()
             
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            scene.rootNode.addChildNode(f)
+            f.opacity = 0.05
             
+            let plane = SCNNode(geometry: SCNPlane(width: CGFloat(w), height: CGFloat(h)))
+            plane.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
+            plane.opacity = 0.3
+            
+            nodes.append(f)
+            nodes.append(plane)
         }
-
-        // scene
-        self.sceneView.scene = scene
-        self.sceneView.backgroundColor = UIColor.clear
-        return self.sceneView
-    }
-
-    func updateUIView(_ scnView: SCNView, context: Context) {
-        print("Update called")
-    }
-    
-    // allowing user to hook into render loop
-    func makeCoordinator() -> RenderDelegate {
-        return RenderDelegate(parent: self)
-    }
-    final class RenderDelegate: NSObject, SCNSceneRendererDelegate {
-        var parent: HeadView
-        init(parent: HeadView) {
-            self.parent = parent
-        }
-        func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-            if let callback = self.parent.onRender {
-                callback(renderer, parent.sceneView)
-            }
-        }
+        
+        
+        return nodes
     }
 }
-
+        
+    
 
 struct HeadView_Previews: PreviewProvider {
     static var previews: some View {
-        let observation = VNFaceObservation(
+        
+        let observation1 = VNFaceObservation(
             requestRevision: 0,
-            boundingBox: CGRect(x: 0.4, y: 0.75, width: 0.125, height: 0.125),
-            roll: 0.3,
-            yaw: 0.01,
-            pitch: -0.3
+            boundingBox: CGRect(x: 0.545, y: 0.276, width: 0.439, height: 0.436),
+            roll: 0.138,
+            yaw: -0.482,
+            pitch: 0.112
         )
         
-        let img = UIImage(named: "TestImage")
-        let size = img!.size
+        let observation2 = VNFaceObservation(
+            requestRevision: 0,
+            boundingBox: CGRect(x: 0.218, y: 0.248, width: 0.382, height: 0.379),
+            roll: -0.216,
+            yaw: 0.121,
+            pitch: 0.151
+        )
+        
+        let img = UIImage(named: "TestImage2")!
+        let size = img.size
         let ar = size.width / size.height
         let uiWidth = UIScreen.main.bounds.width
         let w = 0.8 * uiWidth
@@ -143,15 +117,15 @@ struct HeadView_Previews: PreviewProvider {
         
         return ZStack {
             
-            Image(uiImage: img!)
+            Image(uiImage: img)
                 .resizable()
                 .scaledToFit()
                 .border(.green)
             
-            HeadView(observations: [observation], imageSize: size) { renderer, sceneView in
-                    print("rendering ...")
-                }
-                .border(.red)
+            HeadView(
+                observations: [observation1, observation2],
+                imageSize: size
+            ).border(.red)
             
         }.frame(width: w, height: h)
     }

@@ -15,14 +15,14 @@ struct MarkerView: View {
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
     
+    @State var tapCount = 0
     
     var body: some View {
         GeometryReader { geo in
-            ForEach(0 ..< observations.count) { i in
-                let observation = observations[i]
+            ForEach(observations, id: \.uuid) { observation in
                 Rectangle()
                     .foregroundColor(.clear)
-                    .border(.red)
+                    .border(.gray)
                     .offset(
                         x: geo.size.width * observation.boundingBox.minX,
                         y: geo.size.height * (1.0 - observation.boundingBox.maxY)
@@ -31,11 +31,9 @@ struct MarkerView: View {
                         height: geo.size.height * observation.boundingBox.height
                     )
             }
-//            observations.forEach { observation in
-//            ForEach(observations) { observation in
-//            ForEach(0 ..< observations.count) { i in
         }
     }
+    
 }
 
 struct MarkerView_Previews: PreviewProvider {

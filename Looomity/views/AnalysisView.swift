@@ -50,7 +50,7 @@ struct AnalysisView: View {
 
 struct AnalysisWrapper_Previews: PreviewProvider {
     static var previews: some View {
-        let img = UIImage(named: "TestImage")!
+        let img = UIImage(named: "TestImage2")!
         AnalysisView(image: img)
     }
 }

@@ -167,17 +167,33 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7C625AAB-1858-4A85-BCCE-91AEF209234B"
-            shouldBeEnabled = "No"
+            uuid = "8C9DA799-18F9-42A0-BE3F-9C228AFA6893"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Looomity/helpers/SceneKitHelpers.swift"
+            filePath = "Looomity/representables/SceneKitView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
-            landmarkName = "getHeadPosition(w:h:ar:topImg:rightImg:bottomImg:leftImg:projectionTransform:viewTransform:)"
-            landmarkType = "9">
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "handleTap(tapGesture:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AACA7E45-8861-46F8-A178-874CFD32C087"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Looomity/representables/SceneKitView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "handlePan(panGesture:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
