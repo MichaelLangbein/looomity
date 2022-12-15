@@ -119,8 +119,7 @@ final class BoxPlacementTests: XCTestCase {
         let planePos = plane.worldPosition
         
         let cWorld = getHeadPosition(
-            w: w, h: h,
-            arImg: arImg, arCam: arCam,
+            w: w, h: h, ar: arImg,
             topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
             projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)
         )

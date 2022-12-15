@@ -11,7 +11,7 @@ import SwiftUI
 struct LooomityApp: App {
     var body: some Scene {
         WindowGroup {
-            StartPage()
+            StartPageView()
         }
     }
 }

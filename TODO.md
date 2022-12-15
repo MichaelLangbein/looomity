@@ -1,6 +1,8 @@
 #  TODOs
 
-
+- detect glsl-files. 
+    - http://blog.simonrodriguez.fr/articles/2015/08/a_few_scntechnique_examples.html
+    - https://github.com/sakrist/SCNTechniqueTest/blob/master/TechniqueTest/draw_normals/draw_normals.json
 - Camera and image fixed; user-guestures only move currently selected head-model
 - Provide new model with named landmarks
 - Compare new model's landmarks with face-detection landmarks

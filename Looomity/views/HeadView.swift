@@ -14,7 +14,7 @@ import SceneKit
 struct HeadView : UIViewRepresentable {
     
     // Parameters for a detected face
-    var observation: VNFaceObservation
+    var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
     // Called after each rendered frame
@@ -26,15 +26,6 @@ struct HeadView : UIViewRepresentable {
     func makeUIView(context: Context) -> SCNView {
         // Having swiftui connect scene-view with the coordinator
         self.sceneView.delegate = context.coordinator
-        
-        // Unwrapping face-detection parameters
-        let roll = Float(truncating: observation.roll!) + Float.pi / 2.0
-        let pitch = Float(truncating: observation.pitch!)
-        let yaw = Float(truncating: observation.yaw!)
-        let leftImg = Float(observation.boundingBox.minX)
-        let rightImg = Float(observation.boundingBox.maxX)
-        let topImg = Float(observation.boundingBox.maxY)
-        let bottomImg = Float(observation.boundingBox.minY)
 
         // SceneView
         self.sceneView.frame = CGRect(x: 0, y: 0, width: self.imageSize.width, height: self.imageSize.height)
@@ -59,51 +50,19 @@ struct HeadView : UIViewRepresentable {
         
         self.sceneView.pointOfView = cameraNode
         
+        // ambient light
+        sceneView.autoenablesDefaultLighting = true;
+        
         // Size of face in meters
         let w: Float = 0.165
         let h: Float = 0.17
         
-        let cWorld = getHeadPosition(
-            w: w, h: h, ar: Float(imageSize.width) / Float(imageSize.height),
-            topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
-            projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)
-        )
-        
-        // ambient light
-        let ambientLightNode = SCNNode()
-        ambientLightNode.name = "Light"
-        ambientLightNode.light = SCNLight()
-        ambientLightNode.light!.type = .ambient
-        ambientLightNode.light!.color = UIColor.white
-        scene.rootNode.addChildNode(ambientLightNode)
-
         // loading model
         guard let loadedScene = SCNScene(named: "Loomis_Head.usdz") else {
             return SCNView()
         }
+        
         let figure = loadedScene.rootNode
-        
-        // make white transparent for background,
-        // while still obscuring model elements
-        camera.technique = SCNTechnique.init(dictionary: [
-            "passes": [
-                "color2alpha", [
-                    "draw": "DRAW_QUAD",
-                    "program": "color2alpha",
-                    "inputs": [
-                        "colorSampler": "COLOR",
-                        "a_position": "a_position-symbol"
-                    ]
-                ]
-            ],
-            "sequence": ["color2alpha"],
-            "symbols": [
-                "a_position-symbol": "vertex"
-            ]
-        ])
-        // Resoures placed at:
-        // https://developer.apple.com/documentation/bundleresources/placing_content_in_a_bundle
-        
         
         // scaling and repositioning
         figure.scale = SCNVector3(
@@ -111,11 +70,31 @@ struct HeadView : UIViewRepresentable {
             y: w / figure.boundingSphere.radius,
             z: w / figure.boundingSphere.radius
         )
-        figure.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
-        figure.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-        figure.name = "Head"
-        scene.rootNode.addChildNode(figure)
-
+        
+        
+        for observation in observations {
+            // Unwrapping face-detection parameters
+            let roll = Float(truncating: observation.roll!) // + Float.pi / 2.0
+            let pitch = Float(truncating: observation.pitch!)
+            let yaw = Float(truncating: observation.yaw!)
+            let leftImg = Float(observation.boundingBox.minX)
+            let rightImg = Float(observation.boundingBox.maxX)
+            let topImg = Float(observation.boundingBox.maxY)
+            let bottomImg = Float(observation.boundingBox.minY)
+            
+            let cWorld = getHeadPosition(
+                w: w, h: h, ar: Float(imageSize.width) / Float(imageSize.height),
+                topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
+                projectionTransform: camera.projectionTransform, viewTransform: SCNMatrix4Invert(cameraNode.transform)
+            )
+            
+            let f = figure.clone()
+            
+            f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
+            f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
+            scene.rootNode.addChildNode(f)
+            
+        }
 
         // scene
         self.sceneView.scene = scene
@@ -144,11 +123,6 @@ struct HeadView : UIViewRepresentable {
     }
 }
 
-/**
- * I have that strange problem of the head being placed sideways.
- * My suspicion is that this is because the camera looks at the scene vertically.
- * I hope to fix the problem by first making sure that the image and the 3d-scene cover the exact same frame
- */
 
 struct HeadView_Previews: PreviewProvider {
     static var previews: some View {
@@ -174,7 +148,7 @@ struct HeadView_Previews: PreviewProvider {
                 .scaledToFit()
                 .border(.green)
             
-            HeadView(observation: observation, imageSize: size) { renderer, sceneView in
+            HeadView(observations: [observation], imageSize: size) { renderer, sceneView in
                     print("rendering ...")
                 }
                 .border(.red)

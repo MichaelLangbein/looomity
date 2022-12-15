@@ -7,17 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3E35BF1B29179E5C00F3AA45 /* StartPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E35BF1A29179E5C00F3AA45 /* StartPage.swift */; };
+		3E07FA0E294B22F500E8E9E1 /* SelectImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E07FA0D294B22F500E8E9E1 /* SelectImageView.swift */; };
+		3E07FA10294B40C100E8E9E1 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E07FA0F294B40C100E8E9E1 /* AnalysisView.swift */; };
+		3E07FA12294B47BE00E8E9E1 /* AnalysisOngoingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E07FA11294B47BE00E8E9E1 /* AnalysisOngoingView.swift */; };
+		3E35BF1B29179E5C00F3AA45 /* StartPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E35BF1A29179E5C00F3AA45 /* StartPageView.swift */; };
 		3E35BF1D2917A22600F3AA45 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E35BF1C2917A22600F3AA45 /* HelpView.swift */; };
 		3E382B472916943F00CCA2AF /* LooomityApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B462916943F00CCA2AF /* LooomityApp.swift */; };
-		3E382B492916943F00CCA2AF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B482916943F00CCA2AF /* ContentView.swift */; };
+		3E382B492916943F00CCA2AF /* DisplayModelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B482916943F00CCA2AF /* DisplayModelsView.swift */; };
 		3E382B4B2916944100CCA2AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E382B4A2916944100CCA2AF /* Assets.xcassets */; };
 		3E382B4F2916944100CCA2AF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */; };
 		3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B55291699D400CCA2AF /* ImagePickerView.swift */; };
 		3E382B582916A28000CCA2AF /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B572916A28000CCA2AF /* HeadView.swift */; };
 		3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B592916A51D00CCA2AF /* VisionHelpers.swift */; };
-		3E42DB49292B5E21007616CF /* color2alpha.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 3E42DB48292B5E21007616CF /* color2alpha.vsh */; };
-		3E42DB4B292B5E86007616CF /* color2alpha.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 3E42DB4A292B5E86007616CF /* color2alpha.fsh */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
 		3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E58849C29170A660063647C /* Loomis_Head.usdz */; };
 		3E9759D42926DA4500E477F5 /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9759D32926DA4500E477F5 /* MarkerView.swift */; };
@@ -37,21 +38,34 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		3E746015292BFF9800FB4B4F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		3E07FA0D294B22F500E8E9E1 /* SelectImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageView.swift; sourceTree = "<group>"; };
+		3E07FA0F294B40C100E8E9E1 /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
+		3E07FA11294B47BE00E8E9E1 /* AnalysisOngoingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisOngoingView.swift; sourceTree = "<group>"; };
 		3E35BF1929179BFC00F3AA45 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
-		3E35BF1A29179E5C00F3AA45 /* StartPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartPage.swift; sourceTree = "<group>"; };
+		3E35BF1A29179E5C00F3AA45 /* StartPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartPageView.swift; sourceTree = "<group>"; };
 		3E35BF1C2917A22600F3AA45 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		3E382B432916943F00CCA2AF /* Looomity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Looomity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E382B462916943F00CCA2AF /* LooomityApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LooomityApp.swift; sourceTree = "<group>"; };
-		3E382B482916943F00CCA2AF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3E382B482916943F00CCA2AF /* DisplayModelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayModelsView.swift; sourceTree = "<group>"; };
 		3E382B4A2916944100CCA2AF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E382B4C2916944100CCA2AF /* Looomity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Looomity.entitlements; sourceTree = "<group>"; };
 		3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		3E382B55291699D400CCA2AF /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		3E382B572916A28000CCA2AF /* HeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
 		3E382B592916A51D00CCA2AF /* VisionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionHelpers.swift; sourceTree = "<group>"; };
-		3E42DB48292B5E21007616CF /* color2alpha.vsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = color2alpha.vsh; path = views/color2alpha.vsh; sourceTree = "<group>"; };
-		3E42DB4A292B5E86007616CF /* color2alpha.fsh */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = color2alpha.fsh; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
 		3E58849C29170A660063647C /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = Loomis_Head.usdz; path = ../../../../Downloads/Loomis_Head.usdz; sourceTree = "<group>"; };
 		3E9759D32926DA4500E477F5 /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
@@ -102,8 +116,6 @@
 		3E382B452916943F00CCA2AF /* Looomity */ = {
 			isa = PBXGroup;
 			children = (
-				3E42DB48292B5E21007616CF /* color2alpha.vsh */,
-				3E42DB4A292B5E86007616CF /* color2alpha.fsh */,
 				3E382B4C2916944100CCA2AF /* Looomity.entitlements */,
 				3E58849C29170A660063647C /* Loomis_Head.usdz */,
 				3E382B4A2916944100CCA2AF /* Assets.xcassets */,
@@ -146,12 +158,15 @@
 		3EC9F0A2291ED1740021F146 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				3E382B482916943F00CCA2AF /* ContentView.swift */,
+				3E35BF1A29179E5C00F3AA45 /* StartPageView.swift */,
+				3E07FA0D294B22F500E8E9E1 /* SelectImageView.swift */,
+				3E382B55291699D400CCA2AF /* ImagePickerView.swift */,
+				3E07FA0F294B40C100E8E9E1 /* AnalysisView.swift */,
+				3E07FA11294B47BE00E8E9E1 /* AnalysisOngoingView.swift */,
+				3E382B482916943F00CCA2AF /* DisplayModelsView.swift */,
 				3E9759D32926DA4500E477F5 /* MarkerView.swift */,
 				3E382B572916A28000CCA2AF /* HeadView.swift */,
 				3E35BF1C2917A22600F3AA45 /* HelpView.swift */,
-				3E382B55291699D400CCA2AF /* ImagePickerView.swift */,
-				3E35BF1A29179E5C00F3AA45 /* StartPage.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -166,6 +181,7 @@
 				3E382B3F2916943F00CCA2AF /* Sources */,
 				3E382B402916943F00CCA2AF /* Frameworks */,
 				3E382B412916943F00CCA2AF /* Resources */,
+				3E746015292BFF9800FB4B4F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -238,8 +254,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */,
-				3E42DB49292B5E21007616CF /* color2alpha.vsh in Resources */,
-				3E42DB4B292B5E86007616CF /* color2alpha.fsh in Resources */,
 				3E382B4F2916944100CCA2AF /* Preview Assets.xcassets in Resources */,
 				3E382B4B2916944100CCA2AF /* Assets.xcassets in Resources */,
 			);
@@ -259,10 +273,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3E35BF1B29179E5C00F3AA45 /* StartPage.swift in Sources */,
+				3E35BF1B29179E5C00F3AA45 /* StartPageView.swift in Sources */,
+				3E07FA10294B40C100E8E9E1 /* AnalysisView.swift in Sources */,
+				3E07FA12294B47BE00E8E9E1 /* AnalysisOngoingView.swift in Sources */,
 				3EC9F0A0291ED0810021F146 /* SceneKitHelpers.swift in Sources */,
 				3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */,
-				3E382B492916943F00CCA2AF /* ContentView.swift in Sources */,
+				3E382B492916943F00CCA2AF /* DisplayModelsView.swift in Sources */,
+				3E07FA0E294B22F500E8E9E1 /* SelectImageView.swift in Sources */,
 				3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */,
 				3E9759D42926DA4500E477F5 /* MarkerView.swift in Sources */,
 				3E382B582916A28000CCA2AF /* HeadView.swift in Sources */,
@@ -414,6 +431,7 @@
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app would like to take a picture with your camera.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app would like to access your photo library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -424,7 +442,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -452,6 +471,7 @@
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app would like to take a picture with your camera.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app would like to access your photo library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -462,7 +482,8 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

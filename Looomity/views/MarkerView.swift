@@ -10,24 +10,30 @@ import Vision
 
 
 struct MarkerView: View {
-    // Parameters for a detected face
-    var observation: VNFaceObservation
+    // Parameters for detected faces
+    var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
     
     
     var body: some View {
         GeometryReader { geo in
-            Rectangle()
-                .foregroundColor(.clear)
-                .border(.red)
-                .offset(
-                    x: geo.size.width * observation.boundingBox.minX,
-                    y: geo.size.height * (1.0 - observation.boundingBox.maxY)
-                ).frame(
-                    width: geo.size.width * observation.boundingBox.width,
-                    height: geo.size.height * observation.boundingBox.height
-                )
+            ForEach(0 ..< observations.count) { i in
+                let observation = observations[i]
+                Rectangle()
+                    .foregroundColor(.clear)
+                    .border(.red)
+                    .offset(
+                        x: geo.size.width * observation.boundingBox.minX,
+                        y: geo.size.height * (1.0 - observation.boundingBox.maxY)
+                    ).frame(
+                        width: geo.size.width * observation.boundingBox.width,
+                        height: geo.size.height * observation.boundingBox.height
+                    )
+            }
+//            observations.forEach { observation in
+//            ForEach(observations) { observation in
+//            ForEach(0 ..< observations.count) { i in
         }
     }
 }
@@ -56,7 +62,7 @@ struct MarkerView_Previews: PreviewProvider {
                 .scaledToFit()
                 .border(.green)
             
-            MarkerView(observation: observation, imageSize: size)
+            MarkerView(observations: [observation], imageSize: size)
                 .border(.blue)
             
         }.frame(width: w, height: h)
