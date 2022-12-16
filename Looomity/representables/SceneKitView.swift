@@ -21,34 +21,49 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     var nodes: [SCNNode]
     // Should rendering continue when no action is going on?
     var renderContinuously: Bool
+    // Should default camera-control be active?
+    var defaultCameraControl: Bool
     // Called on each frame
     var onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)?
     // Called on tap
-    var onTap: ((SCNNode, SCNView, [SCNNode]) -> Void)?
+    var onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    // Called on pan
+    var onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    // Called on pinch
+    var onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    // Called on swipe
+    var onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    // Called on rotate
+    var onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     //---------------- SCNView --------------------------------------//
     // Handle to SCNView
     var sceneView: SCNView?
-    //---------------- Gesture-states -------------------------------//
-    var panStartZ: CGFloat = 0.0
-    var lastPanLocation: SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
-    var draggingNode: SCNNode?
-    
     
     init(
         width: Int, height: Int,
         loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])? = nil,
         nodes: [SCNNode] = [],
         renderContinuously: Bool = false,
+        defaultCameraControl: Bool = false,
         onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)? = nil,
-        onTap: ((SCNNode, SCNView, [SCNNode]) -> Void)? = nil
+        onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
+        onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
+        onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
+        onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
+        onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil
     ) {
         self.width = width
         self.height = height
         self.loadNodes = loadNodes
         self.nodes = nodes
         self.renderContinuously = renderContinuously
+        self.defaultCameraControl = defaultCameraControl
         self.onRender = onRender
         self.onTap = onTap
+        self.onPan = onPan
+        self.onPinch = onPinch
+        self.onSwipe = onSwipe
+        self.onRotate = onRotate
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -74,8 +89,8 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         sceneView.autoenablesDefaultLighting = true
         // Background
         sceneView.backgroundColor = UIColor.clear
-        // We *won't* activate camera-control. Gestures shall move objects, not the camera.
-        // self.sceneView.allowsCameraControl = true
+        // Otherwise overwritten by on<Gesture> methods
+         sceneView.allowsCameraControl = defaultCameraControl
         // Size
         sceneView.frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
         
@@ -98,12 +113,21 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         sceneView.pointOfView = cameraNode
         
         // Gesture recognizers
-        let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(panGesture:)))
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(tapGesture:)))
+        let panRecognizer    = UIPanGestureRecognizer(      target: self, action: #selector(handlePan(panGesture:))       )
+        let tapRecognizer    = UITapGestureRecognizer(      target: self, action: #selector(handleTap(tapGesture:))       )
+        let pinchRecognizer  = UIPinchGestureRecognizer(    target: self, action: #selector(handlePinch(pinchGesture:))   )
+        let swipeRecognizer  = UISwipeGestureRecognizer(    target: self, action: #selector(handleSwipe(swipeGesture:))   )
+        let rotateRecognizer = UIRotationGestureRecognizer( target: self, action: #selector(handleRotate(rotateGesture:)) )
         tapRecognizer.delegate = self
         panRecognizer.delegate = self
+        pinchRecognizer.delegate = self
+        swipeRecognizer.delegate = self
+        rotateRecognizer.delegate = self
         sceneView.addGestureRecognizer(panRecognizer)
         sceneView.addGestureRecognizer(tapRecognizer)
+        sceneView.addGestureRecognizer(pinchRecognizer)
+        sceneView.addGestureRecognizer(swipeRecognizer)
+        sceneView.addGestureRecognizer(rotateRecognizer)
         
         // adding user-defined nodes
         if let load = self.loadNodes {
@@ -123,29 +147,33 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     }
     
     @objc func handlePan(panGesture: UIPanGestureRecognizer) {
+        guard let onPan = self.onPan else { return }
         let view = self.sceneView!
-        let location = panGesture.location(in: view)
-        switch panGesture.state {
-            case .began:
-                guard let hitNodeResult = view.hitTest(location, options: nil).first else { return }
-                // panStartZ and draggingNode should be defined in the containing class
-                panStartZ = CGFloat(view.projectPoint(lastPanLocation).z)
-                draggingNode = hitNodeResult.node
-            case .changed:
-                let location = panGesture.location(in: view)
-                let worldTouchPosition = view.unprojectPoint(SCNVector3(location.x, location.y, panStartZ))
-                draggingNode?.worldPosition = worldTouchPosition
-            default:
-                break
-        }
+        onPan(panGesture, view, self.nodes)
     }
     
     @objc func handleTap(tapGesture: UITapGestureRecognizer) {
-        let view = self.sceneView!
-        let location = tapGesture.location(in: view)
-        guard let hitNodeResult = view.hitTest(location, options: nil).first else { return }
         guard let onTap = self.onTap else { return }
-        onTap(hitNodeResult.node, view, self.nodes)
+        let view = self.sceneView!
+        onTap(tapGesture, view, self.nodes)
+    }
+    
+    @objc func handlePinch(pinchGesture: UIPinchGestureRecognizer) {
+        guard let onPinch = self.onPinch else { return }
+        let view = self.sceneView!
+        onPinch(pinchGesture, view, self.nodes)
+    }
+    
+    @objc func handleSwipe(swipeGesture: UISwipeGestureRecognizer) {
+        guard let onSwipe = self.onSwipe else { return }
+        let view = self.sceneView!
+        onSwipe(swipeGesture, view, self.nodes)
+    }
+    
+    @objc func handleRotate(rotateGesture: UIRotationGestureRecognizer) {
+        guard let onRotate = self.onRotate else { return }
+        let view = self.sceneView!
+        onRotate(rotateGesture, view, self.nodes)
     }
 }
 
@@ -162,13 +190,16 @@ struct SceneKitView: UIViewControllerRepresentable {
     @State var nodes: [SCNNode] = []
     // Should rendering continue when no action is going on?
     var renderContinuously = false
+    // Shoule default-camera-control be used?
+    var defaultCameraControl = false
     // Called on each frame
     var onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)?
-    // Called on tap
-    var onTap: ((SCNNode, SCNView, [SCNNode]) -> Void)?
-
-    // @TODO: Needs to remain in scope?
-    let sceneView = SCNView()
+    // Called on gestures
+    var onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    var onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    var onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    var onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    var onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     
     func makeUIViewController(context: Context) -> SceneController {
         return SceneController(
@@ -177,8 +208,13 @@ struct SceneKitView: UIViewControllerRepresentable {
             loadNodes: loadNodes,
             nodes: nodes,
             renderContinuously: renderContinuously,
+            defaultCameraControl: defaultCameraControl,
             onRender: onRender,
-            onTap: onTap
+            onTap: onTap,
+            onPan: onPan,
+            onPinch: onPinch,
+            onSwipe: onSwipe,
+            onRotate: onRotate
         )
     }
     
@@ -208,31 +244,14 @@ struct SceneKitView_Previews: PreviewProvider {
             onRender: { renderer, view, nodes in
 //                nodes[1].position.x += 0.01
             },
-            onTap: { node, view, nodes in
-//                let animation = CABasicAnimation(keyPath: "scale")
-//                animation.fromValue = SCNVector3(x: 1, y: 1, z: 1)
-//                animation.toValue = SCNVector3(x: 1.2, y: 1.2, z: 1.2)
-                let animation = CAKeyframeAnimation(keyPath: "scale")
-                animation.duration = 0.2
-                animation.keyTimes = [
-                    NSNumber(value: 0),
-                    NSNumber(value: 0.1 * animation.duration),
-                    NSNumber(value: 0.5 * animation.duration),
-                    NSNumber(value: animation.duration)
-                ]
-                animation.values = [
-                    SCNVector3(x: 1, y: 1, z: 1),
-                    SCNVector3(x: 1.3, y: 1.3, z: 1.3),
-                    SCNVector3(x: 0.8, y: 0.8, z: 0.8),
-                    SCNVector3(x: 1, y: 1, z: 1),
-                ]
-                animation.repeatCount = 1
-                animation.autoreverses = false
-                animation.isRemovedOnCompletion = false
-                node.addAnimation(animation, forKey: "MyBounceAnimation")
+            onTap: { gesture, view, nodes in
+                let hits = getGestureHits(view: view, gesture: gesture)
+                guard let node = hits.first else { return }
+//                node.addAnimation(createPopAnimation(), forKey: "MyBounceAnimation")
+                node.addAnimation(createOpacityHideAnimation(), forKey: "disappear")
+            },
+            onPan: { gesture, view, nodes in
                 
-//                let player = node.animationPlayer(forKey: "MyBounceAnimation")
-//                player?.play()
             }
         )
     }

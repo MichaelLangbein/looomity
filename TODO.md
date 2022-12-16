@@ -2,12 +2,11 @@
 
 
 - Animate rects on tap
-    - 
-- Custom gestures
-    - https://www.youtube.com/watch?v=r5emjIgmFB8
-    - https://www.kodeco.com/6747815-uigesturerecognizer-tutorial-getting-started
-    - https://betterprogramming.pub/how-to-use-uiviewrepresentable-in-swiftui-1b9a0a7c1358
-
+    - shrink rect
+    - pop face
+- Better face-placement
+    - also get face-landmarks
+    - gradient-descent position and scale until best match
 
 
 ## Later

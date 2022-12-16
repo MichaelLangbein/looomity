@@ -25,10 +25,60 @@ struct HeadView: View {
             loadNodes: { view, scene, camera in
                 return self.getNodes(scene: scene)
             },
-            onTap: { node, view, nodes in
-                node.opacity = 1.0
+            onTap: { gesture, view, nodes in
+                togglePlaneVsModel(view: view, gesture: gesture, nodes: nodes)
+            },
+            onPan: { gesture, view, nodes in
+                moveInPlane(view: view, gesture: gesture, nodes: nodes)
+            },
+            onSwipe: { gesture, view, nodes in
+                rotate(view: view, gesture: gesture, nodes: nodes)
+            },
+            onPinch: { gesture, view, nodes in
+                scale(view: view, gesture: gesture, nodes: nodes)
             }
         )
+    }
+    
+    func rotate(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    }
+    
+    func scale(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    }
+    
+    func moveInPlane(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    }
+    
+    func togglePlaneVsModel(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+        let hits = getGestureHits(view: view, gesture: gesture)
+        guard let node = hits.first(where: {
+            ($0.value(forKey: "type") != nil)           &&
+            ($0.value(forKey: "observationId") != nil)  &&
+            ($0.opacity > 0.0)
+        }) else { return }
+        let type = node.value(forKey: "type") as! String
+        let obsId = node.value(forKey: "observationId") as! UUID
+        
+        let appearAnimation = createOpacityRevealAnimation()
+        let disappearAnimation = createOpacityHideAnimation()
+        
+        if type == "plane" {
+            let figure = nodes.first(where: {
+                $0.value(forKey: "observationId") as! UUID == obsId &&
+                $0.value(forKey: "type") as! String == "figure" }
+            )!
+            node.addAnimation(disappearAnimation, forKey: "disappear")
+            figure.addAnimation(appearAnimation, forKey: "reveal")
+        }
+        
+        if type == "figure" {
+            let plane = nodes.first(where: {
+                $0.value(forKey: "observationId") as! UUID == obsId &&
+                $0.value(forKey: "type") as! String == "plane"
+            })!
+            node.addAnimation(disappearAnimation, forKey: "disappear")
+            plane.addAnimation(appearAnimation, forKey: "reveal")
+        }
     }
     
     func getNodes(scene: SCNScene) -> [SCNNode] {
@@ -76,10 +126,14 @@ struct HeadView: View {
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             f.opacity = 0.05
+            setValueRecursively(node: f, val: "figure", key: "type")
+            setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             
             let plane = SCNNode(geometry: SCNPlane(width: CGFloat(w), height: CGFloat(h)))
             plane.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             plane.opacity = 0.3
+            setValueRecursively(node: plane, val: "plane", key: "type")
+            setValueRecursively(node: plane, val: observation.uuid, key: "observationId")
             
             nodes.append(f)
             nodes.append(plane)
