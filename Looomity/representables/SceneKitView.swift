@@ -9,8 +9,156 @@ import SwiftUI
 import SceneKit
 
 
-struct SceneKitView: UIViewRepresentable {
+class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureRecognizerDelegate {
+    
+    //---------------- Inputs -------------------------------------//
+    // Dimensions
+    var width: Int
+    var height: Int
+    // Provide nodes as function of scene, camera
+    var loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])?
+    // Provide nodes directly
+    var nodes: [SCNNode]
+    // Should rendering continue when no action is going on?
+    var renderContinuously: Bool
+    // Called on each frame
+    var onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)?
+    // Called on tap
+    var onTap: ((SCNNode, SCNView, [SCNNode]) -> Void)?
+    //---------------- SCNView --------------------------------------//
+    // Handle to SCNView
+    var sceneView: SCNView?
+    //---------------- Gesture-states -------------------------------//
+    var panStartZ: CGFloat = 0.0
+    var lastPanLocation: SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
+    var draggingNode: SCNNode?
+    
+    
+    init(
+        width: Int, height: Int,
+        loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])? = nil,
+        nodes: [SCNNode] = [],
+        renderContinuously: Bool = false,
+        onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)? = nil,
+        onTap: ((SCNNode, SCNView, [SCNNode]) -> Void)? = nil
+    ) {
+        self.width = width
+        self.height = height
+        self.loadNodes = loadNodes
+        self.nodes = nodes
+        self.renderContinuously = renderContinuously
+        self.onRender = onRender
+        self.onTap = onTap
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let sceneView = makeSceneView()
+        self.view = sceneView
+        self.sceneView = sceneView
+    }
+    
+    func makeSceneView() -> SCNView {
+        
+        let sceneView = SCNView()
+        // Having swiftui connect scene-view with the coordinator
+        sceneView.delegate = self
+        // Probably not required - we can just set animations.
+        sceneView.rendersContinuously = self.renderContinuously
+        // Ambient light
+        sceneView.autoenablesDefaultLighting = true
+        // Background
+        sceneView.backgroundColor = UIColor.clear
+        // We *won't* activate camera-control. Gestures shall move objects, not the camera.
+        // self.sceneView.allowsCameraControl = true
+        // Size
+        sceneView.frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
+        
+        // Scene
+        let scene = SCNScene()
+        sceneView.scene = scene
+        
+        // Camera
+        let camera = SCNCamera()
+        camera.zNear = 0.01
+        camera.zFar = 100
+        camera.usesOrthographicProjection = false
+        camera.projectionDirection = width > height ? .horizontal : .vertical
+        let cameraNode = SCNNode()
+        scene.rootNode.addChildNode(cameraNode)
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
+        cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
+        cameraNode.name = "Camera"
+        cameraNode.camera = camera
+        sceneView.pointOfView = cameraNode
+        
+        // Gesture recognizers
+        let panRecognizer = UIPanGestureRecognizer(
+            target: self,
+            action: #selector(handlePan(panGesture:))
+        )
+        panRecognizer.delegate = self
+        sceneView.addGestureRecognizer(panRecognizer)
+        let tapRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleTap(tapGesture:))
+        )
+        tapRecognizer.delegate = self
+        sceneView.addGestureRecognizer(tapRecognizer)
+        
+        // adding user-defined nodes
+        if let load = self.loadNodes {
+            self.nodes = load(sceneView, scene, camera)
+        }
+        for node in self.nodes {
+            scene.rootNode.addChildNode(node)
+        }
+        
+        return sceneView
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        if let onRender = self.onRender {
+            onRender(renderer, self.sceneView!, self.nodes)
+        }
+    }
+    
+    @objc func handlePan(panGesture: UIPanGestureRecognizer) {
+        let view = self.sceneView!
+        let location = panGesture.location(in: view)
+        switch panGesture.state {
+            case .began:
+                guard let hitNodeResult = view.hitTest(location, options: nil).first else { return }
+                // panStartZ and draggingNode should be defined in the containing class
+                panStartZ = CGFloat(view.projectPoint(lastPanLocation).z)
+                draggingNode = hitNodeResult.node
+            case .changed:
+                let location = panGesture.location(in: view)
+                let worldTouchPosition = view.unprojectPoint(SCNVector3(location.x, location.y, panStartZ))
+                draggingNode?.worldPosition = worldTouchPosition
+            default:
+                break
+        }
+    }
+    
+    @objc func handleTap(tapGesture: UITapGestureRecognizer) {
+        let view = self.sceneView!
+        let location = tapGesture.location(in: view)
+        guard let hitNodeResult = view.hitTest(location, options: nil).first else { return }
+        guard let onTap = self.onTap else { return }
+        onTap(hitNodeResult.node, view, self.nodes)
+    }
+}
 
+
+
+struct SceneKitView: UIViewControllerRepresentable {
+    
     // Dimensions
     var width: Int
     var height: Int
@@ -25,132 +173,27 @@ struct SceneKitView: UIViewRepresentable {
     // Called on tap
     var onTap: ((SCNNode, SCNView, [SCNNode]) -> Void)?
 
-
-    // Needs to remain in scope
+    // @TODO: Needs to remain in scope?
     let sceneView = SCNView()
-
-
-    func makeUIView(context: Context) -> SCNView {
-        
-        // Having swiftui connect scene-view with the coordinator
-        self.sceneView.delegate = context.coordinator
-        // Probably not required - we can just set animations.
-        self.sceneView.rendersContinuously = self.renderContinuously
-        // Ambient light
-        self.sceneView.autoenablesDefaultLighting = true
-        self.sceneView.backgroundColor = UIColor.clear
-        // We *won't* activate camera-control. Gestures shall move objects, not the camera.
-        // self.sceneView.allowsCameraControl = true
-        
-        // SceneView
-        self.sceneView.frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
-        
-        // Scene
-        let scene = SCNScene()
-        self.sceneView.scene = scene
-        
-        // Camera
-        let camera = SCNCamera()
-        camera.zNear = 0.01
-        camera.zFar = 100
-        camera.usesOrthographicProjection = false
-        camera.projectionDirection = width > height ? .horizontal : .vertical
-        let cameraNode = SCNNode()
-        scene.rootNode.addChildNode(cameraNode)
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
-        cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
-        cameraNode.name = "Camera"
-        cameraNode.camera = camera
-        self.sceneView.pointOfView = cameraNode
-        
-        // Create the gesture recognizers
-        let gestureDelegate = GestureDelegate(parent: self)
-        let panRecognizer = UIPanGestureRecognizer(
-            target: self,
-            action: #selector(gestureDelegate.handlePan(panGesture:))
+    
+    func makeUIViewController(context: Context) -> SceneController {
+        return SceneController(
+            width: width,
+            height: height,
+            loadNodes: loadNodes,
+            nodes: nodes,
+            renderContinuously: renderContinuously,
+            onRender: onRender,
+            onTap: onTap
         )
-        self.sceneView.addGestureRecognizer(panRecognizer)
-        let tapRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(gestureDelegate.handleTap(tapGesture:))
-        )
-        self.sceneView.addGestureRecognizer(tapRecognizer)
-        
-        // adding user-defined nodes
-        let nodes = self.loadNodes(self.sceneView, scene, camera)
-        for node in nodes {
-            scene.rootNode.addChildNode(node)
-        }
-        self.nodes = nodes
-        
-        return self.sceneView
     }
     
-    
-    func updateUIView(_ scnView: SCNView, context: Context) {
-        print("Update called")
-    }
-    
-    
-    // allowing user to hook into render loop
-    func makeCoordinator() -> RenderDelegate {
-        return RenderDelegate(parent: self)
-    }
-    
-}
-
-final class GestureDelegate: NSObject {
-    
-    // reference to parent
-    var parent: SceneKitView
-    // pan-state
-    var draggingNode: SCNNode?
-    var panStartZ: CGFloat?
-    var lastPanLocation: SCNVector3?
-    
-    init(parent: SceneKitView) {
-        self.parent = parent
-    }
-
-    @objc func handlePan(panGesture: UIPanGestureRecognizer) {
-        let view = parent.sceneView
-        let location = panGesture.location(in: view)
-        switch panGesture.state {
-            case .began:
-                guard let hitNodeResult = view.hitTest(location, options: nil).first else { return }
-                // panStartZ and draggingNode should be defined in the containing class
-                panStartZ = CGFloat(view.projectPoint(lastPanLocation!).z)
-                draggingNode = hitNodeResult.node
-            case .changed:
-                let location = panGesture.location(in: view)
-                let worldTouchPosition = view.unprojectPoint(SCNVector3(location.x, location.y, panStartZ!))
-                draggingNode?.worldPosition = worldTouchPosition
-            default:
-                break
-        }
-    }
-    
-    @objc func handleTap(tapGesture: UITapGestureRecognizer) {
-        let view = parent.sceneView
-        let location = tapGesture.location(in: view)
-        guard let hitNodeResult = view.hitTest(location, options: nil).first else { return }
-        guard let onTap = parent.onTap else { return }
-        onTap(hitNodeResult.node, view, parent.nodes)
-        // @TODO: handle tap&drag === rotate
+    func updateUIViewController(_ uiViewController: SceneController, context: Context) {
     }
 }
 
-final class RenderDelegate: NSObject, SCNSceneRendererDelegate {
-    var parent: SceneKitView
-    init(parent: SceneKitView) {
-        self.parent = parent
-    }
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        if let onRender = self.parent.onRender {
-            onRender(renderer, parent.sceneView, parent.nodes)
-        }
-    }
-}
+
+
 
 struct SceneKitView_Previews: PreviewProvider {
     static var previews: some View {

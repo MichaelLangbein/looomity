@@ -24,6 +24,9 @@ struct HeadView: View {
             height: Int(imageSize.height),
             loadNodes: { view, scene, camera in
                 return self.getNodes(scene: scene)
+            },
+            onTap: { node, view, nodes in
+                node.opacity = 1.0
             }
         )
     }
