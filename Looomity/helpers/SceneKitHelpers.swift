@@ -24,29 +24,32 @@ func createPopAnimation() -> CAKeyframeAnimation {
     ]
     animation.repeatCount = 1
     animation.autoreverses = false
-    animation.isRemovedOnCompletion = true
+    animation.isRemovedOnCompletion = true  // revert to initial state
     return animation
 }
 
 func createOpacityRevealAnimation() -> CABasicAnimation {
     let animation = CABasicAnimation(keyPath: "opacity")
-    animation.duration = 2.0
+    animation.duration = 0.2
     animation.fromValue = 0.0
     animation.toValue = 1.0
     animation.repeatCount = 0
     animation.autoreverses = false
-    animation.isRemovedOnCompletion = true
+    // https://stackoverflow.com/questions/6059054/cabasicanimation-resets-to-initial-value-after-animation-completes
+    animation.isRemovedOnCompletion = false  // maintain new state
+    animation.fillMode = .forwards           // maintain new state
     return animation
 }
 
 func createOpacityHideAnimation() -> CABasicAnimation {
     let animation = CABasicAnimation(keyPath: "opacity")
-    animation.duration = 2.0
+    animation.duration = 0.2
     animation.fromValue = 1.0
-    animation.toValue = 0.0
+    animation.toValue = 0.1
     animation.repeatCount = 0
     animation.autoreverses = false
-    animation.isRemovedOnCompletion = true
+    animation.isRemovedOnCompletion = false  // maintain new state
+    animation.fillMode = .forwards           // maintain new state
     return animation
 }
 
@@ -57,7 +60,8 @@ func createSpinAnimation() -> CABasicAnimation {
     animation.toValue = Float.pi
     animation.repeatCount = 1
     animation.autoreverses = false
-    animation.isRemovedOnCompletion = true
+    animation.isRemovedOnCompletion = false  // maintain new state
+    animation.fillMode = .forwards           // maintain new state
     return animation
 }
 
