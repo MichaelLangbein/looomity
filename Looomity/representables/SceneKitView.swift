@@ -209,12 +209,25 @@ struct SceneKitView_Previews: PreviewProvider {
 //                nodes[1].position.x += 0.01
             },
             onTap: { node, view, nodes in
-                node.position.x += 0.01
-                let animation = CABasicAnimation(keyPath: "scale")
-                animation.fromValue = SCNVector3(x: 1, y: 1, z: 1)
-                animation.toValue = SCNVector3(x: 2, y: 2, z: 2)
-                animation.duration = 1.0
+//                let animation = CABasicAnimation(keyPath: "scale")
+//                animation.fromValue = SCNVector3(x: 1, y: 1, z: 1)
+//                animation.toValue = SCNVector3(x: 1.2, y: 1.2, z: 1.2)
+                let animation = CAKeyframeAnimation(keyPath: "scale")
+                animation.duration = 0.2
+                animation.keyTimes = [
+                    NSNumber(value: 0),
+                    NSNumber(value: 0.1 * animation.duration),
+                    NSNumber(value: 0.5 * animation.duration),
+                    NSNumber(value: animation.duration)
+                ]
+                animation.values = [
+                    SCNVector3(x: 1, y: 1, z: 1),
+                    SCNVector3(x: 1.3, y: 1.3, z: 1.3),
+                    SCNVector3(x: 0.8, y: 0.8, z: 0.8),
+                    SCNVector3(x: 1, y: 1, z: 1),
+                ]
                 animation.repeatCount = 1
+                animation.autoreverses = false
                 animation.isRemovedOnCompletion = true
                 node.addAnimation(animation, forKey: nil)
             }
