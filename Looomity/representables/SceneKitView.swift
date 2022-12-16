@@ -228,8 +228,11 @@ struct SceneKitView_Previews: PreviewProvider {
                 ]
                 animation.repeatCount = 1
                 animation.autoreverses = false
-                animation.isRemovedOnCompletion = true
-                node.addAnimation(animation, forKey: nil)
+                animation.isRemovedOnCompletion = false
+                node.addAnimation(animation, forKey: "MyBounceAnimation")
+                
+//                let player = node.animationPlayer(forKey: "MyBounceAnimation")
+//                player?.play()
             }
         )
     }
