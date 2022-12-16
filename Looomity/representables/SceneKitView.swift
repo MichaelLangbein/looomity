@@ -98,17 +98,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         sceneView.pointOfView = cameraNode
         
         // Gesture recognizers
-        let panRecognizer = UIPanGestureRecognizer(
-            target: self,
-            action: #selector(handlePan(panGesture:))
-        )
+        let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handlePan(panGesture:)))
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(tapGesture:)))
+        tapRecognizer.delegate = self
         panRecognizer.delegate = self
         sceneView.addGestureRecognizer(panRecognizer)
-        let tapRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(handleTap(tapGesture:))
-        )
-        tapRecognizer.delegate = self
         sceneView.addGestureRecognizer(tapRecognizer)
         
         // adding user-defined nodes
@@ -212,10 +206,17 @@ struct SceneKitView_Previews: PreviewProvider {
                 return [plane, bx]
             },
             onRender: { renderer, view, nodes in
-                nodes[1].position.x += 0.01
+//                nodes[1].position.x += 0.01
             },
             onTap: { node, view, nodes in
                 node.position.x += 0.01
+                let animation = CABasicAnimation(keyPath: "scale")
+                animation.fromValue = SCNVector3(x: 1, y: 1, z: 1)
+                animation.toValue = SCNVector3(x: 2, y: 2, z: 2)
+                animation.duration = 1.0
+                animation.repeatCount = 1
+                animation.isRemovedOnCompletion = true
+                node.addAnimation(animation, forKey: nil)
             }
         )
     }
