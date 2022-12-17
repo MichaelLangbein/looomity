@@ -226,9 +226,6 @@ struct SceneKitView: UIViewControllerRepresentable {
 
 
 struct SceneKitView_Previews: PreviewProvider {
-    
-    @State var message = ""
-    
     static var previews: some View {
         
         let plane = SCNNode(geometry: SCNPlane(width: 2.0, height: 1.0))
@@ -239,31 +236,29 @@ struct SceneKitView_Previews: PreviewProvider {
         bx.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 125.0 / 255.0, green: 10.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
         bx.position = SCNVector3(x: -0.5, y: 0.1, z: -0.1)
         
-        return VStack {
-            SceneKitView(
-                width: 400, height: 600,
-                loadNodes: { view, scene, camera in
-                    return [plane, bx]
-                },
-                onRender: { renderer, view, nodes in
-                    // @TODO
-                },
-                onTap: { gesture, view, nodes in
-                    let hits = getGestureHits(view: view, gesture: gesture)
-                    guard let node = hits.first else { return }
-    //                node.addAnimation(createPopAnimation(), forKey: "MyBounceAnimation")
-                    if node.opacity > 0.05 {
-                        $message = "disappearing"
-                        node.addAnimation(createOpacityHideAnimation(), forKey: "disappear")
-                    } else {
-                        message = "revealing"
-                        node.addAnimation(createOpacityRevealAnimation(), forKey: "reveal")
-                    }
-                },
-                onPan: { gesture, view, nodes in
+        return SceneKitView(
+            width: 400, height: 600,
+            loadNodes: { view, scene, camera in
+                return [plane, bx]
+            },
+            onRender: { renderer, view, nodes in
+                // @TODO
+            },
+            onTap: { gesture, view, nodes in
+                let hits = getGestureHits(view: view, gesture: gesture)
+                guard let node = hits.first else { return }
+                if node.animationKeys.first != nil {
+                    node.removeAnimation(forKey: "disappear")
+                } else {
+                    node.addAnimation(createOpacityHideAnimation(toOpacity: 0.2), forKey: "disappear")
                 }
-            )
-            Text("hi")
-        }
+            }
+        )
     }
 }
+
+// Animating opacity does not actually change the object's opacity.
+// It's just that an additional effect on top of the object's opacity is applied
+// as long as the animation is attached to the object.
+
+// Hit detection only works on visible objects

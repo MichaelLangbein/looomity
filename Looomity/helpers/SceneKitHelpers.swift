@@ -28,11 +28,11 @@ func createPopAnimation() -> CAKeyframeAnimation {
     return animation
 }
 
-func createOpacityRevealAnimation() -> CABasicAnimation {
+func createOpacityRevealAnimation(fromOpacity: Float = 0.0, toOpacity: Float = 1.0) -> CABasicAnimation {
     let animation = CABasicAnimation(keyPath: "opacity")
     animation.duration = 0.2
-    animation.fromValue = 0.0
-    animation.toValue = 1.0
+    animation.fromValue = fromOpacity
+    animation.toValue = toOpacity
     animation.repeatCount = 0
     animation.autoreverses = false
     // https://stackoverflow.com/questions/6059054/cabasicanimation-resets-to-initial-value-after-animation-completes
@@ -41,11 +41,11 @@ func createOpacityRevealAnimation() -> CABasicAnimation {
     return animation
 }
 
-func createOpacityHideAnimation() -> CABasicAnimation {
+func createOpacityHideAnimation(fromOpacity: Float = 1.0, toOpacity: Float = 0.0) -> CABasicAnimation {
     let animation = CABasicAnimation(keyPath: "opacity")
     animation.duration = 0.2
-    animation.fromValue = 1.0
-    animation.toValue = 0.1
+    animation.fromValue = fromOpacity
+    animation.toValue = toOpacity
     animation.repeatCount = 0
     animation.autoreverses = false
     animation.isRemovedOnCompletion = false  // maintain new state
@@ -67,7 +67,7 @@ func createSpinAnimation() -> CABasicAnimation {
 
 func getGestureHits(view: SCNView, gesture: UIGestureRecognizer) -> [SCNNode] {
     let location = gesture.location(in: view)
-    let hitNodes = view.hitTest(location, options: nil)
+    let hitNodes = view.hitTest(location, options: [:])
     return hitNodes.map { $0.node }
 }
 

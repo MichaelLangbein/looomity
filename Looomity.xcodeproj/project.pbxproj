@@ -19,6 +19,7 @@
 		3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B55291699D400CCA2AF /* ImagePickerView.swift */; };
 		3E382B582916A28000CCA2AF /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B572916A28000CCA2AF /* HeadView.swift */; };
 		3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B592916A51D00CCA2AF /* VisionHelpers.swift */; };
+		3E416047294DC0090040A521 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E416046294DC0090040A521 /* Experiments.swift */; };
 		3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
 		3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E58849C29170A660063647C /* Loomis_Head.usdz */; };
@@ -68,6 +69,7 @@
 		3E382B55291699D400CCA2AF /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		3E382B572916A28000CCA2AF /* HeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
 		3E382B592916A51D00CCA2AF /* VisionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionHelpers.swift; sourceTree = "<group>"; };
+		3E416046294DC0090040A521 /* Experiments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
 		3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
 		3E58849C29170A660063647C /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = Loomis_Head.usdz; path = ../../../../Downloads/Loomis_Head.usdz; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				3E9759D32926DA4500E477F5 /* MarkerView.swift */,
 				3E382B572916A28000CCA2AF /* HeadView.swift */,
 				3E35BF1C2917A22600F3AA45 /* HelpView.swift */,
+				3E416046294DC0090040A521 /* Experiments.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -287,6 +290,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E416047294DC0090040A521 /* Experiments.swift in Sources */,
 				3E35BF1B29179E5C00F3AA45 /* StartPageView.swift in Sources */,
 				3E07FA10294B40C100E8E9E1 /* AnalysisView.swift in Sources */,
 				3EB9B172294BA1D200C61E0D /* SceneKitView.swift in Sources */,
