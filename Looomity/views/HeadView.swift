@@ -50,35 +50,53 @@ struct HeadView: View {
     }
     
     func togglePlaneVsModel(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
-        let hits = getGestureHits(view: view, gesture: gesture)
-        guard let node = hits.first(where: {
-            ($0.value(forKey: "type") != nil)           &&
-            ($0.value(forKey: "observationId") != nil)  &&
-            ($0.opacity > 0.0)
-        }) else { return }
+        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
         let type = node.value(forKey: "type") as! String
         let obsId = node.value(forKey: "observationId") as! UUID
         
-        let appearAnimation = createOpacityRevealAnimation()
-        let disappearAnimation = createOpacityHideAnimation()
-        
         if type == "plane" {
-            let figure = nodes.first(where: {
-                $0.value(forKey: "observationId") as! UUID == obsId &&
-                $0.value(forKey: "type") as! String == "figure" }
-            )!
-            node.addAnimation(disappearAnimation, forKey: "disappear")
-            figure.addAnimation(appearAnimation, forKey: "reveal")
+            let plane = node
+            let figure = getFigureForId(obsId: obsId, nodes: nodes)
+            plane.removeAnimation(forKey: "reveal")
+            plane.addAnimation(createOpacityHideAnimation(fromOpacity: 0.3, toOpacity: 0.0), forKey: "disappear")
+            figure.removeAnimation(forKey: "disappear")
+            figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 1.0), forKey: "reveal")
+        } else {
+            let plane = getPlaneForId(obsId: obsId, nodes: nodes)
+            let figure = getFigureForId(obsId: obsId, nodes: nodes)
+            figure.removeAnimation(forKey: "reveal")
+            figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.0), forKey: "disappear")
+            plane.removeAnimation(forKey: "disappear")
+            plane.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 0.3), forKey: "reveal")
         }
-        
-        if type == "figure" {
-            let plane = nodes.first(where: {
-                $0.value(forKey: "observationId") as! UUID == obsId &&
-                $0.value(forKey: "type") as! String == "plane"
-            })!
-            node.addAnimation(disappearAnimation, forKey: "disappear")
-            plane.addAnimation(appearAnimation, forKey: "reveal")
-        }
+    }
+    
+    func getFirstHit(view: SCNView, gesture: UIGestureRecognizer) -> SCNNode? {
+        let hits = getGestureHits(view: view, gesture: gesture)
+        let node = hits.first(where: {
+            ($0.value(forKey: "type") != nil)           &&
+            ($0.value(forKey: "observationId") != nil)  &&
+            ($0.opacity > 0.0)
+        })
+        return node
+    }
+    
+    func getFigureForId(obsId: UUID, nodes: [SCNNode]) -> SCNNode {
+        let figure = nodes.first(where: {
+            $0.value(forKey: "observationId") as! UUID == obsId     &&
+            $0.value(forKey: "type") as! String == "figure"         &&
+            $0.value(forKey: "root") != nil                         &&
+            $0.value(forKey: "root") as! UUID == obsId
+        })!
+        return figure
+    }
+    
+    func getPlaneForId(obsId: UUID, nodes: [SCNNode]) -> SCNNode {
+        let plane = nodes.first(where: {
+            $0.value(forKey: "observationId") as! UUID == obsId &&
+            $0.value(forKey: "type") as! String == "plane"
+        })!
+        return plane
     }
     
     func getNodes(scene: SCNScene) -> [SCNNode] {
@@ -125,15 +143,16 @@ struct HeadView: View {
             
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            f.opacity = 0.05
+            f.opacity = 0.0
+            f.setValue(observation.uuid, forKey: "root")
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             
             let plane = SCNNode(geometry: SCNPlane(width: CGFloat(w), height: CGFloat(h)))
             plane.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             plane.opacity = 0.3
-            setValueRecursively(node: plane, val: "plane", key: "type")
-            setValueRecursively(node: plane, val: observation.uuid, key: "observationId")
+            plane.setValue("plane", forKey: "type")
+            plane.setValue(observation.uuid, forKey: "observationId")
             
             nodes.append(f)
             nodes.append(plane)
