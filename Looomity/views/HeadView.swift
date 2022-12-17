@@ -16,6 +16,9 @@ struct HeadView: View {
     var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
+    // Currently active face
+    @State var activeFace: UUID?
+    //
     
     var body: some View {
         
@@ -29,10 +32,10 @@ struct HeadView: View {
                 togglePlaneVsModel(view: view, gesture: gesture, nodes: nodes)
             },
             onPan: { gesture, view, nodes in
-                moveInPlane(view: view, gesture: gesture, nodes: nodes)
-            },
-            onSwipe: { gesture, view, nodes in
                 rotate(view: view, gesture: gesture, nodes: nodes)
+            },
+            onDoublePan: { gesture, view, nodes in
+                moveInPlane(view: view, gesture: gesture, nodes: nodes)
             },
             onPinch: { gesture, view, nodes in
                 scale(view: view, gesture: gesture, nodes: nodes)
@@ -40,13 +43,43 @@ struct HeadView: View {
         )
     }
     
-    func rotate(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    func rotate(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
+        let type = node.value(forKey: "type") as! String
+        if type != "figure" { return }
+        let obsId = node.value(forKey: "observationId") as! UUID
+        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        let observation = observations.first(where: { $0.uuid == obsId })!
+        
+        let translation = gesture.translation(in: view)
+        // pitch = rotation about x
+        figure.eulerAngles.x = Float(4 * .pi * translation.y / imageSize.width) + Float(observation.pitch!)
+        // yaw = rotation about y
+        figure.eulerAngles.y = Float(4 * .pi * translation.x / imageSize.height) + Float(observation.yaw!)
     }
     
-    func scale(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
     }
     
-    func moveInPlane(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    func moveInPlane(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
+        let type = node.value(forKey: "type") as! String
+        if type != "figure" { return }
+        let obsId = node.value(forKey: "observationId") as! UUID
+        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        let observation = observations.first(where: { $0.uuid == obsId })!
+
+        let translation = gesture.translation(in: view)
+        let leftImg = Float(observation.boundingBox.minX)
+        let rightImg = Float(observation.boundingBox.maxX)
+        let topImg = Float(observation.boundingBox.maxY)
+        let bottomImg = Float(observation.boundingBox.minY)
+        
+        var pos = figure.position
+        pos.x += Float(translation.x)
+        pos.y += Float(translation.y)
+        
+        figure.position = pos
     }
     
     func togglePlaneVsModel(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {

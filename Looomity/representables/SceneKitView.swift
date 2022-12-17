@@ -29,6 +29,8 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     var onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     // Called on pan
     var onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    // Called on two-finger-pan
+    var onDoublePan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     // Called on pinch
     var onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     // Called on swipe
@@ -48,6 +50,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)? = nil,
         onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
         onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
+        onDoublePan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
         onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
         onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
         onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil
@@ -113,17 +116,23 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         sceneView.pointOfView = cameraNode
         
         // Gesture recognizers
-        let panRecognizer    = UIPanGestureRecognizer(      target: self, action: #selector(handlePan(panGesture:))       )
         let tapRecognizer    = UITapGestureRecognizer(      target: self, action: #selector(handleTap(tapGesture:))       )
         let pinchRecognizer  = UIPinchGestureRecognizer(    target: self, action: #selector(handlePinch(pinchGesture:))   )
         let swipeRecognizer  = UISwipeGestureRecognizer(    target: self, action: #selector(handleSwipe(swipeGesture:))   )
         let rotateRecognizer = UIRotationGestureRecognizer( target: self, action: #selector(handleRotate(rotateGesture:)) )
+        let panRecognizer    = UIPanGestureRecognizer(      target: self, action: #selector(handlePan(panGesture:))       )
+        let doublePanRecognizer = UIPanGestureRecognizer(   target: self, action: #selector(handleDoublePan(panGesture:)) )
+        panRecognizer.maximumNumberOfTouches = 1
+        doublePanRecognizer.minimumNumberOfTouches = 2
+        doublePanRecognizer.maximumNumberOfTouches = 2
         tapRecognizer.delegate = self
         panRecognizer.delegate = self
+        doublePanRecognizer.delegate = self
         pinchRecognizer.delegate = self
         swipeRecognizer.delegate = self
         rotateRecognizer.delegate = self
         sceneView.addGestureRecognizer(panRecognizer)
+        sceneView.addGestureRecognizer(doublePanRecognizer)
         sceneView.addGestureRecognizer(tapRecognizer)
         sceneView.addGestureRecognizer(pinchRecognizer)
         sceneView.addGestureRecognizer(swipeRecognizer)
@@ -150,6 +159,12 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         guard let onPan = self.onPan else { return }
         let view = self.sceneView!
         onPan(panGesture, view, self.nodes)
+    }
+    
+    @objc func handleDoublePan(panGesture: UIPanGestureRecognizer) {
+        guard let onDoublePan = self.onDoublePan else { return }
+        let view = self.sceneView!
+        onDoublePan(panGesture, view, self.nodes)
     }
     
     @objc func handleTap(tapGesture: UITapGestureRecognizer) {
@@ -197,6 +212,7 @@ struct SceneKitView: UIViewControllerRepresentable {
     // Called on gestures
     var onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    var onDoublePan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)?
@@ -212,6 +228,7 @@ struct SceneKitView: UIViewControllerRepresentable {
             onRender: onRender,
             onTap: onTap,
             onPan: onPan,
+            onDoublePan: onDoublePan,
             onPinch: onPinch,
             onSwipe: onSwipe,
             onRotate: onRotate
