@@ -16,6 +16,7 @@ struct HeadView: View {
     var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
+    var onImagePinch: ((UIPinchGestureRecognizer) -> Void)?
     
     var body: some View {
         
@@ -55,7 +56,7 @@ struct HeadView: View {
         case .began:
             rollOnMoveStart = figure.eulerAngles.z
         case .changed:
-            figure.eulerAngles.z = rollOnMoveStart! + Float(gesture.rotation)
+            figure.eulerAngles.z = rollOnMoveStart! - Float(gesture.rotation)
         case .ended:
             rollOnMoveStart = nil
         case .cancelled, .failed:
@@ -85,7 +86,10 @@ struct HeadView: View {
     
     @State var scaleOnStartMove: SCNVector3?
     func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
-        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
+        guard let node = getFirstHit(view: view, gesture: gesture) else {
+            scaleSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
+            return
+        }
         let type = node.value(forKey: "type") as! String
         if type != "figure" { return }
         let obsId = node.value(forKey: "observationId") as! UUID
@@ -99,13 +103,39 @@ struct HeadView: View {
             let s = Float(gesture.scale)
             figure.scale = SCNVector3(x: initial.x * s, y: initial.y * s, z: initial.z * s)
         case .ended:
-                scaleOnStartMove = nil
+            scaleOnStartMove = nil
         case .cancelled, .failed:
             figure.scale = scaleOnStartMove!
             scaleOnStartMove = nil
         default:
             return
         }
+    }
+    
+    @State var cameraZOnStartMove: Float?
+    func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
+        guard let rootNode = view.scene?.rootNode else { return }
+        guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
+        guard let camera = cameraNode.camera else { return }
+        
+        if onImagePinch != nil {
+            onImagePinch!(gesture)
+        }
+        
+        switch gesture.state {
+        case .began:
+            cameraZOnStartMove = cameraNode.position.z
+        case .changed:
+            cameraNode.position.z = Float(gesture.scale) * cameraZOnStartMove!
+        case .ended:
+            cameraZOnStartMove = nil
+        case .cancelled, .failed:
+            cameraNode.position.z = cameraZOnStartMove!
+            cameraZOnStartMove = nil
+        default:
+            return
+        }
+        
     }
     
     @State var positionOnStartMove: SCNVector3?
