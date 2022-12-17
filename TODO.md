@@ -3,16 +3,7 @@
 
 - Gestures
     - pinch
-        - on face: zoom
         - on background: zoom both image and 3d
-
-Gestures overall
-
-|           | tap    | pinch  | pan    | 2-finger-pan |
-|-----------|--------|--------|--------|--------------|
-|face       | select | zoom   | rotate | translate    |
-|background | select | zoom   | -      | -            |
-
 - Better face-placement
     - also get face-landmarks
     - gradient-descent position and scale until best match

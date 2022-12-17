@@ -16,9 +16,6 @@ struct HeadView: View {
     var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
-    // Currently active face
-    @State var activeFace: UUID?
-    //
     
     var body: some View {
         
@@ -32,18 +29,45 @@ struct HeadView: View {
                 togglePlaneVsModel(view: view, gesture: gesture, nodes: nodes)
             },
             onPan: { gesture, view, nodes in
-                rotate(view: view, gesture: gesture, nodes: nodes)
+                lookDirection(view: view, gesture: gesture, nodes: nodes)
             },
             onDoublePan: { gesture, view, nodes in
                 moveInPlane(view: view, gesture: gesture, nodes: nodes)
             },
             onPinch: { gesture, view, nodes in
                 scale(view: view, gesture: gesture, nodes: nodes)
+            },
+            onRotate: { gesture, view, nodes in
+                rotate(view: view, gesture: gesture, nodes: nodes)
             }
         )
     }
     
-    func rotate(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+    @State var rollOnMoveStart: Float?
+    func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
+        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
+        let type = node.value(forKey: "type") as! String
+        if type != "figure" { return }
+        let obsId = node.value(forKey: "observationId") as! UUID
+        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+
+        switch gesture.state {
+        case .began:
+            rollOnMoveStart = figure.eulerAngles.z
+        case .changed:
+            figure.eulerAngles.z = rollOnMoveStart! + Float(gesture.rotation)
+        case .ended:
+            rollOnMoveStart = nil
+        case .cancelled, .failed:
+            guard let roll = rollOnMoveStart else { return }
+            figure.eulerAngles.z = roll
+            rollOnMoveStart = nil
+        default:
+            return
+        }
+    }
+    
+    func lookDirection(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         guard let node = getFirstHit(view: view, gesture: gesture) else { return }
         let type = node.value(forKey: "type") as! String
         if type != "figure" { return }
@@ -58,50 +82,96 @@ struct HeadView: View {
         figure.eulerAngles.y = Float(4 * .pi * translation.x / imageSize.height) + Float(observation.yaw!)
     }
     
+    
+    @State var scaleOnStartMove: SCNVector3?
     func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
+        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
+        let type = node.value(forKey: "type") as! String
+        if type != "figure" { return }
+        let obsId = node.value(forKey: "observationId") as! UUID
+        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        
+        switch gesture.state {
+        case .began:
+            scaleOnStartMove = figure.scale
+        case .changed:
+            guard let initial = scaleOnStartMove else { return }
+            let s = Float(gesture.scale)
+            figure.scale = SCNVector3(x: initial.x * s, y: initial.y * s, z: initial.z * s)
+        case .ended:
+                scaleOnStartMove = nil
+        case .cancelled, .failed:
+            figure.scale = scaleOnStartMove!
+            scaleOnStartMove = nil
+        default:
+            return
+        }
     }
     
+    @State var positionOnStartMove: SCNVector3?
     func moveInPlane(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         guard let node = getFirstHit(view: view, gesture: gesture) else { return }
         let type = node.value(forKey: "type") as! String
         if type != "figure" { return }
         let obsId = node.value(forKey: "observationId") as! UUID
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
-        let observation = observations.first(where: { $0.uuid == obsId })!
-
-        let translation = gesture.translation(in: view)
-        let leftImg = Float(observation.boundingBox.minX)
-        let rightImg = Float(observation.boundingBox.maxX)
-        let topImg = Float(observation.boundingBox.maxY)
-        let bottomImg = Float(observation.boundingBox.minY)
         
-        var pos = figure.position
-        pos.x += Float(translation.x)
-        pos.y += Float(translation.y)
-        
-        figure.position = pos
+        switch gesture.state {
+        case .began:
+            positionOnStartMove = figure.position
+        case .changed:
+            guard let startPos = positionOnStartMove else { return }
+            let translation = gesture.translation(in: view)
+            let dist = (startPos.x * startPos.x  + startPos.y * startPos.y  + startPos.z * startPos.z).squareRoot()
+            figure.position.x = 0.001 * (startPos.x + Float(translation.x)) * dist
+            figure.position.y = 0.001 * (startPos.y + Float(translation.y)) * dist
+        case .ended:
+            positionOnStartMove = nil
+        case .cancelled, .failed:
+            figure.position = positionOnStartMove!
+            positionOnStartMove = nil
+        default:
+            return
+        }
     }
     
+    @State var activeFace: UUID?
     func togglePlaneVsModel(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
-        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
-        let type = node.value(forKey: "type") as! String
-        let obsId = node.value(forKey: "observationId") as! UUID
-        
-        if type == "plane" {
-            let plane = node
-            let figure = getFigureForId(obsId: obsId, nodes: nodes)
-            plane.removeAnimation(forKey: "reveal")
-            plane.addAnimation(createOpacityHideAnimation(fromOpacity: 0.3, toOpacity: 0.0), forKey: "disappear")
-            figure.removeAnimation(forKey: "disappear")
-            figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 1.0), forKey: "reveal")
-        } else {
-            let plane = getPlaneForId(obsId: obsId, nodes: nodes)
-            let figure = getFigureForId(obsId: obsId, nodes: nodes)
-            figure.removeAnimation(forKey: "reveal")
-            figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.0), forKey: "disappear")
-            plane.removeAnimation(forKey: "disappear")
-            plane.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 0.3), forKey: "reveal")
+        let node = getFirstHit(view: view, gesture: gesture)
+        if node == nil {
+            unfocusObservation(nodes: nodes)
+            return
         }
+        let type = node!.value(forKey: "type") as! String
+        let obsId = node!.value(forKey: "observationId") as! UUID
+        if type == "plane" {
+            focusObservation(obsId: obsId, nodes: nodes)
+        } else {
+            unfocusObservation(nodes: nodes)
+        }
+    }
+    
+    func focusObservation(obsId: UUID, nodes: [SCNNode]) {
+        if self.activeFace == obsId { return }
+        unfocusObservation(nodes: nodes)
+        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        let plane = getPlaneForId(obsId: obsId, nodes: nodes)
+        plane.removeAnimation(forKey: "reveal")
+        plane.addAnimation(createOpacityHideAnimation(fromOpacity: 0.3, toOpacity: 0.0), forKey: "disappear")
+        figure.removeAnimation(forKey: "disappear")
+        figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 1.0), forKey: "reveal")
+        self.activeFace = obsId
+    }
+    
+    func unfocusObservation(nodes: [SCNNode]) {
+        if self.activeFace == nil { return }
+        let figure = getFigureForId(obsId: self.activeFace!, nodes: nodes)
+        let plane = getPlaneForId(obsId: self.activeFace!, nodes: nodes)
+        figure.removeAnimation(forKey: "reveal")
+        figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.0), forKey: "disappear")
+        plane.removeAnimation(forKey: "disappear")
+        plane.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 0.3), forKey: "reveal")
+        self.activeFace = nil
     }
     
     func getFirstHit(view: SCNView, gesture: UIGestureRecognizer) -> SCNNode? {
