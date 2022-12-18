@@ -16,7 +16,9 @@ struct HeadView: View {
     var observations: [VNFaceObservation]
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
+    // If no head selected, allow passing on a few gestures to the next higher view
     var onImagePinch: ((UIPinchGestureRecognizer) -> Void)?
+    var onImagePan: ((UIPanGestureRecognizer) -> Void)?
     
     var body: some View {
         
@@ -120,7 +122,8 @@ struct HeadView: View {
             cameraZOnStartMove = cameraNode.position.z
         case .changed:
             guard let z = cameraZOnStartMove else { return }
-            cameraNode.position.z =  z / Float(gesture.scale)
+            let scaleFactor = 1.0 / Float(gesture.scale)
+            cameraNode.position.z =  z * scaleFactor
         case .ended:
             cameraZOnStartMove = nil
         case .cancelled, .failed:
@@ -134,7 +137,10 @@ struct HeadView: View {
     
     @State var positionOnStartMove: SCNVector3?
     func moveInPlane(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        guard let obsId = activeFace else { return }
+        guard let obsId = activeFace else {
+            panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
+            return
+        }
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
         
         switch gesture.state {
@@ -157,6 +163,33 @@ struct HeadView: View {
         case .cancelled, .failed:
             figure.position = positionOnStartMove!
             positionOnStartMove = nil
+        default:
+            return
+        }
+    }
+    
+    @State var globalPositionOnStartMove: SCNVector3?
+    func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+        if onImagePan != nil {
+            onImagePan!(gesture)
+        }
+        
+        guard let scene = view.scene else { return }
+        guard let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true) else { return }
+        
+        switch gesture.state {
+        case .began:
+            globalPositionOnStartMove = cameraNode.position
+        case .changed:
+            guard let startPos = globalPositionOnStartMove else { return }
+            let translation = gesture.translation(in: view)  // in pixels
+            cameraNode.position.x = startPos.x - Float(translation.x / imageSize.width)
+            cameraNode.position.y = startPos.y + Float(translation.y / imageSize.height)
+        case .ended:
+            globalPositionOnStartMove = nil
+        case .cancelled, .failed:
+            cameraNode.position = globalPositionOnStartMove!
+            globalPositionOnStartMove = nil
         default:
             return
         }

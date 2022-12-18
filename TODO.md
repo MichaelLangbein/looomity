@@ -3,8 +3,9 @@
 
 
 - pinch
-    - on background: zoom both image and 3d
-    
+    - sync image-zoom and camera-z-position
+    - maximum and minimum pinch
+
 - Camera:
     - Only activates after galery has been opened once
     - [Camera] Attempted to change to mode Portrait with an unsupported device (BackDual). Auto device for both positions unsupported, returning Auto device for same position anyway (BackAuto).

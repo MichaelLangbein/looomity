@@ -14,13 +14,8 @@ struct DisplayModelsView: View {
     let image: UIImage
     let observations: [VNFaceObservation]
     
-    @GestureState var imageScaledBy = 1.0
-    var magnification: some Gesture {
-        MagnificationGesture()
-            .updating($imageScaledBy) { currentState, gestureState, transaction in
-                gestureState = currentState
-            }
-    }
+    @State var opacity = 1.0
+    @State var imageScaledBy = 1.0
     
     var body: some View {
         VStack (alignment: .center) {
@@ -37,21 +32,28 @@ struct DisplayModelsView: View {
                     .scaledToFit()
                     .border(.green)
                     .scaleEffect(imageScaledBy)
-                    .gesture(magnification)
                 
                 MarkerView(observations: observations, imageSize: image.size)
                     .frame(width: w, height: h)
                     .border(.blue)
                 
-                HeadView(observations: observations, imageSize: image.size)
+                HeadView(observations: observations, imageSize: image.size, onImagePinch: onScale)
                     .frame(width: w, height: h)
                     .border(.red)
+                    .opacity(opacity)
 
             }.frame(width: w, height: h)
+            
+            Slider(value: $opacity, in: 0.0 ... 1.0 )
+            Text("Opacity: \(Int(opacity * 100))%")
         
             Spacer()
 
         }.navigationBarTitle("Analysis")
+    }
+    
+    func onScale(gesture: UIPinchGestureRecognizer) {
+        imageScaledBy = gesture.scale
     }
 
 }
