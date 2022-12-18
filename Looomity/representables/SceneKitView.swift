@@ -64,6 +64,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         self.onRender = onRender
         self.onTap = onTap
         self.onPan = onPan
+        self.onDoublePan = onDoublePan
         self.onPinch = onPinch
         self.onSwipe = onSwipe
         self.onRotate = onRotate
@@ -153,6 +154,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         if let onRender = self.onRender {
             onRender(renderer, self.sceneView!, self.nodes)
         }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Can those two gestures be handles at the same time?
+        return true
     }
     
     @objc func handlePan(panGesture: UIPanGestureRecognizer) {

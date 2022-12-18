@@ -14,6 +14,14 @@ struct DisplayModelsView: View {
     let image: UIImage
     let observations: [VNFaceObservation]
     
+    @GestureState var imageScaledBy = 1.0
+    var magnification: some Gesture {
+        MagnificationGesture()
+            .updating($imageScaledBy) { currentState, gestureState, transaction in
+                gestureState = currentState
+            }
+    }
+    
     var body: some View {
         VStack (alignment: .center) {
             
@@ -28,6 +36,8 @@ struct DisplayModelsView: View {
                     .resizable()
                     .scaledToFit()
                     .border(.green)
+                    .scaleEffect(imageScaledBy)
+                    .gesture(magnification)
                 
                 MarkerView(observations: observations, imageSize: image.size)
                     .frame(width: w, height: h)

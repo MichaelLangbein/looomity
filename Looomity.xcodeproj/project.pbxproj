@@ -23,6 +23,7 @@
 		3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
 		3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E58849C29170A660063647C /* Loomis_Head.usdz */; };
+		3E6179EC294EFF9700D2F045 /* ZoomableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6179EB294EFF9700D2F045 /* ZoomableImage.swift */; };
 		3E9759D42926DA4500E477F5 /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E9759D32926DA4500E477F5 /* MarkerView.swift */; };
 		3EB9B172294BA1D200C61E0D /* SceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EB9B171294BA1D200C61E0D /* SceneKitView.swift */; };
 		3EC9F098291ECC050021F146 /* LooomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC9F097291ECC050021F146 /* LooomityTests.swift */; };
@@ -73,6 +74,7 @@
 		3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
 		3E58849C29170A660063647C /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = Loomis_Head.usdz; path = ../../../../Downloads/Loomis_Head.usdz; sourceTree = "<group>"; };
+		3E6179EB294EFF9700D2F045 /* ZoomableImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImage.swift; sourceTree = "<group>"; };
 		3E9759D32926DA4500E477F5 /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
 		3EB9B171294BA1D200C61E0D /* SceneKitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitView.swift; sourceTree = "<group>"; };
 		3EC9F08F291EC8750021F146 /* BoxPlacementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxPlacementTests.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 			children = (
 				3E382B55291699D400CCA2AF /* ImagePickerView.swift */,
 				3EB9B171294BA1D200C61E0D /* SceneKitView.swift */,
+				3E6179EB294EFF9700D2F045 /* ZoomableImage.swift */,
 			);
 			path = representables;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			files = (
 				3E416047294DC0090040A521 /* Experiments.swift in Sources */,
 				3E35BF1B29179E5C00F3AA45 /* StartPageView.swift in Sources */,
+				3E6179EC294EFF9700D2F045 /* ZoomableImage.swift in Sources */,
 				3E07FA10294B40C100E8E9E1 /* AnalysisView.swift in Sources */,
 				3EB9B172294BA1D200C61E0D /* SceneKitView.swift in Sources */,
 				3E07FA12294B47BE00E8E9E1 /* AnalysisOngoingView.swift in Sources */,

@@ -46,17 +46,15 @@ struct HeadView: View {
     
     @State var rollOnMoveStart: Float?
     func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
-        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
-        let type = node.value(forKey: "type") as! String
-        if type != "figure" { return }
-        let obsId = node.value(forKey: "observationId") as! UUID
+        guard let obsId = activeFace else { return }
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
 
         switch gesture.state {
         case .began:
             rollOnMoveStart = figure.eulerAngles.z
         case .changed:
-            figure.eulerAngles.z = rollOnMoveStart! - Float(gesture.rotation)
+            guard let roll = rollOnMoveStart else { return }
+            figure.eulerAngles.z = roll - Float(gesture.rotation)
         case .ended:
             rollOnMoveStart = nil
         case .cancelled, .failed:
@@ -69,10 +67,8 @@ struct HeadView: View {
     }
     
     func lookDirection(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
-        let type = node.value(forKey: "type") as! String
-        if type != "figure" { return }
-        let obsId = node.value(forKey: "observationId") as! UUID
+        guard let obsId = activeFace else { return }
+        
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
         let observation = observations.first(where: { $0.uuid == obsId })!
         
@@ -86,13 +82,11 @@ struct HeadView: View {
     
     @State var scaleOnStartMove: SCNVector3?
     func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
-        guard let node = getFirstHit(view: view, gesture: gesture) else {
+        guard let obsId = activeFace else {
             scaleSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
-        let type = node.value(forKey: "type") as! String
-        if type != "figure" { return }
-        let obsId = node.value(forKey: "observationId") as! UUID
+        
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
         
         switch gesture.state {
@@ -116,7 +110,6 @@ struct HeadView: View {
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
         guard let rootNode = view.scene?.rootNode else { return }
         guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
-        guard let camera = cameraNode.camera else { return }
         
         if onImagePinch != nil {
             onImagePinch!(gesture)
@@ -126,7 +119,8 @@ struct HeadView: View {
         case .began:
             cameraZOnStartMove = cameraNode.position.z
         case .changed:
-            cameraNode.position.z = Float(gesture.scale) * cameraZOnStartMove!
+            guard let z = cameraZOnStartMove else { return }
+            cameraNode.position.z =  z / Float(gesture.scale)
         case .ended:
             cameraZOnStartMove = nil
         case .cancelled, .failed:
@@ -140,10 +134,7 @@ struct HeadView: View {
     
     @State var positionOnStartMove: SCNVector3?
     func moveInPlane(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        guard let node = getFirstHit(view: view, gesture: gesture) else { return }
-        let type = node.value(forKey: "type") as! String
-        if type != "figure" { return }
-        let obsId = node.value(forKey: "observationId") as! UUID
+        guard let obsId = activeFace else { return }
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
         
         switch gesture.state {
@@ -151,10 +142,16 @@ struct HeadView: View {
             positionOnStartMove = figure.position
         case .changed:
             guard let startPos = positionOnStartMove else { return }
-            let translation = gesture.translation(in: view)
-            let dist = (startPos.x * startPos.x  + startPos.y * startPos.y  + startPos.z * startPos.z).squareRoot()
-            figure.position.x = 0.001 * (startPos.x + Float(translation.x)) * dist
-            figure.position.y = 0.001 * (startPos.y + Float(translation.y)) * dist
+            guard let rootNode = view.scene?.rootNode else { return }
+            guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
+            let camPos = cameraNode.position
+            let dx = startPos.x - camPos.x
+            let dy = startPos.y - camPos.y
+            let dz = startPos.z - camPos.z
+            let dist = (dx * dx  + dy * dy  + dz * dz).squareRoot()
+            let translation = gesture.translation(in: view)  // in pixels
+            figure.position.x = startPos.x + Float(translation.x / imageSize.width) * dist
+            figure.position.y = startPos.y - Float(translation.y / imageSize.height) * dist
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:

@@ -9,16 +9,21 @@ import SwiftUI
 
 struct Experiments: View {
     
-    @State var count = 0
-    
-    var body: some View {
-        VStack {
-            Text("Count: \(count)")
-            Button("Increment") {
-                count += 1
-            }
-        }
-    }
+    @GestureState var magnifyBy = 1.0
+
+       var magnification: some Gesture {
+           MagnificationGesture()
+               .updating($magnifyBy) { currentState, gestureState, transaction in
+                   gestureState = currentState
+               }
+       }
+
+       var body: some View {
+           Circle()
+               .frame(width: 100, height: 100)
+               .scaleEffect(magnifyBy)
+               .gesture(magnification)
+       }
 }
 
 struct Experiments_Previews: PreviewProvider {
