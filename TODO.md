@@ -1,12 +1,13 @@
 #  TODOs
 
 
-- active face gets slight bg-glow
-
 - Camera:
     - Only activates after galery has been opened once
     - [Camera] Attempted to change to mode Portrait with an unsupported device (BackDual). Auto device for both positions unsupported, returning Auto device for same position anyway (BackAuto).
     - Something about presentation mode?
+
+
+- active face gets slight bg-glow
 
 - Payment
     - Free week

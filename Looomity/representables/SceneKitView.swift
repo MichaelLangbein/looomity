@@ -110,7 +110,10 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         camera.projectionDirection = width > height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 3)
+        let cameraWidthAngle = camera.projectionDirection == .horizontal ? Float(camera.fieldOfView) : Float(camera.fieldOfView) * Float(width) / Float(height)
+        let halfViewAngleRads = (cameraWidthAngle / 2.0) * (2.0 * .pi / 360.0)
+        let zCam = 1.0 / tan(halfViewAngleRads)
+        cameraNode.position = SCNVector3(x: 0, y: 0, z: zCam)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
         cameraNode.camera = camera
@@ -252,12 +255,12 @@ struct SceneKitView_Previews: PreviewProvider {
     static var previews: some View {
         
         let plane = SCNNode(geometry: SCNPlane(width: 2.0, height: 1.0))
-        plane.position = SCNVector3(x: 0.1, y: 0.2, z: -1.0)
+        plane.position = SCNVector3(x: 0.0, y: 0.0, z: 0.0)
         plane.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 30.0 / 255.0, green: 150.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
         
         let bx = SCNNode(geometry: SCNBox(width: 0.2, height: 0.3, length: 0.2, chamferRadius: 0.05))
         bx.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 125.0 / 255.0, green: 10.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
-        bx.position = SCNVector3(x: -0.5, y: 0.1, z: -0.1)
+        bx.position = SCNVector3(x: -0.5, y: 0.1, z: 0.0)
         
         return SceneKitView(
             width: 400, height: 600,

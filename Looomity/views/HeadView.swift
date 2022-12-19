@@ -12,24 +12,21 @@ import SceneKit
 
 struct HeadView: View {
 
+    // Image
+    var image: UIImage
     // Parameters for detected faces
     var observations: [VNFaceObservation]
-    // Aspect-ratio of underlying photo
-    var imageSize: CGSize
-    // If no head selected, allow passing on a few gestures to the next higher view
-    var onImagePinch: ((SCNView, UIPinchGestureRecognizer) -> Void)?
-    var onImagePan: ((SCNView, UIPanGestureRecognizer) -> Void)?
     
     var body: some View {
         
         SceneKitView(
-            width: Int(imageSize.width),
-            height: Int(imageSize.height),
+            width: Int(image.size.width),
+            height: Int(image.size.height),
             loadNodes: { view, scene, camera in
                 return self.getNodes(scene: scene)
             },
             onTap: { gesture, view, nodes in
-                togglePlaneVsModel(view: view, gesture: gesture, nodes: nodes)
+                focusOnObservation(view: view, gesture: gesture, nodes: nodes)
             },
             onPan: { gesture, view, nodes in
                 lookDirection(view: view, gesture: gesture, nodes: nodes)
@@ -45,6 +42,10 @@ struct HeadView: View {
             }
         )
     }
+    
+//    func opacity(_ opacity: Double) -> some View {
+//        // @TODO: get nodes and update their opacity
+//    }
     
     @State var rollOnMoveStart: Float?
     func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
@@ -76,11 +77,10 @@ struct HeadView: View {
         
         let translation = gesture.translation(in: view)
         // pitch = rotation about x
-        figure.eulerAngles.x = Float(4 * .pi * translation.y / imageSize.width) + Float(observation.pitch!)
+        figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(observation.pitch!)
         // yaw = rotation about y
-        figure.eulerAngles.y = Float(4 * .pi * translation.x / imageSize.height) + Float(observation.yaw!)
+        figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(observation.yaw!)
     }
-    
     
     @State var scaleOnStartMove: SCNVector3?
     func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
@@ -113,17 +113,12 @@ struct HeadView: View {
         guard let rootNode = view.scene?.rootNode else { return }
         guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
         
-        if onImagePinch != nil {
-            onImagePinch!(view, gesture)
-        }
-        
         switch gesture.state {
         case .began:
             cameraZOnStartMove = cameraNode.position.z
         case .changed:
             guard let z = cameraZOnStartMove else { return }
             let scaleFactor = pow( 1.0 / Float(gesture.scale), 0.25)
-            print("sf: \(scaleFactor) - s: \(gesture.scale)")
             cameraNode.position.z =  z * scaleFactor
         case .ended:
             cameraZOnStartMove = nil
@@ -149,16 +144,9 @@ struct HeadView: View {
             positionOnStartMove = figure.position
         case .changed:
             guard let startPos = positionOnStartMove else { return }
-            guard let rootNode = view.scene?.rootNode else { return }
-            guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
-            let camPos = cameraNode.position
-            let dx = startPos.x - camPos.x
-            let dy = startPos.y - camPos.y
-            let dz = startPos.z - camPos.z
-            let dist = (dx * dx  + dy * dy  + dz * dz).squareRoot()
             let translation = gesture.translation(in: view)  // in pixels
-            figure.position.x = startPos.x + Float(translation.x / imageSize.width) * dist * 2.0
-            figure.position.y = startPos.y - Float(translation.y / imageSize.height) * dist * 2.0
+            figure.position.x = startPos.x + Float(translation.x / image.size.width) * 4.0
+            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -171,10 +159,6 @@ struct HeadView: View {
     
     @State var globalPositionOnStartMove: SCNVector3?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        if onImagePan != nil {
-            onImagePan!(view, gesture)
-        }
-        
         guard let scene = view.scene else { return }
         guard let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true) else { return }
         
@@ -184,8 +168,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = globalPositionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            cameraNode.position.x = startPos.x - Float(translation.x / imageSize.width)
-            cameraNode.position.y = startPos.y + Float(translation.y / imageSize.height)
+            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width) * 4.0
+            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 4.0
         case .ended:
             globalPositionOnStartMove = nil
         case .cancelled, .failed:
@@ -197,7 +181,7 @@ struct HeadView: View {
     }
     
     @State var activeFace: UUID?
-    func togglePlaneVsModel(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
+    func focusOnObservation(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
         let node = getFirstHit(view: view, gesture: gesture)
         if node == nil {
             unfocusObservation(nodes: nodes)
@@ -216,9 +200,6 @@ struct HeadView: View {
         if self.activeFace == obsId { return }
         unfocusObservation(nodes: nodes)
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
-        let plane = getPlaneForId(obsId: obsId, nodes: nodes)
-        plane.removeAnimation(forKey: "disappear")
-        plane.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 0.3), forKey: "reveal")
         figure.removeAnimation(forKey: "disappear")
         figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.3, toOpacity: 1.0), forKey: "reveal")
         self.activeFace = obsId
@@ -227,11 +208,8 @@ struct HeadView: View {
     func unfocusObservation(nodes: [SCNNode]) {
         if self.activeFace == nil { return }
         let figure = getFigureForId(obsId: self.activeFace!, nodes: nodes)
-        let plane = getPlaneForId(obsId: self.activeFace!, nodes: nodes)
         figure.removeAnimation(forKey: "reveal")
         figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.3), forKey: "disappear")
-        plane.removeAnimation(forKey: "reveal")
-        plane.addAnimation(createOpacityHideAnimation(fromOpacity: 0.3, toOpacity: 0.0), forKey: "disappear")
         self.activeFace = nil
     }
     
@@ -247,64 +225,56 @@ struct HeadView: View {
     
     func getFigureForId(obsId: UUID, nodes: [SCNNode]) -> SCNNode {
         let figure = nodes.first(where: {
-            $0.value(forKey: "observationId") as! UUID == obsId     &&
-            $0.value(forKey: "type") as! String == "figure"         &&
+            $0.value(forKey: "observationId") as? UUID == obsId     &&
+            $0.value(forKey: "type") as? String == "figure"         &&
             $0.value(forKey: "root") != nil                         &&
             $0.value(forKey: "root") as! UUID == obsId
         })!
         return figure
     }
     
-    func getPlaneForId(obsId: UUID, nodes: [SCNNode]) -> SCNNode {
-        let plane = nodes.first(where: {
-            $0.value(forKey: "observationId") as! UUID == obsId &&
-            $0.value(forKey: "type") as! String == "plane"
-        })!
-        return plane
-    }
-    
     func getNodes(scene: SCNScene) -> [SCNNode] {
 
-        // base-elements
-        guard let cameraNode = scene.rootNode.childNodes.first(where: { $0.name == "Camera" }) else { return [] }
-        guard let camera = cameraNode.camera else { return [] }
         // loading model
         guard let loadedScene = SCNScene(named: "Loomis_Head.usdz") else { return [] }
         let figure = loadedScene.rootNode
         
-        // Size of face in meters
-        let w: Float = 0.165
-        let h: Float = 0.17
-        
-        // scaling and repositioning
-        figure.scale = SCNVector3(
-            x: 0.5 * w / figure.boundingSphere.radius,
-            y: 0.5 * w / figure.boundingSphere.radius,
-            z: 0.5 * w / figure.boundingSphere.radius
-        )
-        
-        
         var nodes: [SCNNode] = []
+        
+        let ar = image.size.width / image.size.height
+        let width = 2.0
+        let height = width / ar
+        let imagePlane = SCNNode(geometry: SCNPlane(width: width, height: height))
+        imagePlane.position = SCNVector3(x: 0, y: 0, z: 0)
+        imagePlane.geometry?.firstMaterial?.diffuse.contents = image
+        imagePlane.name = "ImagePlane"
+        imagePlane.setValue("ImagePlane", forKey: "type")
+        nodes.append(imagePlane)
+        
         for observation in observations {
             
             // Unwrapping face-detection parameters
             let roll = Float(truncating: observation.roll!) // + Float.pi / 2.0
             let pitch = Float(truncating: observation.pitch!)
             let yaw = Float(truncating: observation.yaw!)
+            
             let leftImg = Float(observation.boundingBox.minX)
             let rightImg = Float(observation.boundingBox.maxX)
             let topImg = Float(observation.boundingBox.maxY)
             let bottomImg = Float(observation.boundingBox.minY)
             
-            let cWorld = getHeadPosition(
-                w: w, h: h, ar: Float(imageSize.width) / Float(imageSize.height),
-                topImg: topImg, rightImg: rightImg, bottomImg: bottomImg, leftImg: leftImg,
-                projectionTransform: camera.projectionTransform,
-                viewTransform: SCNMatrix4Invert(cameraNode.transform)
-            )
+            let wImg = rightImg - leftImg
+            let hImg = topImg - bottomImg
+            let xImg = leftImg   + wImg / 2.0
+            let yImg = bottomImg + hImg / 2.0
+            let xScene = 2.0 * xImg - 1.0
+            let yScene = (2.0 * yImg - 1.0) * Float(ar)
+            let cWorld = SCNVector3(x: xScene, y: yScene, z: 0)
             
             let f = figure.clone()
             
+            let scaleFactor = (wImg * 0.5 + hImg * 0.5) / figure.boundingSphere.radius
+            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             f.opacity = 0.3
@@ -312,16 +282,7 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             
-            let ring = SCNNode(geometry: SCNTorus(ringRadius: 0.5 * CGFloat(w), pipeRadius: 0.02 * CGFloat(w)))
-            ring.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            ring.eulerAngles = SCNVector3(x: .pi / 2.0, y: 0, z: 0)
-            ring.opacity = 0.0
-            ring.setValue("plane", forKey: "type")
-            ring.setValue(observation.uuid, forKey: "observationId")
-            f.addChildNode(ring)
-            
             nodes.append(f)
-            nodes.append(ring)
         }
         
         
@@ -359,14 +320,9 @@ struct HeadView_Previews: PreviewProvider {
         
         return ZStack {
             
-            Image(uiImage: img)
-                .resizable()
-                .scaledToFit()
-                .border(.green)
-            
             HeadView(
-                observations: [observation1, observation2],
-                imageSize: size
+                image: img,
+                observations: [observation1, observation2]
             ).border(.red)
             
         }.frame(width: w, height: h)

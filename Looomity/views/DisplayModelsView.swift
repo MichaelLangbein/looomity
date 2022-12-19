@@ -20,7 +20,6 @@ struct DisplayModelsView: View {
     let observations: [VNFaceObservation]
     
     @State var opacity = 1.0
-    @State var imageTransform = CGAffineTransform(a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0)
     
     var body: some View {
         VStack (alignment: .center) {
@@ -32,15 +31,8 @@ struct DisplayModelsView: View {
             let h = ar * w
             
             ZStack {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .border(.green)
-//                    .scaleEffect(imageScaledBy)
-                    .transformEffect(imageTransform)
-                
-                HeadView(observations: observations, imageSize: image.size,
-                         onImagePinch: onScale, onImagePan: onPan)
+
+                HeadView(image: image, observations: observations)
                     .frame(width: w, height: h)
                     .border(.red)
                     .opacity(opacity)
@@ -53,19 +45,6 @@ struct DisplayModelsView: View {
             Spacer()
 
         }.navigationBarTitle("Analysis")
-    }
-    
-    func onScale(view: SCNView, gesture: UIPinchGestureRecognizer) {
-        imageTransform.a = gesture.scale
-        imageTransform.d = gesture.scale
-        imageTransform.tx = image.size.width  * (1.0 - gesture.scale) / 2.0
-        imageTransform.ty = image.size.height * (1.0 - gesture.scale) / 2.0
-    }
-    
-    func onPan(view: SCNView, gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: view)
-        imageTransform.tx = translation.x
-        imageTransform.ty = translation.y
     }
 
 }
