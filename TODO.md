@@ -2,25 +2,25 @@
 
 
 
-- pinch
-    - sync image-zoom and camera-z-position
-    - maximum and minimum pinch
-
-- Camera:
-    - Only activates after galery has been opened once
-    - [Camera] Attempted to change to mode Portrait with an unsupported device (BackDual). Auto device for both positions unsupported, returning Auto device for same position anyway (BackAuto).
-    - Something about presentation mode?
-
 - All faces visible immediately
     - <= reason: global zoom is useless if you can only see boxes. need to see faces during global zoom
     - no more planes
     - actions still only work on active face
     - active face gets slight bg-glow
 
+- Global pan
+
+- Camera:
+    - Only activates after galery has been opened once
+    - [Camera] Attempted to change to mode Portrait with an unsupported device (BackDual). Auto device for both positions unsupported, returning Auto device for same position anyway (BackAuto).
+    - Something about presentation mode?
+
 - Payment
     - Free week
     - Then one-time price
-        
+
+- pinch
+    - maximum and minimum pinch        
 - Better face-placement
     - also get face-landmarks
     - gradient-descent position and scale until best match

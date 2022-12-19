@@ -33,9 +33,9 @@ struct DisplayModelsView: View {
                     .border(.green)
                     .scaleEffect(imageScaledBy)
                 
-                MarkerView(observations: observations, imageSize: image.size)
-                    .frame(width: w, height: h)
-                    .border(.blue)
+//                MarkerView(observations: observations, imageSize: image.size)
+//                    .frame(width: w, height: h)
+//                    .border(.blue)
                 
                 HeadView(observations: observations, imageSize: image.size, onImagePinch: onScale)
                     .frame(width: w, height: h)

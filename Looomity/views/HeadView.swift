@@ -122,7 +122,8 @@ struct HeadView: View {
             cameraZOnStartMove = cameraNode.position.z
         case .changed:
             guard let z = cameraZOnStartMove else { return }
-            let scaleFactor = 1.0 / Float(gesture.scale)
+            let scaleFactor = pow( 1.0 / Float(gesture.scale), 0.25)
+            print("sf: \(scaleFactor) - s: \(gesture.scale)")
             cameraNode.position.z =  z * scaleFactor
         case .ended:
             cameraZOnStartMove = nil
