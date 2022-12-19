@@ -16,33 +16,37 @@ struct SelectImageView: View {
     var body: some View {
         VStack(alignment: .center) {
             
-            Spacer()
-            
-            if let image = self.image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .border(.green)
-            } else {
-                Image(systemName: "person.crop.rectangle.fill")
-                    .resizable().scaledToFit().padding(UIScreen.main.bounds.width / 4.0)
-                    .foregroundColor(.gray)
+            if (showImagePicker) {
+                ImagePickerView(image: $image, show: $showImagePicker, sourceType: imageSelectMode)
             }
             
-            Spacer()
-            
-            HStack {
-                Button("Galery", action: pickFromGalery).buttonStyle(.borderedProminent)
-                Button("Camera", action: pickFromCamera).buttonStyle(.borderedProminent)
-                if let img = image {
-                    NavigationLink(destination: AnalysisView(image: img)) {
-                        Text("Analyze")
+            else {
+                Spacer()
+                
+                if let image = self.image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .border(.green)
+                } else {
+                    Image(systemName: "person.crop.rectangle.fill")
+                        .resizable().scaledToFit().padding(UIScreen.main.bounds.width / 4.0)
+                        .foregroundColor(.gray)
+                }
+                
+                Spacer()
+                
+                HStack {
+                    Button("Galery", action: pickFromGalery).buttonStyle(.borderedProminent)
+                    Button("Camera", action: pickFromCamera).buttonStyle(.borderedProminent)
+                    if let img = image {
+                        NavigationLink(destination: AnalysisView(image: img)) {
+                            Text("Analyze")
+                        }
                     }
                 }
-            }
 
-        }.sheet(isPresented: $showImagePicker) {
-            ImagePickerView(image: $image, sourceType: imageSelectMode)
+            }
         }
         .navigationTitle("Select image")
     }

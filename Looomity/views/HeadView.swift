@@ -266,7 +266,7 @@ struct HeadView: View {
 //                       ─────────────────────
 //                       0                   1
 //                       ImageRel
-        
+
         
         let ar = image.size.width / image.size.height
         let width = 2.0
@@ -276,12 +276,24 @@ struct HeadView: View {
         imagePlane.geometry?.firstMaterial?.diffuse.contents = image
         imagePlane.name = "ImagePlane"
         imagePlane.setValue("ImagePlane", forKey: "type")
+        
+        // accounting for potential camera-orientation
+//        if (image.imageOrientation == .right) {
+//            let translation = SCNMatrix4MakeTranslation(-1, 0, 0)
+//            let rotation = SCNMatrix4MakeRotation(-Float.pi / 2, 0, 0, 1)
+//            let transform = SCNMatrix4Mult(translation, rotation)
+//            imagePlane.geometry?.firstMaterial?.diffuse.contentsTransform = transform
+//        }
+        
         nodes.append(imagePlane)
         
         for observation in observations {
             
             // Unwrapping face-detection parameters
-            let roll = Float(truncating: observation.roll!) // + Float.pi / 2.0
+            let roll = Float(truncating: observation.roll!)
+//            if (image.imageOrientation == .right) {
+//                roll += Float.pi / 2.0
+//            }
             let pitch = Float(truncating: observation.pitch!)
             let yaw = Float(truncating: observation.yaw!)
             

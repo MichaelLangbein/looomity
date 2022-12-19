@@ -1,18 +1,6 @@
 #  TODOs
 
 
-- Camera:
-    - Only activates after galery has been opened once
-    - [Camera] Attempted to change to mode Portrait with an unsupported device (BackDual). Auto device for both positions unsupported, returning Auto device for same position anyway (BackAuto).
-    - Something about presentation mode?
-    - Photo: sometimes placed on image-plane with wrong orientation.
-        - Same thing happens to face-detection-bboxes
-    - Create new one:
-        - https://www.youtube.com/watch?v=cLnw5z8ZGqM
-        - https://www.kodeco.com/26244793-building-a-camera-app-with-swiftui-and-combine
-        - https://developer.apple.com/documentation/avfoundation/capture_setup
-        - https://itnext.io/building-a-lightweight-camera-app-in-swiftui-66db47b3537f (my initial attempt using default picker)
-
 - Opacity
 
 - Buttons to add new face or remove current face
@@ -38,6 +26,12 @@
 - detect glsl-files. 
     - http://blog.simonrodriguez.fr/articles/2015/08/a_few_scntechnique_examples.html
     - https://github.com/sakrist/SCNTechniqueTest/blob/master/TechniqueTest/draw_normals/draw_normals.json
+- create new camera
+    - [Camera] Attempted to change to mode Portrait with an unsupported device (BackDual). Auto device for both positions unsupported, returning Auto device for same position anyway (BackAuto).
+    - Create new one:
+        - https://www.youtube.com/watch?v=cLnw5z8ZGqM
+        - https://www.kodeco.com/26244793-building-a-camera-app-with-swiftui-and-combine
+        - https://developer.apple.com/documentation/avfoundation/capture_setup
 
 # Design
 
