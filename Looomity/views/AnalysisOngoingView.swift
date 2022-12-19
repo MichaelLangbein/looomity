@@ -11,18 +11,24 @@ struct AnalysisOngoingView: View {
     let image: UIImage
     
     var body: some View {
+        
+        let ar = image.size.width / image.size.height
+        let uiWidth = UIScreen.main.bounds.width
+        let w = 0.8 * uiWidth
+        let h = w / ar
+        
         ZStack {
-            Spacer()
             
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
                 .opacity(0.5)
             
-            ProgressView().progressViewStyle(CircularProgressViewStyle())
+            ProgressView()
+                .progressViewStyle(CircularProgressViewStyle())
+                .scaleEffect(4)
             
-            Spacer()
-        }
+        }.frame(width: w, height: h)
     }
 }
 

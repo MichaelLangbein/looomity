@@ -13,6 +13,8 @@
         - https://developer.apple.com/documentation/avfoundation/capture_setup
         - https://itnext.io/building-a-lightweight-camera-app-in-swiftui-66db47b3537f (my initial attempt using default picker)
 
+- Opacity
+
 - Buttons to add new face or remove current face
 - Button to reset analysis
 - Button to save current view to galery
