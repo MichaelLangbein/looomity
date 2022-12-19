@@ -1,14 +1,7 @@
 #  TODOs
 
 
-
-- All faces visible immediately
-    - <= reason: global zoom is useless if you can only see boxes. need to see faces during global zoom
-    - no more planes
-    - actions still only work on active face
-    - active face gets slight bg-glow
-
-- Global pan
+- active face gets slight bg-glow
 
 - Camera:
     - Only activates after galery has been opened once
@@ -20,18 +13,26 @@
     - Then one-time price
 
 - pinch
-    - maximum and minimum pinch        
-- Better face-placement
-    - also get face-landmarks
-    - gradient-descent position and scale until best match
+    - maximum and minimum pinch
 
 
 ## Later
+
+- Better face-placement
+    - also get face-landmarks
+    - gradient-descent position and scale until best match
 - detect glsl-files. 
     - http://blog.simonrodriguez.fr/articles/2015/08/a_few_scntechnique_examples.html
     - https://github.com/sakrist/SCNTechniqueTest/blob/master/TechniqueTest/draw_normals/draw_normals.json
 
 # Design
+
+## Updates decided on later in the process
+
+- All faces visible immediately
+    - <= reason: global zoom is useless if you can only see boxes. need to see faces during global zoom
+- Actions only work on active face
+    - Or globally if no face selected
 
 ## Actions
 

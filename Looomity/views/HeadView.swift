@@ -17,8 +17,8 @@ struct HeadView: View {
     // Aspect-ratio of underlying photo
     var imageSize: CGSize
     // If no head selected, allow passing on a few gestures to the next higher view
-    var onImagePinch: ((UIPinchGestureRecognizer) -> Void)?
-    var onImagePan: ((UIPanGestureRecognizer) -> Void)?
+    var onImagePinch: ((SCNView, UIPinchGestureRecognizer) -> Void)?
+    var onImagePan: ((SCNView, UIPanGestureRecognizer) -> Void)?
     
     var body: some View {
         
@@ -114,7 +114,7 @@ struct HeadView: View {
         guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
         
         if onImagePinch != nil {
-            onImagePinch!(gesture)
+            onImagePinch!(view, gesture)
         }
         
         switch gesture.state {
@@ -157,8 +157,8 @@ struct HeadView: View {
             let dz = startPos.z - camPos.z
             let dist = (dx * dx  + dy * dy  + dz * dz).squareRoot()
             let translation = gesture.translation(in: view)  // in pixels
-            figure.position.x = startPos.x + Float(translation.x / imageSize.width) * dist
-            figure.position.y = startPos.y - Float(translation.y / imageSize.height) * dist
+            figure.position.x = startPos.x + Float(translation.x / imageSize.width) * dist * 2.0
+            figure.position.y = startPos.y - Float(translation.y / imageSize.height) * dist * 2.0
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -172,7 +172,7 @@ struct HeadView: View {
     @State var globalPositionOnStartMove: SCNVector3?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         if onImagePan != nil {
-            onImagePan!(gesture)
+            onImagePan!(view, gesture)
         }
         
         guard let scene = view.scene else { return }
@@ -205,7 +205,7 @@ struct HeadView: View {
         }
         let type = node!.value(forKey: "type") as! String
         let obsId = node!.value(forKey: "observationId") as! UUID
-        if type == "plane" {
+        if type == "figure" {
             focusObservation(obsId: obsId, nodes: nodes)
         } else {
             unfocusObservation(nodes: nodes)
@@ -217,21 +217,21 @@ struct HeadView: View {
         unfocusObservation(nodes: nodes)
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
         let plane = getPlaneForId(obsId: obsId, nodes: nodes)
-        plane.removeAnimation(forKey: "reveal")
-        plane.addAnimation(createOpacityHideAnimation(fromOpacity: 0.3, toOpacity: 0.0), forKey: "disappear")
+        plane.removeAnimation(forKey: "disappear")
+        plane.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 0.3), forKey: "reveal")
         figure.removeAnimation(forKey: "disappear")
-        figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 1.0), forKey: "reveal")
+        figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.3, toOpacity: 1.0), forKey: "reveal")
         self.activeFace = obsId
     }
-    
+
     func unfocusObservation(nodes: [SCNNode]) {
         if self.activeFace == nil { return }
         let figure = getFigureForId(obsId: self.activeFace!, nodes: nodes)
         let plane = getPlaneForId(obsId: self.activeFace!, nodes: nodes)
         figure.removeAnimation(forKey: "reveal")
-        figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.0), forKey: "disappear")
-        plane.removeAnimation(forKey: "disappear")
-        plane.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.0, toOpacity: 0.3), forKey: "reveal")
+        figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.3), forKey: "disappear")
+        plane.removeAnimation(forKey: "reveal")
+        plane.addAnimation(createOpacityHideAnimation(fromOpacity: 0.3, toOpacity: 0.0), forKey: "disappear")
         self.activeFace = nil
     }
     
@@ -307,19 +307,21 @@ struct HeadView: View {
             
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            f.opacity = 0.0
+            f.opacity = 0.3
             f.setValue(observation.uuid, forKey: "root")
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             
-            let plane = SCNNode(geometry: SCNPlane(width: CGFloat(w), height: CGFloat(h)))
-            plane.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            plane.opacity = 0.3
-            plane.setValue("plane", forKey: "type")
-            plane.setValue(observation.uuid, forKey: "observationId")
+            let ring = SCNNode(geometry: SCNTorus(ringRadius: 0.5 * CGFloat(w), pipeRadius: 0.02 * CGFloat(w)))
+            ring.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
+            ring.eulerAngles = SCNVector3(x: .pi / 2.0, y: 0, z: 0)
+            ring.opacity = 0.0
+            ring.setValue("plane", forKey: "type")
+            ring.setValue(observation.uuid, forKey: "observationId")
+            f.addChildNode(ring)
             
             nodes.append(f)
-            nodes.append(plane)
+            nodes.append(ring)
         }
         
         

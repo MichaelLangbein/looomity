@@ -7,15 +7,20 @@
 
 import SwiftUI
 import Vision
+import SceneKit
 
 
-
+/**
+ *  Container for
+ *   - UI-elements
+ *   - 2D effects applied on top of SceneKit
+ */
 struct DisplayModelsView: View {
     let image: UIImage
     let observations: [VNFaceObservation]
     
     @State var opacity = 1.0
-    @State var imageScaledBy = 1.0
+    @State var imageTransform = CGAffineTransform(a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0)
     
     var body: some View {
         VStack (alignment: .center) {
@@ -31,13 +36,11 @@ struct DisplayModelsView: View {
                     .resizable()
                     .scaledToFit()
                     .border(.green)
-                    .scaleEffect(imageScaledBy)
+//                    .scaleEffect(imageScaledBy)
+                    .transformEffect(imageTransform)
                 
-//                MarkerView(observations: observations, imageSize: image.size)
-//                    .frame(width: w, height: h)
-//                    .border(.blue)
-                
-                HeadView(observations: observations, imageSize: image.size, onImagePinch: onScale)
+                HeadView(observations: observations, imageSize: image.size,
+                         onImagePinch: onScale, onImagePan: onPan)
                     .frame(width: w, height: h)
                     .border(.red)
                     .opacity(opacity)
@@ -52,8 +55,17 @@ struct DisplayModelsView: View {
         }.navigationBarTitle("Analysis")
     }
     
-    func onScale(gesture: UIPinchGestureRecognizer) {
-        imageScaledBy = gesture.scale
+    func onScale(view: SCNView, gesture: UIPinchGestureRecognizer) {
+        imageTransform.a = gesture.scale
+        imageTransform.d = gesture.scale
+        imageTransform.tx = image.size.width  * (1.0 - gesture.scale) / 2.0
+        imageTransform.ty = image.size.height * (1.0 - gesture.scale) / 2.0
+    }
+    
+    func onPan(view: SCNView, gesture: UIPanGestureRecognizer) {
+        let translation = gesture.translation(in: view)
+        imageTransform.tx = translation.x
+        imageTransform.ty = translation.y
     }
 
 }
