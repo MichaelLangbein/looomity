@@ -8,6 +8,10 @@
 import SwiftUI
 
 
+class ImagePickerController: UIImagePickerController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+}
+
 struct ImagePickerView: UIViewControllerRepresentable {
     @Binding var image: UIImage?
     @Environment(\.presentationMode) private var presentationMode

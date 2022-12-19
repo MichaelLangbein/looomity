@@ -17,6 +17,7 @@ struct AnalysisOngoingView: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
+                .opacity(0.5)
             
             ProgressView().progressViewStyle(CircularProgressViewStyle())
             

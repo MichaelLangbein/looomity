@@ -206,8 +206,8 @@ struct HeadView: View {
     }
 
     func unfocusObservation(nodes: [SCNNode]) {
-        if self.activeFace == nil { return }
-        let figure = getFigureForId(obsId: self.activeFace!, nodes: nodes)
+        guard let activeFace = self.activeFace else { return }
+        let figure = getFigureForId(obsId: activeFace, nodes: nodes)
         figure.removeAnimation(forKey: "reveal")
         figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.3), forKey: "disappear")
         self.activeFace = nil
@@ -240,6 +240,33 @@ struct HeadView: View {
         let figure = loadedScene.rootNode
         
         var nodes: [SCNNode] = []
+        
+        
+//        ImageRelative               SceneKit               ImageRel    Scene
+//
+//                                       ar
+//     1  ▲                               ▲                         1 │ ar
+//        │                               │                           │
+//        │                             1 │                           │
+//        │                               │                           │
+//        │                               │                           │
+//        │                     -1        │        1                  │0
+//        │                     ◄─────────┼────────►                  │
+//        │                               │                           │
+//        │                               │                           │
+//        │                               │                           │
+//        │                            -1 │                           │
+//        │                               │                         0 │ -ar
+//     0  └─────────────►                 ▼
+//        0             1                ar
+//
+//
+//                       Scene
+//                       -1        0         1
+//                       ─────────────────────
+//                       0                   1
+//                       ImageRel
+        
         
         let ar = image.size.width / image.size.height
         let width = 2.0
