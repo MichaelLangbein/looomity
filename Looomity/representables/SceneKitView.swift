@@ -69,6 +69,8 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         self.onSwipe = onSwipe
         self.onRotate = onRotate
         super.init(nibName: nil, bundle: nil)
+        
+        print("SceneController init")
     }
     
     required init?(coder: NSCoder) {
@@ -207,6 +209,22 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         guard let onRotate = self.onRotate else { return }
         let view = self.sceneView!
         onRotate(rotateGesture, view, self.nodes)
+    }
+    
+    func newNode(node: SCNNode) {
+        self.nodes.append(node)
+        self.sceneView?.scene?.rootNode.addChildNode(node)
+        print("Added node")
+    }
+    
+    func removeNodes(predicate: (SCNNode) -> Bool) {
+        self.nodes.removeAll(where: predicate)
+        for child in self.sceneView!.scene!.rootNode.childNodes {
+            if predicate(child) {
+                child.removeFromParentNode()
+            }
+        }
+        print("Removed nodes")
     }
 }
 

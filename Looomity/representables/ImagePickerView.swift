@@ -34,8 +34,7 @@ struct ImagePickerView: UIViewControllerRepresentable {
     
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                var rotatedImage = image
-                parent.image = rotatedImage.fixedOrientation()
+                parent.image = image.fixedOrientation()
             }
             parent.show = false
         }

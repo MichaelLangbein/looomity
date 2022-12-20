@@ -10,12 +10,26 @@ import Vision
 import SceneKit
 
 
+
+
+enum TaskType {
+    case add, remove
+}
+
+struct SKVTask {
+    var type: TaskType
+    var payload: UUID?
+}
+
+
 struct HeadView: View {
 
     // Image
     var image: UIImage
     // Parameters for detected faces
     var observations: [VNFaceObservation]
+    //
+    @StateObject var taskQueue = Queue<SKVTask>()
 
     var body: some View {
         VStack {
@@ -42,20 +56,33 @@ struct HeadView: View {
                 },
                 onUIInit: { skc in
                     unfocusObservation(nodes: skc.nodes)
+                    print("UIInit")
                 },
                 onUIUpdate: { skc in
-                    render(nodes: skc.nodes)
+                    update(skc: skc, nodes: skc.nodes)
+                    print("UIUpdate")
                 }
             )
                 
             Slider(value: $opacity, in: 0.0 ... 1.0)
             Text("Opacity: \(Int(opacity * 100))%")
+            if activeFace == nil {
+                Button("Add model") {
+                    taskQueue.enqueue(SKVTask(type: .add))
+                }
+            }
+            if activeFace != nil {
+                Button("Remove model") {
+                    taskQueue.enqueue(SKVTask(type: .remove, payload: activeFace))
+                }
+            }
         }
     }
     
     @State var lastOpacity: Double = 1.0
     @State var opacity: Double = 1.0
-    func render(nodes: [SCNNode]) {
+    func update(skc: SceneController, nodes: [SCNNode]) {
+        
         for node in nodes {
             let type = node.value(forKey: "type") as! String
             if type  == "figure" {
@@ -83,15 +110,36 @@ struct HeadView: View {
                 node.opacity = min(node.opacity, opacity)
             }
         }
+        
+        // only updating view-state after render-phase
         DispatchQueue.main.async {
+            
+            // 1. handling queued up tasks
+            while let task = self.taskQueue.dequeue() {
+                switch task.type {
+                case .add:
+                    let node = getFaceModel()
+                    skc.newNode(node: node)
+                    activeFace = node.value(forKey: "observationId") as? UUID
+                case .remove:
+                    skc.removeNodes(predicate: { node in
+                        guard let uuid = node.value(forKey: "observationId") else { return false }
+                        return (uuid as! UUID) == task.payload!
+                    })
+                    activeFace = nil
+                }
+            }
+            
+            // 2. update opacity-state
             lastOpacity = opacity
+            
         }
     }
     
     @State var rollOnMoveStart: Float?
     func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else { return }
-        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
 
         switch gesture.state {
         case .began:
@@ -113,8 +161,10 @@ struct HeadView: View {
     func lookDirection(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else { return }
         
-        let figure = getFigureForId(obsId: obsId, nodes: nodes)
-        let observation = observations.first(where: { $0.uuid == obsId })!
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
+
+        // Manually added models don't have an observation - so we provide a fallback
+        let observation = observations.first(where: { $0.uuid == obsId }) ?? VNFaceObservation(requestRevision: 0, boundingBox: CGRect(), roll: 0, yaw: 0, pitch: 0)
         
         let translation = gesture.translation(in: view)
         // pitch = rotation about x
@@ -130,7 +180,7 @@ struct HeadView: View {
             return
         }
         
-        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         
         switch gesture.state {
         case .began:
@@ -159,7 +209,7 @@ struct HeadView: View {
             cameraZOnStartMove = cameraNode.position.z
         case .changed:
             guard let z = cameraZOnStartMove else { return }
-            let scaleFactor = pow( 1.0 / Float(gesture.scale), 0.25)
+            let scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
             cameraNode.position.z =  z * scaleFactor
         case .ended:
             cameraZOnStartMove = nil
@@ -178,7 +228,7 @@ struct HeadView: View {
             panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
-        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         
         switch gesture.state {
         case .began:
@@ -186,8 +236,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = positionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            figure.position.x = startPos.x + Float(translation.x / image.size.width) * 4.0
-            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0
+            figure.position.x = startPos.x + Float(translation.x / image.size.width) * 8.0
+            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 8.0
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -209,8 +259,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = globalPositionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width) * 4.0
-            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 4.0
+            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width) * 8.0
+            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 8.0
         case .ended:
             globalPositionOnStartMove = nil
         case .cancelled, .failed:
@@ -240,14 +290,14 @@ struct HeadView: View {
     func focusObservation(obsId: UUID, nodes: [SCNNode]) {
         if self.activeFace == obsId { return }
         unfocusObservation(nodes: nodes)
-        let figure = getFigureForId(obsId: obsId, nodes: nodes)
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: 1.0)
         self.activeFace = obsId
     }
 
     func unfocusObservation(nodes: [SCNNode]) {
         guard let activeFace = self.activeFace else { return }
-        let figure = getFigureForId(obsId: activeFace, nodes: nodes)
+        guard let figure = getFigureForId(obsId: activeFace, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: 0.3)
         self.activeFace = nil
     }
@@ -262,13 +312,13 @@ struct HeadView: View {
         return node
     }
     
-    func getFigureForId(obsId: UUID, nodes: [SCNNode]) -> SCNNode {
+    func getFigureForId(obsId: UUID, nodes: [SCNNode]) -> SCNNode? {
         let figure = nodes.first(where: {
             $0.value(forKey: "observationId") as? UUID == obsId     &&
             $0.value(forKey: "type") as? String == "figure"         &&
             $0.value(forKey: "root") != nil                         &&
             $0.value(forKey: "root") as! UUID == obsId
-        })!
+        })
         return figure
     }
     
@@ -283,26 +333,24 @@ struct HeadView: View {
         
 //        ImageRelative               SceneKit               ImageRel    Scene
 //
-//                                       ar
-//     1  ▲                               ▲                         1 │ ar
+//     1  ▲                               ▲ ar                      1 ▲ ar
 //        │                               │                           │
-//        │                             1 │                           │
-//        │                               │                           │
-//        │                               │                           │
-//        │                     -1        │        1                  │0
-//        │                     ◄─────────┼────────►                  │
+//        │                             1 │                           │ 1
 //        │                               │                           │
 //        │                               │                           │
+//        │                     -1        │        1                  │
+//        │                     ◄─────────┼────────►                  │ 0
 //        │                               │                           │
-//        │                            -1 │                           │
-//        │                               │                         0 │ -ar
-//     0  └─────────────►                 ▼
-//        0             1                ar
-//
+//        │                               │                           │
+//        │                               │                           │
+//        │                            -1 │                           │ -1
+//        │                               │                           │
+//     0  └─────────────►                 ▼ -ar                     0 ▼ -ar
+//        0             1
 //
 //                       Scene
 //                       -1        0         1
-//                       ─────────────────────
+//                       ◄───────────────────►
 //                       0                   1
 //                       ImageRel
 
@@ -357,6 +405,22 @@ struct HeadView: View {
         }
         
         return nodes
+    }
+    
+    func getFaceModel() -> SCNNode {
+        let loadedScene = SCNScene(named: "Loomis_Head.usdz")!
+        let figure = loadedScene.rootNode
+        let f = figure.clone()
+        f.position = SCNVector3(x: 0, y: 0, z: 0)
+        f.look(at: SCNVector3(x: 0, y: 0, z: 1))
+        let scaleFactor = 1.0 / f.boundingSphere.radius
+        f.scale = SCNVector3(x: scaleFactor, y: scaleFactor, z: scaleFactor)
+        let newUUID = UUID()
+        f.setValue(newUUID, forKey: "root")
+        setValueRecursively(node: f, val: "figure", key: "type")
+        setValueRecursively(node: f, val: newUUID, key: "observationId")
+        f.opacity = min(opacity, 0.3)
+        return f
     }
 }
         

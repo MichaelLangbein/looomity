@@ -183,32 +183,96 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "417FD1A1-BEC2-4F7F-97F3-DB3E51F53AB6"
+            uuid = "FF2B3F7D-6D1A-4458-A079-9B2D0E893125"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Looomity/views/HeadView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "347"
-            endingLineNumber = "347"
-            landmarkName = "getNodes(scene:)"
+            startingLineNumber = "316"
+            endingLineNumber = "316"
+            landmarkName = "getFigureForId(obsId:nodes:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "6B5D3B0F-A059-41D8-92A0-B0E3E4A0E79D"
+            uuid = "D7E7B913-ADD4-46FB-BA7E-1F03EE4962B5"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Looomity/views/HeadView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "312"
-            endingLineNumber = "312"
-            landmarkName = "getNodes(scene:)"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
+            landmarkName = "update(skc:nodes:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A39B2033-E450-4423-B139-097A346D4523"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Looomity/views/HeadView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "update(skc:nodes:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A39B2033-E450-4423-B139-097A346D4523 - 1d47194028ae69d7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in Looomity.HeadView.update(skc: Looomity.SceneController, nodes: Swift.Array&lt;__C.SCNNode&gt;) -&gt; ()"
+                  moduleName = "Looomity"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michaellangbein/Desktop/code.nosync/Looomity/Looomity/views/HeadView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "124"
+                  endingLineNumber = "124"
+                  offsetFromSymbolStart = "624">
+               </Location>
+               <Location
+                  uuid = "A39B2033-E450-4423-B139-097A346D4523 - 8b86e0ba51076132"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.SCNNode) -&gt; Swift.Bool in closure #1 @Swift.MainActor () -&gt; () in Looomity.HeadView.update(skc: Looomity.SceneController, nodes: Swift.Array&lt;__C.SCNNode&gt;) -&gt; ()"
+                  moduleName = "Looomity"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/michaellangbein/Desktop/code.nosync/Looomity/Looomity/views/HeadView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "125"
+                  endingLineNumber = "125"
+                  offsetFromSymbolStart = "172">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EEBCCCCB-3530-431B-B584-4097BC300DC7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Looomity/views/HeadView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "update(skc:nodes:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
