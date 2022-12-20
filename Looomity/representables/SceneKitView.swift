@@ -94,7 +94,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         // Background
         sceneView.backgroundColor = UIColor.clear
         // Otherwise overwritten by on<Gesture> methods
-         sceneView.allowsCameraControl = defaultCameraControl
+        sceneView.allowsCameraControl = defaultCameraControl
         // Size
         sceneView.frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
         
@@ -156,6 +156,15 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         if let onRender = self.onRender {
             onRender(renderer, self.sceneView!, self.nodes)
+        }
+    }
+    
+    public func objectOpacity(_ opacity: Double) {
+        for node in nodes {
+            let type = node.value(forKey: "type") as! String
+            if type == "figure" {
+                node.opacity = opacity
+            }
         }
     }
     
@@ -225,9 +234,12 @@ struct SceneKitView: UIViewControllerRepresentable {
     var onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)?
+    var onUIInit: ((SceneController) -> Void)?
+    var onUIUpdate: ((SceneController) -> Void)?
+    
     
     func makeUIViewController(context: Context) -> SceneController {
-        return SceneController(
+        let sc = SceneController(
             width: width,
             height: height,
             loadNodes: loadNodes,
@@ -242,17 +254,24 @@ struct SceneKitView: UIViewControllerRepresentable {
             onSwipe: onSwipe,
             onRotate: onRotate
         )
+        if onUIInit != nil {
+            onUIInit!(sc)
+        }
+        return sc
     }
     
     func updateUIViewController(_ uiViewController: SceneController, context: Context) {
+        if onUIUpdate != nil {
+            onUIUpdate!(uiViewController)
+        }
     }
+
 }
 
 
-
-
-struct SceneKitView_Previews: PreviewProvider {
-    static var previews: some View {
+struct PreviewView: View {
+    @State var opacity = 1.0
+    var body: some View {
         
         let plane = SCNNode(geometry: SCNPlane(width: 2.0, height: 1.0))
         plane.position = SCNVector3(x: 0.0, y: 0.0, z: 0.0)
@@ -262,29 +281,42 @@ struct SceneKitView_Previews: PreviewProvider {
         bx.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 125.0 / 255.0, green: 10.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
         bx.position = SCNVector3(x: -0.5, y: 0.1, z: 0.0)
         
-        return SceneKitView(
-            width: 400, height: 600,
-            loadNodes: { view, scene, camera in
-                return [plane, bx]
-            },
-            onRender: { renderer, view, nodes in
-                // @TODO
-            },
-            onTap: { gesture, view, nodes in
-                let hits = getGestureHits(view: view, gesture: gesture)
-                guard let node = hits.first else { return }
-                if node.animationKeys.first != nil {
-                    node.removeAnimation(forKey: "disappear")
-                } else {
-                    node.addAnimation(createOpacityHideAnimation(toOpacity: 0.2), forKey: "disappear")
-                }
-            }
-        )
+        return VStack {
+            SceneKitView(
+                width: 400, height: 600,
+                 loadNodes: { view, scene, camera in
+                     return [plane, bx]
+                 },
+                 renderContinuously: true,
+                 onRender: { renderer, view, nodes in
+                     plane.opacity = opacity
+                     bx.opacity = opacity
+                 },
+                 onTap: { gesture, view, nodes in
+                     let hits = getGestureHits(view: view, gesture: gesture)
+                     guard let node = hits.first else { return }
+                     if node.animationKeys.first != nil {
+                         node.removeAnimation(forKey: "disappear")
+                     } else {
+                         node.addAnimation(createOpacityHideAnimation(toOpacity: 0.2), forKey: "disappear")
+                     }
+                 }
+             )
+            
+            Slider(value: $opacity, in: 0.0 ... 1.0)
+            Text("Opacity: \(Int(opacity * 100)) %")
+        }
     }
 }
 
-// Animating opacity does not actually change the object's opacity.
-// It's just that an additional effect on top of the object's opacity is applied
-// as long as the animation is attached to the object.
+struct SceneKitView_Previews: PreviewProvider {
+    static var previews: some View {
+        PreviewView()
+    }
+}
 
-// Hit detection only works on visible objects
+// Animating SCNNode-opacity does not actually change the node's opacity.
+// It's just that an additional effect on top of the nodes's opacity is applied
+// as long as the animation is attached to the nodes.
+
+// Hit detection only works on visible nodes

@@ -19,8 +19,6 @@ struct DisplayModelsView: View {
     let image: UIImage
     let observations: [VNFaceObservation]
     
-    @State var opacity = 1.0
-    
     var body: some View {
         VStack (alignment: .center) {
             
@@ -35,12 +33,8 @@ struct DisplayModelsView: View {
                 HeadView(image: image, observations: observations)
                     .frame(width: w, height: h)
                     .border(.red)
-                    .opacity(opacity)
 
             }.frame(width: w, height: h)
-            
-            Slider(value: $opacity, in: 0.0 ... 1.0 )
-            Text("Opacity: \(Int(opacity * 100))%")
         
             Spacer()
 

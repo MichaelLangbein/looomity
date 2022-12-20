@@ -1,8 +1,6 @@
 #  TODOs
 
 
-- Opacity
-
 - Buttons to add new face or remove current face
 - Button to reset analysis
 - Button to save current view to galery
@@ -11,15 +9,22 @@
     - Free week
     - Then one-time price
     
-
 - active face gets slight bg-glow
 
-- pinch
-    - maximum and minimum pinch
 
 
 ## Later
 
+- SCNView state
+    - store all of SCNView's state in a global state-object
+        - observations
+        - opacity
+        - currentOrientation
+        - activeFace
+        - interaction-states not required.
+    - make the view easily re-creatable from that state
+    - updates to opacity as well as adding and removing nodes can then be done by manipulating the state object, not by making `onRender` changes to the view.
+    
 - Better face-placement
     - also get face-landmarks
     - gradient-descent position and scale until best match
@@ -32,6 +37,7 @@
         - https://www.youtube.com/watch?v=cLnw5z8ZGqM
         - https://www.kodeco.com/26244793-building-a-camera-app-with-swiftui-and-combine
         - https://developer.apple.com/documentation/avfoundation/capture_setup
+
 
 # Design
 

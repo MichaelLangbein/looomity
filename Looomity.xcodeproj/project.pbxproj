@@ -19,6 +19,8 @@
 		3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B55291699D400CCA2AF /* ImagePickerView.swift */; };
 		3E382B582916A28000CCA2AF /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B572916A28000CCA2AF /* HeadView.swift */; };
 		3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B592916A51D00CCA2AF /* VisionHelpers.swift */; };
+		3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B742951EA8400EC637F /* AnimationExtension.swift */; };
+		3E397B772951F10800EC637F /* ImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B762951F10800EC637F /* ImageExtension.swift */; };
 		3E416047294DC0090040A521 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E416046294DC0090040A521 /* Experiments.swift */; };
 		3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
@@ -69,6 +71,8 @@
 		3E382B55291699D400CCA2AF /* ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
 		3E382B572916A28000CCA2AF /* HeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
 		3E382B592916A51D00CCA2AF /* VisionHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionHelpers.swift; sourceTree = "<group>"; };
+		3E397B742951EA8400EC637F /* AnimationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationExtension.swift; sourceTree = "<group>"; };
+		3E397B762951F10800EC637F /* ImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtension.swift; sourceTree = "<group>"; };
 		3E416046294DC0090040A521 /* Experiments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
 		3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
@@ -126,6 +130,7 @@
 				3E58849C29170A660063647C /* Loomis_Head.usdz */,
 				3E382B4A2916944100CCA2AF /* Assets.xcassets */,
 				3E382B462916943F00CCA2AF /* LooomityApp.swift */,
+				3E397B732951EA6E00EC637F /* extensions */,
 				3EC9F0A1291ED1310021F146 /* helpers */,
 				3EB9B173294BA68500C61E0D /* representables */,
 				3EC9F0A2291ED1740021F146 /* views */,
@@ -140,6 +145,15 @@
 				3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		3E397B732951EA6E00EC637F /* extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3E397B742951EA8400EC637F /* AnimationExtension.swift */,
+				3E397B762951F10800EC637F /* ImageExtension.swift */,
+			);
+			path = extensions;
 			sourceTree = "<group>";
 		};
 		3EB9B173294BA68500C61E0D /* representables */ = {
@@ -297,7 +311,9 @@
 				3E07FA12294B47BE00E8E9E1 /* AnalysisOngoingView.swift in Sources */,
 				3EC9F0A0291ED0810021F146 /* ReconstructionHelpers.swift in Sources */,
 				3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */,
+				3E397B772951F10800EC637F /* ImageExtension.swift in Sources */,
 				3E382B492916943F00CCA2AF /* DisplayModelsView.swift in Sources */,
+				3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */,
 				3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */,
 				3E07FA0E294B22F500E8E9E1 /* SelectImageView.swift in Sources */,
 				3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */,

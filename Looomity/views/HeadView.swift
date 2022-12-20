@@ -16,36 +16,77 @@ struct HeadView: View {
     var image: UIImage
     // Parameters for detected faces
     var observations: [VNFaceObservation]
-    
+
     var body: some View {
-        
-        SceneKitView(
-            width: Int(image.size.width),
-            height: Int(image.size.height),
-            loadNodes: { view, scene, camera in
-                return self.getNodes(scene: scene)
-            },
-            onTap: { gesture, view, nodes in
-                focusOnObservation(view: view, gesture: gesture, nodes: nodes)
-            },
-            onPan: { gesture, view, nodes in
-                lookDirection(view: view, gesture: gesture, nodes: nodes)
-            },
-            onDoublePan: { gesture, view, nodes in
-                moveInPlane(view: view, gesture: gesture, nodes: nodes)
-            },
-            onPinch: { gesture, view, nodes in
-                scale(view: view, gesture: gesture, nodes: nodes)
-            },
-            onRotate: { gesture, view, nodes in
-                rotate(view: view, gesture: gesture, nodes: nodes)
-            }
-        )
+        VStack {
+            SceneKitView(
+                width: Int(image.size.width),
+                height: Int(image.size.height),
+                loadNodes: { view, scene, camera in
+                    return self.getNodes(scene: scene)
+                },
+                onTap: { gesture, view, nodes in
+                    focusOnObservation(view: view, gesture: gesture, nodes: nodes)
+                },
+                onPan: { gesture, view, nodes in
+                    lookDirection(view: view, gesture: gesture, nodes: nodes)
+                },
+                onDoublePan: { gesture, view, nodes in
+                    moveInPlane(view: view, gesture: gesture, nodes: nodes)
+                },
+                onPinch: { gesture, view, nodes in
+                    scale(view: view, gesture: gesture, nodes: nodes)
+                },
+                onRotate: { gesture, view, nodes in
+                    rotate(view: view, gesture: gesture, nodes: nodes)
+                },
+                onUIInit: { skc in
+                    unfocusObservation(nodes: skc.nodes)
+                },
+                onUIUpdate: { skc in
+                    render(nodes: skc.nodes)
+                }
+            )
+                
+            Slider(value: $opacity, in: 0.0 ... 1.0)
+            Text("Opacity: \(Int(opacity * 100))%")
+        }
     }
     
-//    func opacity(_ opacity: Double) -> some View {
-//        // @TODO: get nodes and update their opacity
-//    }
+    @State var lastOpacity: Double = 1.0
+    @State var opacity: Double = 1.0
+    func render(nodes: [SCNNode]) {
+        for node in nodes {
+            let type = node.value(forKey: "type") as! String
+            if type  == "figure" {
+                
+                var maxOpacity = 1.0
+                let obsId = node.value(forKey: "observationId") as! UUID
+                if obsId != activeFace {
+                    maxOpacity = 0.3
+                }
+                
+                var increasing = true
+                if opacity - lastOpacity < 0.0 {
+                    increasing = false
+                }
+                
+                if increasing {
+                    // when increasing, don't go above max-opacity
+                    node.opacity = min(opacity, maxOpacity)
+                } else {
+                    // when decreasing, only decrease once below max-opacity
+                    let targetOpacity = min(opacity, maxOpacity)
+                    node.opacity = min(targetOpacity, node.opacity)
+                }
+                
+                node.opacity = min(node.opacity, opacity)
+            }
+        }
+        DispatchQueue.main.async {
+            lastOpacity = opacity
+        }
+    }
     
     @State var rollOnMoveStart: Float?
     func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
@@ -77,9 +118,9 @@ struct HeadView: View {
         
         let translation = gesture.translation(in: view)
         // pitch = rotation about x
-        figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(observation.pitch!)
+        figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(truncating: observation.pitch!)
         // yaw = rotation about y
-        figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(observation.yaw!)
+        figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(truncating: observation.yaw!)
     }
     
     @State var scaleOnStartMove: SCNVector3?
@@ -200,16 +241,14 @@ struct HeadView: View {
         if self.activeFace == obsId { return }
         unfocusObservation(nodes: nodes)
         let figure = getFigureForId(obsId: obsId, nodes: nodes)
-        figure.removeAnimation(forKey: "disappear")
-        figure.addAnimation(createOpacityRevealAnimation(fromOpacity: 0.3, toOpacity: 1.0), forKey: "reveal")
+        animateAndApplyOpacity(node: figure, toOpacity: 1.0)
         self.activeFace = obsId
     }
 
     func unfocusObservation(nodes: [SCNNode]) {
         guard let activeFace = self.activeFace else { return }
         let figure = getFigureForId(obsId: activeFace, nodes: nodes)
-        figure.removeAnimation(forKey: "reveal")
-        figure.addAnimation(createOpacityHideAnimation(fromOpacity: 1.0, toOpacity: 0.3), forKey: "disappear")
+        animateAndApplyOpacity(node: figure, toOpacity: 0.3)
         self.activeFace = nil
     }
     
@@ -267,6 +306,8 @@ struct HeadView: View {
 //                       0                   1
 //                       ImageRel
 
+        // Normally here we'd have to account for `image.imageOrientation != .up`
+        // But this is already fixed manually after taking the image in the image-picker
         
         let ar = image.size.width / image.size.height
         let width = 2.0
@@ -277,23 +318,12 @@ struct HeadView: View {
         imagePlane.name = "ImagePlane"
         imagePlane.setValue("ImagePlane", forKey: "type")
         
-        // accounting for potential camera-orientation
-//        if (image.imageOrientation == .right) {
-//            let translation = SCNMatrix4MakeTranslation(-1, 0, 0)
-//            let rotation = SCNMatrix4MakeRotation(-Float.pi / 2, 0, 0, 1)
-//            let transform = SCNMatrix4Mult(translation, rotation)
-//            imagePlane.geometry?.firstMaterial?.diffuse.contentsTransform = transform
-//        }
-        
         nodes.append(imagePlane)
         
         for observation in observations {
             
             // Unwrapping face-detection parameters
             let roll = Float(truncating: observation.roll!)
-//            if (image.imageOrientation == .right) {
-//                roll += Float.pi / 2.0
-//            }
             let pitch = Float(truncating: observation.pitch!)
             let yaw = Float(truncating: observation.yaw!)
             
@@ -312,7 +342,9 @@ struct HeadView: View {
             
             let f = figure.clone()
             
-            let scaleFactor = (wImg * 0.5 + hImg * 0.5) / figure.boundingSphere.radius
+            // we only use width for scale factor because face-detection doesn't include forehead,
+            // rendering the height-value useless for scaling.
+            let scaleFactor = 1.3 * (wImg) / figure.boundingSphere.radius
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
@@ -324,7 +356,6 @@ struct HeadView: View {
             nodes.append(f)
         }
         
-        
         return nodes
     }
 }
@@ -333,7 +364,7 @@ struct HeadView: View {
 
 struct HeadView_Previews: PreviewProvider {
     static var previews: some View {
-        
+
         let observation1 = VNFaceObservation(
             requestRevision: 0,
             boundingBox: CGRect(x: 0.545, y: 0.276, width: 0.439, height: 0.436),
@@ -357,13 +388,6 @@ struct HeadView_Previews: PreviewProvider {
         let w = 0.8 * uiWidth
         let h = w / ar
         
-        return ZStack {
-            
-            HeadView(
-                image: img,
-                observations: [observation1, observation2]
-            ).border(.red)
-            
-        }.frame(width: w, height: h)
+        return HeadView(image: img, observations: [observation1, observation2]).frame(width: w, height: h)
     }
 }

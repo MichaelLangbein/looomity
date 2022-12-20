@@ -53,6 +53,19 @@ func createOpacityHideAnimation(fromOpacity: Float = 1.0, toOpacity: Float = 0.0
     return animation
 }
 
+func animateAndApplyOpacity(node: SCNNode, toOpacity: CGFloat) {
+    let animation = CABasicAnimation(keyPath: "opacity")
+    animation.duration = 0.2
+    animation.fromValue = node.opacity
+    animation.toValue = toOpacity
+    animation.repeatCount = 0
+    animation.autoreverses = false
+    animation.isRemovedOnCompletion = true
+    animation.completionBlock { completingAnimation, status in
+        node.opacity = toOpacity
+    }
+}
+
 func createSpinAnimation() -> CABasicAnimation {
     let animation = CABasicAnimation(keyPath: "transform.rotation.y")
     animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
