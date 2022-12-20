@@ -226,6 +226,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         }
         print("Removed nodes")
     }
+    
+    func toggleOrthographicView(orthographic: Bool) {
+        guard let cameraNode = self.sceneView?.scene?.rootNode.childNode(withName: "Camera", recursively: true) else { return }
+        cameraNode.camera?.usesOrthographicProjection = orthographic
+    }
 }
 
 

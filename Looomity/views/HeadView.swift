@@ -13,7 +13,7 @@ import SceneKit
 
 
 enum TaskType {
-    case add, remove
+    case addNode, removeNode, setOrthographicCam, setPerspectiveCam
 }
 
 struct SKVTask {
@@ -28,8 +28,9 @@ struct HeadView: View {
     var image: UIImage
     // Parameters for detected faces
     var observations: [VNFaceObservation]
-    //
+    // task-state
     @StateObject var taskQueue = Queue<SKVTask>()
+    @State var usesOrthographicCam = false
 
     var body: some View {
         VStack {
@@ -66,14 +67,23 @@ struct HeadView: View {
                 
             Slider(value: $opacity, in: 0.0 ... 1.0)
             Text("Opacity: \(Int(opacity * 100))%")
+            
             if activeFace == nil {
                 Button("Add model") {
-                    taskQueue.enqueue(SKVTask(type: .add))
+                    taskQueue.enqueue(SKVTask(type: .addNode))
                 }
             }
             if activeFace != nil {
                 Button("Remove model") {
-                    taskQueue.enqueue(SKVTask(type: .remove, payload: activeFace))
+                    taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
+                }
+            }
+            
+            Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
+                if usesOrthographicCam == true {
+                    taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
+                } else {
+                    taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
                 }
             }
         }
@@ -117,16 +127,22 @@ struct HeadView: View {
             // 1. handling queued up tasks
             while let task = self.taskQueue.dequeue() {
                 switch task.type {
-                case .add:
+                case .addNode:
                     let node = getFaceModel()
                     skc.newNode(node: node)
                     activeFace = node.value(forKey: "observationId") as? UUID
-                case .remove:
+                case .removeNode:
                     skc.removeNodes(predicate: { node in
                         guard let uuid = node.value(forKey: "observationId") else { return false }
                         return (uuid as! UUID) == task.payload!
                     })
                     activeFace = nil
+                case .setOrthographicCam:
+                    skc.toggleOrthographicView(orthographic: true)
+                    usesOrthographicCam = true
+                case .setPerspectiveCam:
+                    skc.toggleOrthographicView(orthographic: false)
+                    usesOrthographicCam = false
                 }
             }
             
@@ -203,18 +219,22 @@ struct HeadView: View {
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
         guard let rootNode = view.scene?.rootNode else { return }
         guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
+        guard let camera = cameraNode.camera else { return }
+        let ortho = camera.usesOrthographicProjection
         
         switch gesture.state {
         case .began:
-            cameraZOnStartMove = cameraNode.position.z
+            cameraZOnStartMove = ortho ? Float(camera.orthographicScale) : cameraNode.position.z
         case .changed:
             guard let z = cameraZOnStartMove else { return }
             let scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
             cameraNode.position.z =  z * scaleFactor
+            cameraNode.camera?.orthographicScale = Double(z * scaleFactor)
         case .ended:
             cameraZOnStartMove = nil
         case .cancelled, .failed:
             cameraNode.position.z = cameraZOnStartMove!
+            camera.orthographicScale = Double(cameraZOnStartMove!)
             cameraZOnStartMove = nil
         default:
             return

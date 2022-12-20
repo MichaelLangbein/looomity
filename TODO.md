@@ -1,7 +1,6 @@
 #  TODOs
 
 
-
 - Button to save current view to galery
 
 - Payment
@@ -14,6 +13,7 @@
     - Image as big as possible
 
 - Support all interface orientations
+
 
 ## Later
 
