@@ -2,20 +2,31 @@
 
 
 - Button to save current view to galery
+    - success message
+
+- Support all interface orientations
+
+- Onboarding
+    - Recycle onboarding animations for help-view
 
 - Payment
     - Free week
     - Then one-time price
+    - https://developer.apple.com/documentation/storekit/in-app_purchase/original_api_for_in-app_purchase/subscriptions_and_offers/implementing_introductory_offers_in_your_app
 
 - Layouting
     - Button style
     - Icons for buttons
     - Image as big as possible
 
-- Support all interface orientations
+
 
 
 ## Later
+
+- Undo-button
+	- Requires a state manager
+	- Requires 'ongoing' states for gestures
 
 - SCNView state
     - store all of SCNView's state in a global state-object

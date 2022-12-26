@@ -13,7 +13,7 @@ import SceneKit
 
 
 enum TaskType {
-    case addNode, removeNode, setOrthographicCam, setPerspectiveCam
+    case addNode, removeNode, setOrthographicCam, setPerspectiveCam, takeScreenshot
 }
 
 struct SKVTask {
@@ -34,7 +34,7 @@ struct HeadView: View {
 
     var body: some View {
         VStack {
-            SceneKitView(
+            let skv = SceneKitView(
                 width: Int(image.size.width),
                 height: Int(image.size.height),
                 loadNodes: { view, scene, camera in
@@ -64,6 +64,8 @@ struct HeadView: View {
                     print("UIUpdate")
                 }
             )
+            
+            skv
                 
             Slider(value: $opacity, in: 0.0 ... 1.0)
             Text("Opacity: \(Int(opacity * 100))%")
@@ -85,6 +87,10 @@ struct HeadView: View {
                 } else {
                     taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
                 }
+            }
+            
+            Button("Save image") {
+                taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
             }
         }
     }
@@ -143,6 +149,10 @@ struct HeadView: View {
                 case .setPerspectiveCam:
                     skc.toggleOrthographicView(orthographic: false)
                     usesOrthographicCam = false
+                case .takeScreenshot:
+                    guard let img = skc.screenshot() else { print("Error: couldn't get screenshot"); return }
+                    let imageSaver = ImageSaver()
+                    imageSaver.writeToPhotoAlbum(image: img)
                 }
             }
             
@@ -443,8 +453,8 @@ struct HeadView: View {
         return f
     }
 }
-        
-    
+
+
 
 struct HeadView_Previews: PreviewProvider {
     static var previews: some View {

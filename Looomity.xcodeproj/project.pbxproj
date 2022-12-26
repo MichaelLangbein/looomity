@@ -22,6 +22,8 @@
 		3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B742951EA8400EC637F /* AnimationExtension.swift */; };
 		3E397B772951F10800EC637F /* ImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B762951F10800EC637F /* ImageExtension.swift */; };
 		3E397B7A2951FAAE00EC637F /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B792951FAAE00EC637F /* DataStructures.swift */; };
+		3E3C7F402959921B0076BBE9 /* ViewAsImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C7F3F2959921B0076BBE9 /* ViewAsImageExtension.swift */; };
+		3E3C7F432959A0EB0076BBE9 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */; };
 		3E416047294DC0090040A521 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E416046294DC0090040A521 /* Experiments.swift */; };
 		3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
@@ -75,6 +77,9 @@
 		3E397B742951EA8400EC637F /* AnimationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationExtension.swift; sourceTree = "<group>"; };
 		3E397B762951F10800EC637F /* ImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtension.swift; sourceTree = "<group>"; };
 		3E397B792951FAAE00EC637F /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
+		3E3C7F3F2959921B0076BBE9 /* ViewAsImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAsImageExtension.swift; sourceTree = "<group>"; };
+		3E3C7F41295995ED0076BBE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		3E416046294DC0090040A521 /* Experiments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
 		3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
@@ -128,6 +133,7 @@
 		3E382B452916943F00CCA2AF /* Looomity */ = {
 			isa = PBXGroup;
 			children = (
+				3E3C7F41295995ED0076BBE9 /* Info.plist */,
 				3E382B4C2916944100CCA2AF /* Looomity.entitlements */,
 				3E58849C29170A660063647C /* Loomis_Head.usdz */,
 				3E382B4A2916944100CCA2AF /* Assets.xcassets */,
@@ -154,6 +160,7 @@
 			children = (
 				3E397B742951EA8400EC637F /* AnimationExtension.swift */,
 				3E397B762951F10800EC637F /* ImageExtension.swift */,
+				3E3C7F3F2959921B0076BBE9 /* ViewAsImageExtension.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -185,6 +192,7 @@
 				3E382B592916A51D00CCA2AF /* VisionHelpers.swift */,
 				3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */,
 				3E397B792951FAAE00EC637F /* DataStructures.swift */,
+				3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -317,8 +325,10 @@
 				3E397B772951F10800EC637F /* ImageExtension.swift in Sources */,
 				3E382B492916943F00CCA2AF /* DisplayModelsView.swift in Sources */,
 				3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */,
+				3E3C7F432959A0EB0076BBE9 /* ImageSaver.swift in Sources */,
 				3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */,
 				3E07FA0E294B22F500E8E9E1 /* SelectImageView.swift in Sources */,
+				3E3C7F402959921B0076BBE9 /* ViewAsImageExtension.swift in Sources */,
 				3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */,
 				3E9759D42926DA4500E477F5 /* MarkerView.swift in Sources */,
 				3E397B7A2951FAAE00EC637F /* DataStructures.swift in Sources */,
@@ -471,9 +481,11 @@
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Looomity/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app would like to take a picture with your camera.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app would like to access your photo library.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This way you an analyze photos from your camera.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -482,7 +494,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
@@ -510,9 +522,11 @@
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Looomity/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app would like to take a picture with your camera.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app would like to access your photo library.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This way you an analyze photos from your camera.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -521,7 +535,7 @@
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";

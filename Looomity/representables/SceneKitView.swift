@@ -120,7 +120,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         cameraNode.name = "Camera"
         cameraNode.camera = camera
         sceneView.pointOfView = cameraNode
-        
+
         // Gesture recognizers
         let tapRecognizer    = UITapGestureRecognizer(      target: self, action: #selector(handleTap(tapGesture:))       )
         let pinchRecognizer  = UIPinchGestureRecognizer(    target: self, action: #selector(handlePinch(pinchGesture:))   )
@@ -159,6 +159,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         if let onRender = self.onRender {
             onRender(renderer, self.sceneView!, self.nodes)
         }
+    }
+    
+    public func screenshot() -> UIImage? {
+        guard let view = self.sceneView else { return nil }
+        return view.snapshot()
     }
     
     public func objectOpacity(_ opacity: Double) {
@@ -259,7 +264,6 @@ struct SceneKitView: UIViewControllerRepresentable {
     var onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)?
     var onUIInit: ((SceneController) -> Void)?
     var onUIUpdate: ((SceneController) -> Void)?
-    
     
     func makeUIViewController(context: Context) -> SceneController {
         let sc = SceneController(
