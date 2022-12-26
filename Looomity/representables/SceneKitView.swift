@@ -114,7 +114,8 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         scene.rootNode.addChildNode(cameraNode)
         let cameraWidthAngle = camera.projectionDirection == .horizontal ? Float(camera.fieldOfView) : Float(camera.fieldOfView) * Float(width) / Float(height)
         let halfViewAngleRads = (cameraWidthAngle / 2.0) * (2.0 * .pi / 360.0)
-        let zCam = 1.0 / tan(halfViewAngleRads)
+        let halfWidthClippingSpace: Float = 1.0
+        let zCam = halfWidthClippingSpace / tan(halfViewAngleRads)
         cameraNode.position = SCNVector3(x: 0, y: 0, z: zCam)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
@@ -310,7 +311,7 @@ struct PreviewView: View {
         
         return VStack {
             SceneKitView(
-                width: 400, height: 600,
+                width: 300, height: 600,
                  loadNodes: { view, scene, camera in
                      return [plane, bx]
                  },
@@ -328,7 +329,7 @@ struct PreviewView: View {
                          node.addAnimation(createOpacityHideAnimation(toOpacity: 0.2), forKey: "disappear")
                      }
                  }
-             )
+            ).border(.red)
             
             Slider(value: $opacity, in: 0.0 ... 1.0)
             Text("Opacity: \(Int(opacity * 100)) %")

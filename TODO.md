@@ -1,17 +1,20 @@
 #  TODOs
 
 
-- Layouting
-    - Button style
+- Fixes
+    - Slider invisible when in landscape orientation
+    - zoom incorrect when analyzing image while in landscape orientation
+    - ortho-distance != perspective-distance
+    - ui-buttons initially always on bottom, even if device is horiziontal
 
 - Onboarding
+    - Create animations: https://editor.rive.app/file/new-file/307063/500/500
     - Recycle onboarding animations for help-view
 
 - Payment
     - Free week
     - Then one-time price
     - https://developer.apple.com/documentation/storekit/in-app_purchase/original_api_for_in-app_purchase/subscriptions_and_offers/implementing_introductory_offers_in_your_app
-
 
 
 ## Later

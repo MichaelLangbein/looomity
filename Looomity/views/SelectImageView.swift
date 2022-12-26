@@ -27,7 +27,6 @@ struct SelectImageView: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
-                        .border(.green)
                 } else {
                     Image(systemName: "person.crop.rectangle.fill")
                         .resizable().scaledToFit().padding(UIScreen.main.bounds.width / 4.0)
@@ -42,7 +41,7 @@ struct SelectImageView: View {
                     if let img = image {
                         NavigationLink(destination: AnalysisView(image: img)) {
                             Text("Analyze")
-                        }
+                        }.buttonStyle(.borderedProminent)
                     }
                 }
 

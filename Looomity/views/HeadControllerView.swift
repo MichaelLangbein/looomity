@@ -36,7 +36,7 @@ struct HeadControllerView: View {
                 onImageSaveError: onImageSaveError,
                 opacity: opacity,
                 activeFace: $activeFace
-            )
+            ).ignoresSafeArea()
             
             if orientation == .landscapeRight || orientation == .landscapeLeft {
                 HStack {
@@ -44,16 +44,25 @@ struct HeadControllerView: View {
                     VStack {
                         controlButtons
                         opacitySlider
-                    }.frame(width: 0.2 * UIScreen.main.bounds.width)
+                    }
+                    .frame(width: 0.2 * UIScreen.main.bounds.width)
+                    .padding()
+                    .background(.white.opacity(0.8))
+                    .cornerRadius(15)
                 }
             }
             else {
                 VStack {
                     Spacer()
-                    opacitySlider
-                    HStack {
-                        controlButtons
+                    VStack {
+                        opacitySlider
+                        HStack {
+                            controlButtons
+                        }
                     }
+                    .padding()
+                    .background(.white.opacity(0.8))
+                    .cornerRadius(15)
                 }
             }
             
@@ -68,7 +77,10 @@ struct HeadControllerView: View {
         VStack {
             Slider(value: $opacity, in: 0.0 ... 1.0)
             Text("Opacity: \(Int(opacity * 100))%")
+                .fontWeight(.light)
+                .dynamicTypeSize(.small)
         }
+        .padding(EdgeInsets(top: 0, leading: UIScreen.main.bounds.width * 0.1, bottom: 0, trailing: UIScreen.main.bounds.width * 0.1))
     }
     
     var controlButtons: some View {
@@ -77,16 +89,16 @@ struct HeadControllerView: View {
             if activeFace == nil {
                 Button("Add model") {
                     taskQueue.enqueue(SKVTask(type: .addNode))
-                }
+                }.buttonStyle(.borderedProminent)
             }
             if activeFace != nil {
                 Button("Remove model") {
                     taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
-                }
+                }.buttonStyle(.borderedProminent)
             }
 
             // Toggle cam-mode
-            Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
+            Button("Use \(usesOrthographicCam ? "perspective" : "ortho") view") {
                 if usesOrthographicCam == true {
                     taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
                     usesOrthographicCam = false
@@ -94,7 +106,7 @@ struct HeadControllerView: View {
                     taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
                     usesOrthographicCam = true
                 }
-            }
+            }.buttonStyle(.borderedProminent)
 
             // Save image
             Button("Save image") {
@@ -103,7 +115,7 @@ struct HeadControllerView: View {
                 Button("OK") {}
             }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
                 Button("Continue") {}
-            }
+            }.buttonStyle(.borderedProminent)
 
         }
     }

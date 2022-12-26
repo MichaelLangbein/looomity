@@ -38,7 +38,7 @@ struct HeadView: View {
 
     var body: some View {
             SceneKitView(
-                width: Int(UIScreen.main.bounds.width),     // Int(image.size.width),
+                width: Int(UIScreen.main.bounds.width * 1.2),     // Int(image.size.width),
                 height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
                 loadNodes: { view, scene, camera in
                     return self.getNodes(scene: scene)
