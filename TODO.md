@@ -15,10 +15,6 @@
     - Then one-time price
     - https://developer.apple.com/documentation/storekit/in-app_purchase/original_api_for_in-app_purchase/subscriptions_and_offers/implementing_introductory_offers_in_your_app
 
-- Clean-up HeadView
-    - Create AnalysisView wrapper again
-    - AnalysisView communicates with HeadView through the TaskQueue
-
 
 
 ## Later

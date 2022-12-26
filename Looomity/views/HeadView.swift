@@ -29,11 +29,14 @@ struct HeadView: View {
     // Parameters for detected faces
     var observations: [VNFaceObservation]
     // task-state
-    @StateObject var taskQueue = Queue<SKVTask>()
-    @State var usesOrthographicCam = false
+    var taskQueue = Queue<SKVTask>()
+    var usesOrthographicCam: Bool
+    var onImageSaved: () -> Void
+    var onImageSaveError: (Error) -> Void
+    var opacity: Double = 1.0
+    @Binding var activeFace: UUID?
 
     var body: some View {
-        ZStack {
             SceneKitView(
                 width: Int(UIScreen.main.bounds.width),     // Int(image.size.width),
                 height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
@@ -64,56 +67,9 @@ struct HeadView: View {
                     print("UIUpdate")
                 }
             )
-            
-            VStack {
-                Spacer()
-                Group {
-                    Slider(value: $opacity, in: 0.0 ... 1.0)
-                    Text("Opacity: \(Int(opacity * 100))%")
-                    
-                    HStack {
-                        // Add or remove model
-                        if activeFace == nil {
-                            Button("Add model") {
-                                taskQueue.enqueue(SKVTask(type: .addNode))
-                            }
-                        }
-                        if activeFace != nil {
-                            Button("Remove model") {
-                                taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
-                            }
-                        }
-                        
-                        // Toggle cam-mode
-                        Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
-                            if usesOrthographicCam == true {
-                                taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
-                            } else {
-                                taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
-                            }
-                        }
-                        
-                        // Save image
-                        Button("Save image") {
-                            taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
-                        }.alert("Image saved", isPresented: $imageSaved) {
-                            Button("OK") {}
-                        }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
-                            Button("Continue") {}
-                        }
-                        
-                    }
-                    
-                }.background(.white)
-            }
-            .padding()
-            
-        }
-        .navigationBarTitle("Analysis")
     }
     
     @State var lastOpacity: Double = 1.0
-    @State var opacity: Double = 1.0
     func update(skc: SceneController, nodes: [SCNNode]) {
         
         for node in nodes {
@@ -162,10 +118,8 @@ struct HeadView: View {
                     activeFace = nil
                 case .setOrthographicCam:
                     skc.toggleOrthographicView(orthographic: true)
-                    usesOrthographicCam = true
                 case .setPerspectiveCam:
                     skc.toggleOrthographicView(orthographic: false)
-                    usesOrthographicCam = false
                 case .takeScreenshot:
                     guard let img = skc.screenshot() else { print("Error: couldn't get screenshot"); return }
                     let imageSaver = ImageSaver(onSuccess: self.onImageSaved, onError: self.onImageSaveError)
@@ -178,19 +132,6 @@ struct HeadView: View {
             
         }
     }
-    
-    @State var imageSaved = false
-    func onImageSaved() {
-        imageSaved = true
-    }
-    
-    @State var imageSaveError = false
-    @State var imageSaveErrorMessage = ""
-    func onImageSaveError(error: Error) {
-        imageSaveError = true
-        imageSaveErrorMessage = error.localizedDescription
-    }
-    
     
     @State var rollOnMoveStart: Float?
     func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
@@ -330,8 +271,7 @@ struct HeadView: View {
             return
         }
     }
-    
-    @State var activeFace: UUID?
+
     func focusOnObservation(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
         let node = getFirstHit(view: view, gesture: gesture)
         if node == nil {
@@ -486,27 +426,50 @@ struct HeadView: View {
 
 
 
+struct PrevV: View {
+    
+    let observation1 = VNFaceObservation(
+        requestRevision: 0,
+        boundingBox: CGRect(x: 0.545, y: 0.276, width: 0.439, height: 0.436),
+        roll: 0.138,
+        yaw: -0.482,
+        pitch: 0.112
+    )
+    
+    let observation2 = VNFaceObservation(
+        requestRevision: 0,
+        boundingBox: CGRect(x: 0.218, y: 0.248, width: 0.382, height: 0.379),
+        roll: -0.216,
+        yaw: 0.121,
+        pitch: 0.151
+    )
+    
+    let img = UIImage(named: "TestImage2")!
+    
+    let queue = Queue<SKVTask>()
+    
+    @State var useOrtho = false
+    @State var activeFace: UUID? = nil
+    
+    var body: some View {
+        HeadView(
+            image: img,
+            observations: [observation1, observation2],
+            taskQueue: queue,
+            usesOrthographicCam: useOrtho,
+            onImageSaved: {},
+            onImageSaveError: { error in return },
+            activeFace: $activeFace
+        ).onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.activeFace = observation2.uuid
+            }
+        }
+    }
+}
+
 struct HeadView_Previews: PreviewProvider {
     static var previews: some View {
-
-        let observation1 = VNFaceObservation(
-            requestRevision: 0,
-            boundingBox: CGRect(x: 0.545, y: 0.276, width: 0.439, height: 0.436),
-            roll: 0.138,
-            yaw: -0.482,
-            pitch: 0.112
-        )
-        
-        let observation2 = VNFaceObservation(
-            requestRevision: 0,
-            boundingBox: CGRect(x: 0.218, y: 0.248, width: 0.382, height: 0.379),
-            roll: -0.216,
-            yaw: 0.121,
-            pitch: 0.151
-        )
-        
-        let img = UIImage(named: "TestImage2")!
-        
-        return HeadView(image: img, observations: [observation1, observation2])
+        PrevV()
     }
 }

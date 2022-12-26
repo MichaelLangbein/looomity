@@ -14,9 +14,87 @@ struct HeadControllerView: View {
     var image: UIImage
     // Parameters for detected faces
     var observations: [VNFaceObservation]
+    // Communication with HeadView
+    @StateObject var taskQueue = Queue<SKVTask>()
+    @State var opacity = 1.0
+    @State var activeFace: UUID?
+    @State var usesOrthographicCam = false
+    @State var imageSaved = false
+    @State var imageSaveError = false
+    @State var imageSaveErrorMessage = ""
+
+
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+
+        ZStack {
+            HeadView(
+                image: image,
+                observations: observations,
+                taskQueue: taskQueue,
+                usesOrthographicCam: usesOrthographicCam,
+                onImageSaved: onImageSaved,
+                onImageSaveError: onImageSaveError,
+                opacity: opacity,
+                activeFace: $activeFace
+            )
+            
+            VStack {
+                Spacer()
+                Group {
+                    Slider(value: $opacity, in: 0.0 ... 1.0)
+                    Text("Opacity: \(Int(opacity * 100))%")
+
+                    HStack {
+                        // Add or remove model
+                        if activeFace == nil {
+                            Button("Add model") {
+                                taskQueue.enqueue(SKVTask(type: .addNode))
+                            }
+                        }
+                        if activeFace != nil {
+                            Button("Remove model") {
+                                taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
+                            }
+                        }
+
+                        // Toggle cam-mode
+                        Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
+                            if usesOrthographicCam == true {
+                                taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
+                                usesOrthographicCam = false
+                            } else {
+                                taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
+                                usesOrthographicCam = true
+                            }
+                        }
+
+                        // Save image
+                        Button("Save image") {
+                            taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
+                        }.alert("Image saved", isPresented: $imageSaved) {
+                            Button("OK") {}
+                        }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
+                            Button("Continue") {}
+                        }
+
+                    }
+
+                }.background(.white)
+            }
+            .padding()
+            
+        }
+        .navigationBarTitle("Analysis")
+    }
+
+    func onImageSaved() {
+        imageSaved = true
+    }
+    
+    func onImageSaveError(error: Error) {
+        imageSaveError = true
+        imageSaveErrorMessage = error.localizedDescription
     }
 }
 
