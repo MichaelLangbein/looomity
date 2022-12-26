@@ -33,10 +33,10 @@ struct HeadView: View {
     @State var usesOrthographicCam = false
 
     var body: some View {
-        VStack {
-            let skv = SceneKitView(
-                width: Int(image.size.width),
-                height: Int(image.size.height),
+        ZStack {
+            SceneKitView(
+                width: Int(UIScreen.main.bounds.width),     // Int(image.size.width),
+                height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
                 loadNodes: { view, scene, camera in
                     return self.getNodes(scene: scene)
                 },
@@ -65,34 +65,51 @@ struct HeadView: View {
                 }
             )
             
-            skv
-                
-            Slider(value: $opacity, in: 0.0 ... 1.0)
-            Text("Opacity: \(Int(opacity * 100))%")
+            VStack {
+                Spacer()
+                Group {
+                    Slider(value: $opacity, in: 0.0 ... 1.0)
+                    Text("Opacity: \(Int(opacity * 100))%")
+                    
+                    HStack {
+                        // Add or remove model
+                        if activeFace == nil {
+                            Button("Add model") {
+                                taskQueue.enqueue(SKVTask(type: .addNode))
+                            }
+                        }
+                        if activeFace != nil {
+                            Button("Remove model") {
+                                taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
+                            }
+                        }
+                        
+                        // Toggle cam-mode
+                        Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
+                            if usesOrthographicCam == true {
+                                taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
+                            } else {
+                                taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
+                            }
+                        }
+                        
+                        // Save image
+                        Button("Save image") {
+                            taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
+                        }.alert("Image saved", isPresented: $imageSaved) {
+                            Button("OK") {}
+                        }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
+                            Button("Continue") {}
+                        }
+                        
+                    }
+                    
+                }.background(.white)
+            }
+            .padding()
             
-            if activeFace == nil {
-                Button("Add model") {
-                    taskQueue.enqueue(SKVTask(type: .addNode))
-                }
-            }
-            if activeFace != nil {
-                Button("Remove model") {
-                    taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
-                }
-            }
-            
-            Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
-                if usesOrthographicCam == true {
-                    taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
-                } else {
-                    taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
-                }
-            }
-            
-            Button("Save image") {
-                taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
-            }
         }
+        .navigationBarTitle("Analysis")
     }
     
     @State var lastOpacity: Double = 1.0
@@ -151,7 +168,7 @@ struct HeadView: View {
                     usesOrthographicCam = false
                 case .takeScreenshot:
                     guard let img = skc.screenshot() else { print("Error: couldn't get screenshot"); return }
-                    let imageSaver = ImageSaver()
+                    let imageSaver = ImageSaver(onSuccess: self.onImageSaved, onError: self.onImageSaveError)
                     imageSaver.writeToPhotoAlbum(image: img)
                 }
             }
@@ -161,6 +178,19 @@ struct HeadView: View {
             
         }
     }
+    
+    @State var imageSaved = false
+    func onImageSaved() {
+        imageSaved = true
+    }
+    
+    @State var imageSaveError = false
+    @State var imageSaveErrorMessage = ""
+    func onImageSaveError(error: Error) {
+        imageSaveError = true
+        imageSaveErrorMessage = error.localizedDescription
+    }
+    
     
     @State var rollOnMoveStart: Float?
     func rotate(view: SCNView, gesture: UIRotationGestureRecognizer, nodes: [SCNNode]) {
@@ -476,12 +506,7 @@ struct HeadView_Previews: PreviewProvider {
         )
         
         let img = UIImage(named: "TestImage2")!
-        let size = img.size
-        let ar = size.width / size.height
-        let uiWidth = UIScreen.main.bounds.width
-        let w = 0.8 * uiWidth
-        let h = w / ar
         
-        return HeadView(image: img, observations: [observation1, observation2]).frame(width: w, height: h)
+        return HeadView(image: img, observations: [observation1, observation2])
     }
 }

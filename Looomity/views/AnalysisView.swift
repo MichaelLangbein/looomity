@@ -25,7 +25,7 @@ struct AnalysisView: View {
             if currentState == .ongoing {
                 AnalysisOngoingView(image: image)
             } else {
-                DisplayModelsView(image: image, observations: observations)
+                HeadView(image: image, observations: observations)
             }
         }
         .onAppear {

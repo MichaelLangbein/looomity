@@ -13,7 +13,6 @@
 		3E35BF1B29179E5C00F3AA45 /* StartPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E35BF1A29179E5C00F3AA45 /* StartPageView.swift */; };
 		3E35BF1D2917A22600F3AA45 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E35BF1C2917A22600F3AA45 /* HelpView.swift */; };
 		3E382B472916943F00CCA2AF /* LooomityApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B462916943F00CCA2AF /* LooomityApp.swift */; };
-		3E382B492916943F00CCA2AF /* DisplayModelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B482916943F00CCA2AF /* DisplayModelsView.swift */; };
 		3E382B4B2916944100CCA2AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E382B4A2916944100CCA2AF /* Assets.xcassets */; };
 		3E382B4F2916944100CCA2AF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */; };
 		3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E382B55291699D400CCA2AF /* ImagePickerView.swift */; };
@@ -22,7 +21,9 @@
 		3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B742951EA8400EC637F /* AnimationExtension.swift */; };
 		3E397B772951F10800EC637F /* ImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B762951F10800EC637F /* ImageExtension.swift */; };
 		3E397B7A2951FAAE00EC637F /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E397B792951FAAE00EC637F /* DataStructures.swift */; };
-		3E3C7F402959921B0076BBE9 /* ViewAsImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C7F3F2959921B0076BBE9 /* ViewAsImageExtension.swift */; };
+		3E3C4BE8295A098200D69952 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C4BE7295A098200D69952 /* TutorialView.swift */; };
+		3E3C4BEC295A216900D69952 /* OrientationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C4BEB295A216900D69952 /* OrientationExtension.swift */; };
+		3E3C4BEE295A35C200D69952 /* HeadControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C4BED295A35C200D69952 /* HeadControllerView.swift */; };
 		3E3C7F432959A0EB0076BBE9 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */; };
 		3E416047294DC0090040A521 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E416046294DC0090040A521 /* Experiments.swift */; };
 		3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */; };
@@ -67,7 +68,6 @@
 		3E35BF1C2917A22600F3AA45 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		3E382B432916943F00CCA2AF /* Looomity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Looomity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E382B462916943F00CCA2AF /* LooomityApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LooomityApp.swift; sourceTree = "<group>"; };
-		3E382B482916943F00CCA2AF /* DisplayModelsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayModelsView.swift; sourceTree = "<group>"; };
 		3E382B4A2916944100CCA2AF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E382B4C2916944100CCA2AF /* Looomity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Looomity.entitlements; sourceTree = "<group>"; };
 		3E382B4E2916944100CCA2AF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -77,7 +77,9 @@
 		3E397B742951EA8400EC637F /* AnimationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationExtension.swift; sourceTree = "<group>"; };
 		3E397B762951F10800EC637F /* ImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageExtension.swift; sourceTree = "<group>"; };
 		3E397B792951FAAE00EC637F /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
-		3E3C7F3F2959921B0076BBE9 /* ViewAsImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewAsImageExtension.swift; sourceTree = "<group>"; };
+		3E3C4BE7295A098200D69952 /* TutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
+		3E3C4BEB295A216900D69952 /* OrientationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationExtension.swift; sourceTree = "<group>"; };
+		3E3C4BED295A35C200D69952 /* HeadControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadControllerView.swift; sourceTree = "<group>"; };
 		3E3C7F41295995ED0076BBE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		3E416046294DC0090040A521 /* Experiments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
@@ -160,7 +162,7 @@
 			children = (
 				3E397B742951EA8400EC637F /* AnimationExtension.swift */,
 				3E397B762951F10800EC637F /* ImageExtension.swift */,
-				3E3C7F3F2959921B0076BBE9 /* ViewAsImageExtension.swift */,
+				3E3C4BEB295A216900D69952 /* OrientationExtension.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -201,14 +203,15 @@
 			isa = PBXGroup;
 			children = (
 				3E35BF1A29179E5C00F3AA45 /* StartPageView.swift */,
+				3E3C4BE7295A098200D69952 /* TutorialView.swift */,
 				3E07FA0D294B22F500E8E9E1 /* SelectImageView.swift */,
 				3E07FA0F294B40C100E8E9E1 /* AnalysisView.swift */,
 				3E07FA11294B47BE00E8E9E1 /* AnalysisOngoingView.swift */,
-				3E382B482916943F00CCA2AF /* DisplayModelsView.swift */,
 				3E9759D32926DA4500E477F5 /* MarkerView.swift */,
 				3E382B572916A28000CCA2AF /* HeadView.swift */,
 				3E35BF1C2917A22600F3AA45 /* HelpView.swift */,
 				3E416046294DC0090040A521 /* Experiments.swift */,
+				3E3C4BED295A35C200D69952 /* HeadControllerView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -316,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E416047294DC0090040A521 /* Experiments.swift in Sources */,
+				3E3C4BEC295A216900D69952 /* OrientationExtension.swift in Sources */,
 				3E35BF1B29179E5C00F3AA45 /* StartPageView.swift in Sources */,
 				3E07FA10294B40C100E8E9E1 /* AnalysisView.swift in Sources */,
 				3EB9B172294BA1D200C61E0D /* SceneKitView.swift in Sources */,
@@ -323,16 +327,16 @@
 				3EC9F0A0291ED0810021F146 /* ReconstructionHelpers.swift in Sources */,
 				3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */,
 				3E397B772951F10800EC637F /* ImageExtension.swift in Sources */,
-				3E382B492916943F00CCA2AF /* DisplayModelsView.swift in Sources */,
 				3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */,
 				3E3C7F432959A0EB0076BBE9 /* ImageSaver.swift in Sources */,
 				3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */,
 				3E07FA0E294B22F500E8E9E1 /* SelectImageView.swift in Sources */,
-				3E3C7F402959921B0076BBE9 /* ViewAsImageExtension.swift in Sources */,
 				3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */,
+				3E3C4BEE295A35C200D69952 /* HeadControllerView.swift in Sources */,
 				3E9759D42926DA4500E477F5 /* MarkerView.swift in Sources */,
 				3E397B7A2951FAAE00EC637F /* DataStructures.swift in Sources */,
 				3E382B582916A28000CCA2AF /* HeadView.swift in Sources */,
+				3E3C4BE8295A098200D69952 /* TutorialView.swift in Sources */,
 				3E35BF1D2917A22600F3AA45 /* HelpView.swift in Sources */,
 				3E5884992916FEE70063647C /* GradientDescent.swift in Sources */,
 				3E382B472916943F00CCA2AF /* LooomityApp.swift in Sources */,

@@ -1,10 +1,11 @@
 #  TODOs
 
 
-- Button to save current view to galery
-    - success message
+- Layouting
+    - Button style
 
 - Support all interface orientations
+    - When rotated to horizontal, place buttons horizontally
 
 - Onboarding
     - Recycle onboarding animations for help-view
@@ -14,11 +15,9 @@
     - Then one-time price
     - https://developer.apple.com/documentation/storekit/in-app_purchase/original_api_for_in-app_purchase/subscriptions_and_offers/implementing_introductory_offers_in_your_app
 
-- Layouting
-    - Button style
-    - Icons for buttons
-    - Image as big as possible
-
+- Clean-up HeadView
+    - Create AnalysisView wrapper again
+    - AnalysisView communicates with HeadView through the TaskQueue
 
 
 
