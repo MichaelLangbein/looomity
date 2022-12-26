@@ -4,9 +4,6 @@
 - Layouting
     - Button style
 
-- Support all interface orientations
-    - When rotated to horizontal, place buttons horizontally
-
 - Onboarding
     - Recycle onboarding animations for help-view
 

@@ -22,8 +22,7 @@ struct HeadControllerView: View {
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
-
-
+    @State var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
 
@@ -39,55 +38,77 @@ struct HeadControllerView: View {
                 activeFace: $activeFace
             )
             
-            VStack {
-                Spacer()
-                Group {
-                    Slider(value: $opacity, in: 0.0 ... 1.0)
-                    Text("Opacity: \(Int(opacity * 100))%")
-
-                    HStack {
-                        // Add or remove model
-                        if activeFace == nil {
-                            Button("Add model") {
-                                taskQueue.enqueue(SKVTask(type: .addNode))
-                            }
-                        }
-                        if activeFace != nil {
-                            Button("Remove model") {
-                                taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
-                            }
-                        }
-
-                        // Toggle cam-mode
-                        Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
-                            if usesOrthographicCam == true {
-                                taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
-                                usesOrthographicCam = false
-                            } else {
-                                taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
-                                usesOrthographicCam = true
-                            }
-                        }
-
-                        // Save image
-                        Button("Save image") {
-                            taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
-                        }.alert("Image saved", isPresented: $imageSaved) {
-                            Button("OK") {}
-                        }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
-                            Button("Continue") {}
-                        }
-
-                    }
-
-                }.background(.white)
+            if orientation == .landscapeRight || orientation == .landscapeLeft {
+                HStack {
+                    Spacer()
+                    VStack {
+                        controlButtons
+                        opacitySlider
+                    }.frame(width: 0.2 * UIScreen.main.bounds.width)
+                }
             }
-            .padding()
+            else {
+                VStack {
+                    Spacer()
+                    opacitySlider
+                    HStack {
+                        controlButtons
+                    }
+                }
+            }
             
         }
         .navigationBarTitle("Analysis")
+        .onRotate { newOrientation in
+            orientation = newOrientation
+        }
     }
+    
+    var opacitySlider: some View {
+        VStack {
+            Slider(value: $opacity, in: 0.0 ... 1.0)
+            Text("Opacity: \(Int(opacity * 100))%")
+        }
+    }
+    
+    var controlButtons: some View {
+        Group {
+            // Add or remove model
+            if activeFace == nil {
+                Button("Add model") {
+                    taskQueue.enqueue(SKVTask(type: .addNode))
+                }
+            }
+            if activeFace != nil {
+                Button("Remove model") {
+                    taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
+                }
+            }
 
+            // Toggle cam-mode
+            Button("Use \(usesOrthographicCam ? "perspective" : "orthographic") camera") {
+                if usesOrthographicCam == true {
+                    taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
+                    usesOrthographicCam = false
+                } else {
+                    taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
+                    usesOrthographicCam = true
+                }
+            }
+
+            // Save image
+            Button("Save image") {
+                taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
+            }.alert("Image saved", isPresented: $imageSaved) {
+                Button("OK") {}
+            }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
+                Button("Continue") {}
+            }
+
+        }
+    }
+    
+    
     func onImageSaved() {
         imageSaved = true
     }
