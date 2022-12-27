@@ -49,7 +49,7 @@ struct SelectImageView: View {
 
             }
         }
-        .navigationTitle("Select image")
+        .navigationBarTitle("Select image", displayMode: .inline)
     }
     
     

@@ -12,6 +12,21 @@ struct StartPageView: View {
     // AppStorage is a wrapper for UserDefaults.standard
     @AppStorage("displayOnboarding") private var displayOnboarding: Bool = true
     
+    
+    init() {
+        // works globally
+        
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithTransparentBackground()
+        navBarAppearance.backgroundColor = .white.withAlphaComponent(0.8)
+//        navBarAppearance.shadowColor = .clear
+
+        UINavigationBar.appearance().standardAppearance = navBarAppearance
+        UINavigationBar.appearance().compactAppearance = navBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+
+    }
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -20,8 +35,6 @@ struct StartPageView: View {
             .fullScreenCover(isPresented: $displayOnboarding) {
                 TutorialView(show: $displayOnboarding)
             }
-            .navigationTitle("Loomity")
-            
         }
     }
 }

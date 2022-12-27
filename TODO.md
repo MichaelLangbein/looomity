@@ -1,9 +1,6 @@
 #  TODOs
 
 
-- Layout
-    - Navigation-bar: semi-transparent background-color
-
 - Onboarding
     - Create animations: https://editor.rive.app/file/new-file/307063/500/500
     - Recycle onboarding animations for help-view

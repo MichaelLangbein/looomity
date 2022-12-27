@@ -67,7 +67,7 @@ struct HeadControllerView: View {
             }
             
         }
-        .navigationBarTitle("Analysis")
+        .navigationBarTitle("Analysis", displayMode: .inline)
         .onRotate { newOrientation in
             orientation = newOrientation
         }

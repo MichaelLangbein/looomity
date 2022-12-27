@@ -61,11 +61,11 @@ struct HeadView: View {
                 },
                 onUIInit: { skc in
                     unfocusObservation(nodes: skc.nodes)
-                    print("UIInit")
+//                    print("UIInit")
                 },
                 onUIUpdate: { skc in
                     update(skc: skc, nodes: skc.nodes)
-                    print("UIUpdate")
+//                    print("UIUpdate")
                 }
             )
     }
