@@ -3,6 +3,9 @@
 
 - Onboarding
     - Create animations: https://editor.rive.app/file/new-file/307063/500/500
+    	- https://www.youtube.com/watch?v=0tA4fauFykw
+    - Display videos
+    	- as gif: https://www.youtube.com/watch?v=9fz8EW-dX-I	
     - Recycle onboarding animations for help-view
 
 - Payment
