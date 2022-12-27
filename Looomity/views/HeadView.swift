@@ -38,7 +38,7 @@ struct HeadView: View {
 
     var body: some View {
             SceneKitView(
-                width: Int(UIScreen.main.bounds.width * 1.2),     // Int(image.size.width),
+                width: Int(UIScreen.main.bounds.width * 1.15),     // Int(image.size.width),
                 height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
                 loadNodes: { view, scene, camera in
                     return self.getNodes(scene: scene)
@@ -210,7 +210,7 @@ struct HeadView: View {
             guard let z = cameraZOnStartMove else { return }
             let scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
             cameraNode.position.z =  z * scaleFactor
-            cameraNode.camera?.orthographicScale = Double(z * scaleFactor)
+            cameraNode.camera?.orthographicScale = Double(z * scaleFactor * 0.5)
         case .ended:
             cameraZOnStartMove = nil
         case .cancelled, .failed:
@@ -292,6 +292,7 @@ struct HeadView: View {
         unfocusObservation(nodes: nodes)
         guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: 1.0)
+        applyPopAnimation(node: figure)
         self.activeFace = obsId
     }
 
@@ -400,6 +401,7 @@ struct HeadView: View {
             f.setValue(observation.uuid, forKey: "root")
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
+            applyPopAnimation(node: f)
             
             nodes.append(f)
         }

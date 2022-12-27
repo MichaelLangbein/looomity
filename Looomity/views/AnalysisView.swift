@@ -45,6 +45,7 @@ struct AnalysisView: View {
             }
         }
         .navigationTitle("Loomity")
+        .background(.white.opacity(0.8))
     }
 }
 

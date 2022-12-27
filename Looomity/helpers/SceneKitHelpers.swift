@@ -7,9 +7,32 @@
 
 import SceneKit
 
+
+func applyPopAnimation(node: SCNNode, minScale: Float = 0.9, maxScale: Float = 1.1, duration: Double = 0.2) {
+    let s = node.scale
+    let animation = CAKeyframeAnimation(keyPath: "scale")
+    animation.duration = duration
+    animation.keyTimes = [
+        NSNumber(value: 0),
+        NSNumber(value: 0.1 * animation.duration),
+        NSNumber(value: 0.5 * animation.duration),
+        NSNumber(value: animation.duration)
+    ]
+    animation.values = [
+        s,
+        SCNVector3(x: s.x * maxScale, y: s.y * maxScale, z: s.z * maxScale),
+        SCNVector3(x: s.x * minScale, y: s.y * minScale, z: s.z * minScale),
+        s
+    ]
+    animation.repeatCount = 1
+    animation.autoreverses = false
+    animation.isRemovedOnCompletion = true  // revert to initial state
+    node.addAnimation(animation, forKey: "pop")
+}
+
 func createPopAnimation() -> CAKeyframeAnimation {
     let animation = CAKeyframeAnimation(keyPath: "scale")
-    animation.duration = 0.2
+    animation.duration = 0.9
     animation.keyTimes = [
         NSNumber(value: 0),
         NSNumber(value: 0.1 * animation.duration),
@@ -18,7 +41,7 @@ func createPopAnimation() -> CAKeyframeAnimation {
     ]
     animation.values = [
         SCNVector3(x: 1, y: 1, z: 1),
-        SCNVector3(x: 1.3, y: 1.3, z: 1.3),
+        SCNVector3(x: 1.2, y: 1.2, z: 1.2),
         SCNVector3(x: 0.8, y: 0.8, z: 0.8),
         SCNVector3(x: 1, y: 1, z: 1),
     ]
@@ -64,6 +87,7 @@ func animateAndApplyOpacity(node: SCNNode, toOpacity: CGFloat) {
     animation.completionBlock { completingAnimation, status in
         node.opacity = toOpacity
     }
+    node.addAnimation(animation, forKey: "op")
 }
 
 func createSpinAnimation() -> CABasicAnimation {

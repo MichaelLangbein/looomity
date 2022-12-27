@@ -29,7 +29,9 @@ struct SelectImageView: View {
                         .scaledToFit()
                 } else {
                     Image(systemName: "person.crop.rectangle.fill")
-                        .resizable().scaledToFit().padding(UIScreen.main.bounds.width / 4.0)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
                         .foregroundColor(.gray)
                 }
                 

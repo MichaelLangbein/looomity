@@ -22,10 +22,10 @@ struct HeadControllerView: View {
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
-    @State var orientation = UIDeviceOrientation.unknown
+    @State var orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation.isPortrait ?? true ? UIDeviceOrientation.portrait : UIDeviceOrientation.landscapeLeft  // Pretty weird hack for initial orientation
     
     var body: some View {
-
+        
         ZStack {
             HeadView(
                 image: image,
@@ -80,7 +80,6 @@ struct HeadControllerView: View {
                 .fontWeight(.light)
                 .dynamicTypeSize(.small)
         }
-        .padding(EdgeInsets(top: 0, leading: UIScreen.main.bounds.width * 0.1, bottom: 0, trailing: UIScreen.main.bounds.width * 0.1))
     }
     
     var controlButtons: some View {

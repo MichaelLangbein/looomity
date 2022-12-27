@@ -1,11 +1,9 @@
 #  TODOs
 
 
-- Fixes
-    - Slider invisible when in landscape orientation
-    - zoom incorrect when analyzing image while in landscape orientation
-    - ortho-distance != perspective-distance
-    - ui-buttons initially always on bottom, even if device is horiziontal
+- Layout
+    - Hoizontal view: buttons all same width
+    - Navigation-bar: semi-transparent background-color
 
 - Onboarding
     - Create animations: https://editor.rive.app/file/new-file/307063/500/500
@@ -33,7 +31,7 @@
     - make the view easily re-creatable from that state
     - updates to opacity as well as adding and removing nodes can then be done by manipulating the state object, not by making `onRender` changes to the view.
 
-- active face gets slight bg-glow
+- Replace UIWindow with Size-Classes
 
 - Better face-placement
     - also get face-landmarks
