@@ -86,18 +86,23 @@ struct HeadControllerView: View {
         Group {
             // Add or remove model
             if activeFace == nil {
-                Button("Add model") {
+                Button {
                     taskQueue.enqueue(SKVTask(type: .addNode))
+                } label: {
+                    Text("Add model").frame(maxWidth: .infinity)
                 }.buttonStyle(.borderedProminent)
+                    
             }
             if activeFace != nil {
-                Button("Remove model") {
+                Button {
                     taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
+                } label: {
+                    Text("Remove model").frame(maxWidth: .infinity)
                 }.buttonStyle(.borderedProminent)
             }
 
             // Toggle cam-mode
-            Button("Use \(usesOrthographicCam ? "perspective" : "ortho") view") {
+            Button {
                 if usesOrthographicCam == true {
                     taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
                     usesOrthographicCam = false
@@ -105,19 +110,22 @@ struct HeadControllerView: View {
                     taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
                     usesOrthographicCam = true
                 }
+            } label: {
+                Text("\(usesOrthographicCam ? "Perspective" : "Ortho") view").frame(maxWidth: .infinity)
             }.buttonStyle(.borderedProminent)
 
             // Save image
-            Button("Save image") {
+            Button {
                 taskQueue.enqueue((SKVTask(type: .takeScreenshot)))
+            } label: {
+                Text("Save image").frame(maxWidth: .infinity)
             }.alert("Image saved", isPresented: $imageSaved) {
                 Button("OK") {}
             }.alert(imageSaveErrorMessage, isPresented: $imageSaveError) {
                 Button("Continue") {}
             }.buttonStyle(.borderedProminent)
 
-        }
-    }
+        }    }
     
     
     func onImageSaved() {

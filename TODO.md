@@ -2,7 +2,6 @@
 
 
 - Layout
-    - Hoizontal view: buttons all same width
     - Navigation-bar: semi-transparent background-color
 
 - Onboarding

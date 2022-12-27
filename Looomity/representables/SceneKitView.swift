@@ -15,6 +15,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     // Dimensions
     var width: Int
     var height: Int
+    var ar: Float
     // Provide nodes as function of scene, camera
     var loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])?
     // Provide nodes directly
@@ -42,7 +43,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     var sceneView: SCNView?
     
     init(
-        width: Int, height: Int,
+        width: Int, height: Int, ar: Float,
         loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])? = nil,
         nodes: [SCNNode] = [],
         renderContinuously: Bool = false,
@@ -57,6 +58,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     ) {
         self.width = width
         self.height = height
+        self.ar = ar
         self.loadNodes = loadNodes
         self.nodes = nodes
         self.renderContinuously = renderContinuously
@@ -112,13 +114,34 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         camera.projectionDirection = width > height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
-        let cameraSmallestAngle = camera.projectionDirection == .horizontal ?
-            Float(camera.fieldOfView) * Float(height) / Float(width) :
-            Float(camera.fieldOfView) * Float(width) / Float(height)
-        let halfViewAngleRads = (cameraSmallestAngle / 2.0) * (2.0 * .pi / 360.0)
-        let halfWidthClippingSpace: Float = 1.0
-        let zCam = halfWidthClippingSpace / tan(halfViewAngleRads)
-        camera.orthographicScale = 2.0
+        
+//        let cameraSmallestAngle = camera.projectionDirection == .horizontal ?
+//            Float(camera.fieldOfView) * Float(height) / Float(width) :
+//            Float(camera.fieldOfView) * Float(width) / Float(height)
+//        let halfViewAngleRads = (cameraSmallestAngle / 2.0) * (2.0 * .pi / 360.0)
+//        let halfWidthClippingSpace: Float = 1.0
+//        let zCam = halfWidthClippingSpace / tan(halfViewAngleRads)
+        
+
+//        Portrait orientation: x stretches screen
+//        Image-quad right-most-point: (1 0 z 1)
+//        |f 0 0 0| |1|    |f|    |f/z|  <-- must be 1 in clipping space
+//        |0 f 0 0| |0|    |0|    |0  |
+//        |0 0 1 0| |z|  = |z|  = |1  |
+//        |0 0 1 0| |1|    |z|    |1  |
+//        Thus z = f
+//
+//        Landscape orientation: y stretches screen
+//        Image-quad top-most-point: (0 1/ar z 1)
+//        |f 0 0 0| |0   |    |0   |    |0       |
+//        |0 f 0 0| |1/ar|    |f/ar|    |f/(ar*z)| <-- must be 1 in clipping space
+//        |0 0 1 0| |z   |  = |z   |  = |1       |
+//        |0 0 1 0| |1   |    |z   |    |1       |
+//        Thus z = f/ar
+        let f = camera.projectionTransform.m11
+        let zCam = width > height ?    f * 2.0 / self.ar    :    f * 2.0
+        camera.orthographicScale = 2.00
+        
         cameraNode.position = SCNVector3(x: 0, y: 0, z: zCam)
         cameraNode.look(at: SCNVector3(x: 0, y: 0, z: 0))
         cameraNode.name = "Camera"
@@ -249,6 +272,7 @@ struct SceneKitView: UIViewControllerRepresentable {
     // Dimensions
     var width: Int
     var height: Int
+    var ar: Float
     // Provide nodes as function of scene, camera
     var loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])
     // Provide nodes directly
@@ -273,6 +297,7 @@ struct SceneKitView: UIViewControllerRepresentable {
         let sc = SceneController(
             width: width,
             height: height,
+            ar: ar,
             loadNodes: loadNodes,
             nodes: nodes,
             renderContinuously: renderContinuously,
@@ -314,7 +339,7 @@ struct PreviewView: View {
         
         return VStack {
             SceneKitView(
-                width: 300, height: 600,
+                width: 300, height: 600, ar: 3.0 / 6.0,
                  loadNodes: { view, scene, camera in
                      return [plane, bx]
                  },
@@ -326,11 +351,6 @@ struct PreviewView: View {
                  onTap: { gesture, view, nodes in
                      let hits = getGestureHits(view: view, gesture: gesture)
                      guard let node = hits.first else { return }
-//                     if node.animationKeys.first != nil {
-//                         node.removeAnimation(forKey: "disappear")
-//                     } else {
-//                         node.addAnimation(createOpacityHideAnimation(toOpacity: 0.2), forKey: "disappear")
-//                     }
                      node.addAnimation(createPopAnimation(), forKey: "pop")
                  }
             )
