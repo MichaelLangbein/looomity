@@ -14,7 +14,8 @@ struct HeadControllerView: View {
     var image: UIImage
     // Parameters for detected faces
     var observations: [VNFaceObservation]
-    // Communication with HeadView
+
+    @State var showHelp = false
     @StateObject var taskQueue = Queue<SKVTask>()
     @State var opacity = 1.0
     @State var activeFace: UUID?
@@ -68,6 +69,16 @@ struct HeadControllerView: View {
             
         }
         .navigationBarTitle("Analysis", displayMode: .inline)
+        .toolbar {
+            Button {
+                showHelp = true
+            } label: {
+                Label("Help", systemImage: "questionmark.circle")
+            }
+        }
+        .sheet(isPresented: $showHelp) {
+            TutorialView(show: $showHelp)
+        }
         .onRotate { newOrientation in
             orientation = newOrientation
         }

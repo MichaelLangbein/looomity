@@ -34,18 +34,6 @@ struct AnalysisView: View {
                 currentState = .done
             }
         }
-        .sheet(isPresented: $showHelp) {
-            HelpView()
-        }
-        .toolbar {
-            Button {
-                showHelp = true
-            } label: {
-                Label("Help", systemImage: "questionmark.circle")
-            }
-        }
-        .navigationTitle("Loomity")
-        .background(.white.opacity(0.8))
     }
 }
 
