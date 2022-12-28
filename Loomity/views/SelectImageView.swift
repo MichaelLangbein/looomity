@@ -38,11 +38,11 @@ struct SelectImageView: View {
                 Spacer()
                 
                 HStack {
-                    Button("Galery", action: pickFromGalery).buttonStyle(.borderedProminent)
+                    Button("Gallery", action: pickFromGallery).buttonStyle(.borderedProminent)
                     Button("Camera", action: pickFromCamera).buttonStyle(.borderedProminent)
                     if let img = image {
                         NavigationLink(destination: AnalysisView(image: img)) {
-                            Text("Analyze")
+                            Text("Loomify")
                         }.buttonStyle(.borderedProminent)
                     }
                 }.padding()
@@ -53,7 +53,7 @@ struct SelectImageView: View {
     }
     
     
-    func pickFromGalery() {
+    func pickFromGallery() {
         imageSelectMode = .photoLibrary
         showImagePicker = true
     }

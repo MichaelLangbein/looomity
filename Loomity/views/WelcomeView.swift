@@ -23,18 +23,19 @@ struct WelcomeView: View {
             VStack {
                 NavigationLink(destination: SelectImageView()) {
                     Text("Select image")
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
                 
                 NavigationLink(destination: AboutView()) {
                     Text("About")
+                        .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
             }
+            .fixedSize(horizontal: true, vertical: false)
             
-            TrialView()
+//            TrialView()
         }
         .navigationBarTitle("Welcome to Loomity!")
     }

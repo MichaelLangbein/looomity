@@ -35,7 +35,7 @@ struct HeadControllerView: View {
                 usesOrthographicCam: usesOrthographicCam,
                 onImageSaved: onImageSaved,
                 onImageSaveError: onImageSaveError,
-                opacity: opacity,
+                opacity: $opacity,
                 activeFace: $activeFace
             ).ignoresSafeArea()
             

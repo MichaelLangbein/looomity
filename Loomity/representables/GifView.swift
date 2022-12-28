@@ -21,7 +21,12 @@ struct GifView: UIViewRepresentable {
         let url = Bundle.main.url(forResource: fileName, withExtension: "gif")!
         let data = try! Data(contentsOf: url)
         view.load(data, mimeType: "image/gif", characterEncodingName: "UTF-8", baseURL: url.deletingLastPathComponent())
+        
+        view.isOpaque = false
+        view.backgroundColor = UIColor.clear
+        view.scrollView.backgroundColor = UIColor.clear
         view.scrollView.isScrollEnabled = false
+        
         return view
     }
     

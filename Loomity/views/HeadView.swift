@@ -33,8 +33,10 @@ struct HeadView: View {
     var usesOrthographicCam: Bool
     var onImageSaved: () -> Void
     var onImageSaveError: (Error) -> Void
-    var opacity: Double = 1.0
+    @Binding var opacity: Double
     @Binding var activeFace: UUID?
+    
+    let unfocussedOpacity = 0.5
 
     var body: some View {
             SceneKitView(
@@ -80,7 +82,7 @@ struct HeadView: View {
                 var maxOpacity = 1.0
                 let obsId = node.value(forKey: "observationId") as! UUID
                 if obsId != activeFace {
-                    maxOpacity = 0.3
+                    maxOpacity = self.unfocussedOpacity
                 }
                 
                 var increasing = true
@@ -156,19 +158,32 @@ struct HeadView: View {
         }
     }
     
+    @State var eulerAnglesOnStartMove: SCNVector3?
     func lookDirection(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else { return }
         
         guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
-
-        // Manually added models don't have an observation - so we provide a fallback
-        let observation = observations.first(where: { $0.uuid == obsId }) ?? VNFaceObservation(requestRevision: 0, boundingBox: CGRect(), roll: 0, yaw: 0, pitch: 0)
         
         let translation = gesture.translation(in: view)
-        // pitch = rotation about x
-        figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(truncating: observation.pitch!)
-        // yaw = rotation about y
-        figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(truncating: observation.yaw!)
+        
+        switch gesture.state {
+        case .began:
+            eulerAnglesOnStartMove = figure.eulerAngles
+        case .changed:
+            guard let initial = eulerAnglesOnStartMove else { return }
+            // pitch = rotation about x
+            figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(initial.x)
+            // yaw = rotation about y
+            figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(initial.y)
+        case .ended:
+            eulerAnglesOnStartMove = nil
+        case .cancelled, .failed:
+            guard let initial = eulerAnglesOnStartMove else { return }
+            figure.eulerAngles = initial
+            eulerAnglesOnStartMove = nil
+        default:
+            return
+        }
     }
     
     @State var scaleOnStartMove: SCNVector3?
@@ -209,7 +224,8 @@ struct HeadView: View {
             cameraZOnStartMove = ortho ? Float(camera.orthographicScale) : cameraNode.position.z
         case .changed:
             guard let z = cameraZOnStartMove else { return }
-            let scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
+            var scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
+            scaleFactor = min(10, max(0.1, scaleFactor)) // must not go below 0.1 or above 10
             cameraNode.position.z =  z * scaleFactor
             let f = camera.projectionTransform.m11
             cameraNode.camera?.orthographicScale = Double(cameraNode.position.z / f)
@@ -293,7 +309,7 @@ struct HeadView: View {
         if self.activeFace == obsId { return }
         unfocusObservation(nodes: nodes)
         guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
-        animateAndApplyOpacity(node: figure, toOpacity: 1.0)
+        animateAndApplyOpacity(node: figure, toOpacity: self.opacity)
         applyPopAnimation(node: figure)
         self.activeFace = obsId
     }
@@ -301,7 +317,7 @@ struct HeadView: View {
     func unfocusObservation(nodes: [SCNNode]) {
         guard let activeFace = self.activeFace else { return }
         guard let figure = getFigureForId(obsId: activeFace, nodes: nodes) else { return }
-        animateAndApplyOpacity(node: figure, toOpacity: 0.3)
+        animateAndApplyOpacity(node: figure, toOpacity: min(self.unfocussedOpacity, self.opacity))
         self.activeFace = nil
     }
     
@@ -399,7 +415,7 @@ struct HeadView: View {
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            f.opacity = 0.3
+            f.opacity = self.unfocussedOpacity
             f.setValue(observation.uuid, forKey: "root")
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
@@ -423,7 +439,7 @@ struct HeadView: View {
         f.setValue(newUUID, forKey: "root")
         setValueRecursively(node: f, val: "figure", key: "type")
         setValueRecursively(node: f, val: newUUID, key: "observationId")
-        f.opacity = min(opacity, 0.3)
+        f.opacity = min(self.opacity, self.unfocussedOpacity)
         return f
     }
 }
@@ -454,6 +470,7 @@ struct PrevV: View {
     
     @State var useOrtho = false
     @State var activeFace: UUID? = nil
+    @State var opacity = 1.0
     
     var body: some View {
         HeadView(
@@ -463,6 +480,7 @@ struct PrevV: View {
             usesOrthographicCam: useOrtho,
             onImageSaved: {},
             onImageSaveError: { error in return },
+            opacity: $opacity,
             activeFace: $activeFace
         ).onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

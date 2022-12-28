@@ -12,17 +12,20 @@ struct AnalysisOngoingView: View {
     
     var body: some View {
         
-        ZStack {
+        VStack {
             
-//            Image(uiImage: image)
-//                .resizable()
-//                .scaledToFit()
-//                .opacity(0.5)
-
+            Spacer()
+            
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle())
                 .scaleEffect(4)
+                .padding().padding()
             
+            Text("Attempting to place Loomis model nicely...")
+                .foregroundColor(.gray)
+            
+            
+            Spacer()
         }
     }
 }

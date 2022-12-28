@@ -9,25 +9,54 @@ import SwiftUI
 
 
 struct ConceptView:  View {
+    @Binding var show: Bool
+
     var body: some View {
-        VStack (alignment: .center, spacing: 9) {
+        VStack(alignment: .center, spacing: 13) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    show = false
+                }, label: {
+                    Image(systemName: "xmark.circle" )
+                        .minimumScaleFactor(0.3)
+                        .padding(10)
+                })
+            }
+            
+            Spacer()
             Text("Loomity is a tool to help you determine the proportions of faces in your photos.")
                 .multilineTextAlignment(.center)
-            Text("It overlays a [Loomis-head](https://gvaat.com/blog/how-to-draw-the-head-using-the-loomis-method-a-step-by-step-guide/) over your photo's so that you can compare a face's proportions with a reference.")
+            Text("It overlays a [Loomis-head](https://gvaat.com/blog/how-to-draw-the-head-using-the-loomis-method-a-step-by-step-guide/) over your photos so that you can compare a face's proportions with a reference.")
                 .multilineTextAlignment(.center)
+            Spacer()
         }
         .textBox()
     }
 }
 
 struct SelectView: View {
+    @Binding var show: Bool
+
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 13) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    show = false
+                }, label: {
+                    Image(systemName: "xmark.circle" )
+                        .minimumScaleFactor(0.3)
+                        .padding(10)
+                })
+            }
+            
             Spacer()
             Text("You can select a model by tapping on it.")
             GifView("SelectGif").frame(width: 200, height: 200)
             Text("You can de-select a model again by tapping on the background.")
             Spacer()
+
         }
         .textBox()
         .navigationTitle("Selection")
@@ -35,8 +64,21 @@ struct SelectView: View {
 }
 
 struct RotateView: View {
+    @Binding var show: Bool
+
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 13) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    show = false
+                }, label: {
+                    Image(systemName: "xmark.circle" )
+                        .minimumScaleFactor(0.3)
+                        .padding(10)
+                })
+            }
+            
             Spacer()
             Text("You can rotate a model by dragging with one finger.")
             GifView("RotateGif").frame(width: 200, height: 200)
@@ -46,8 +88,21 @@ struct RotateView: View {
 }
 
 struct ScaleView: View {
+    @Binding var show: Bool
+
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 13) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    show = false
+                }, label: {
+                    Image(systemName: "xmark.circle" )
+                        .minimumScaleFactor(0.3)
+                        .padding(10)
+                })
+            }
+            
             Spacer()
             Text("You can scale a model by pinching with two fingers.")
             GifView("ScaleGif").frame(width: 200, height: 200)
@@ -57,8 +112,21 @@ struct ScaleView: View {
 }
 
 struct TranslateView: View {
+    @Binding var show: Bool
+
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 13) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    show = false
+                }, label: {
+                    Image(systemName: "xmark.circle" )
+                        .minimumScaleFactor(0.3)
+                        .padding(10)
+                })
+            }
+            
             Spacer()
             Text("You can translate a model by panning with two fingers.")
             GifView("PanGif").frame(width: 200, height: 200)
@@ -69,10 +137,25 @@ struct TranslateView: View {
 }
 
 struct ToolsView: View {
+    @Binding var show: Bool
+
     var body: some View {
-        VStack {
+        VStack(alignment: .center, spacing: 13) {
+            HStack {
+                Spacer()
+                Button(action: {
+                    show = false
+                }, label: {
+                    Image(systemName: "xmark.circle" )
+                        .minimumScaleFactor(0.3)
+                        .padding(10)
+                })
+            }
+
+            Spacer()
             Text("You can switch between a perspective and an orthographic view.")
-            Text("You can save your current view to your gallery.")
+            Text("You can save your current view to your photo-gallery.")
+            Spacer()
         }.textBox()
     }
 }
@@ -85,16 +168,12 @@ struct TutorialView: View {
     var body: some View {
         TabView {
 
-            ConceptView()
-            SelectView()
-            RotateView()
-            ScaleView()
-            TranslateView()
-            ToolsView()
-            
-            Button("Get started") {
-                show = false
-            }.buttonStyle(.borderedProminent)
+            ConceptView(show: $show)
+            SelectView(show: $show)
+            RotateView(show: $show)
+            ScaleView(show: $show)
+            TranslateView(show: $show)
+            ToolsView(show: $show)
             
         }
         .background(Color.white)

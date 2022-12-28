@@ -40,7 +40,6 @@
 		3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78D295C8A5B00744841 /* SelectImageView.swift */; };
 		3E42F7A7295C8A5B00744841 /* HeadControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78E295C8A5B00744841 /* HeadControllerView.swift */; };
 		3E42F7A8295C8A5B00744841 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78F295C8A5B00744841 /* WelcomeView.swift */; };
-		3E42F7A9295C8A5B00744841 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F790295C8A5B00744841 /* HelpView.swift */; };
 		3E42F7AA295C8A5B00744841 /* TrialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F791295C8A5B00744841 /* TrialView.swift */; };
 		3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F792295C8A5B00744841 /* Experiments.swift */; };
 		3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */; };
@@ -103,7 +102,6 @@
 		3E42F78D295C8A5B00744841 /* SelectImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectImageView.swift; sourceTree = "<group>"; };
 		3E42F78E295C8A5B00744841 /* HeadControllerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadControllerView.swift; sourceTree = "<group>"; };
 		3E42F78F295C8A5B00744841 /* WelcomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
-		3E42F790295C8A5B00744841 /* HelpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
 		3E42F791295C8A5B00744841 /* TrialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrialView.swift; sourceTree = "<group>"; };
 		3E42F792295C8A5B00744841 /* Experiments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
 		3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOngoingView.swift; sourceTree = "<group>"; };
@@ -242,18 +240,17 @@
 		3E42F78A295C8A5B00744841 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				3E42F795295C8A5B00744841 /* StartPageView.swift */,
+				3E42F78F295C8A5B00744841 /* WelcomeView.swift */,
 				3E42F78B295C8A5B00744841 /* AboutView.swift */,
 				3E42F78C295C8A5B00744841 /* AnalysisView.swift */,
+				3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */,
 				3E42F78D295C8A5B00744841 /* SelectImageView.swift */,
 				3E42F78E295C8A5B00744841 /* HeadControllerView.swift */,
-				3E42F78F295C8A5B00744841 /* WelcomeView.swift */,
-				3E42F790295C8A5B00744841 /* HelpView.swift */,
+				3E42F796295C8A5B00744841 /* HeadView.swift */,
+				3E42F794295C8A5B00744841 /* TutorialView.swift */,
 				3E42F791295C8A5B00744841 /* TrialView.swift */,
 				3E42F792295C8A5B00744841 /* Experiments.swift */,
-				3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */,
-				3E42F794295C8A5B00744841 /* TutorialView.swift */,
-				3E42F795295C8A5B00744841 /* StartPageView.swift */,
-				3E42F796295C8A5B00744841 /* HeadView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -409,7 +406,6 @@
 				3E42F79E295C8A5B00744841 /* ImageSaver.swift in Sources */,
 				3E42F798295C8A5B00744841 /* SceneKitView.swift in Sources */,
 				3E42F79D295C8A5B00744841 /* DataStructures.swift in Sources */,
-				3E42F7A9295C8A5B00744841 /* HelpView.swift in Sources */,
 				3E42F7AA295C8A5B00744841 /* TrialView.swift in Sources */,
 				3E42F79F295C8A5B00744841 /* SceneKitHelpers.swift in Sources */,
 				3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */,
@@ -584,6 +580,8 @@
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Loomity;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This will allow you to analyze photos from your camera.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to the gallery.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your gallery.";
@@ -592,6 +590,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -616,6 +615,8 @@
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Loomity;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This will allow you to analyze photos from your camera.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to the gallery.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your gallery.";
@@ -624,6 +625,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
