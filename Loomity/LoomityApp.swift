@@ -1,14 +1,14 @@
 //
-//  LooomityApp.swift
-//  Looomity
+//  LoomityApp.swift
+//  Loomity
 //
-//  Created by Michael Langbein on 05.11.22.
+//  Created by Michael Langbein on 28.12.22.
 //
 
 import SwiftUI
 
 @main
-struct LooomityApp: App {
+struct LoomityApp: App {
     var body: some Scene {
         WindowGroup {
             StartPageView()

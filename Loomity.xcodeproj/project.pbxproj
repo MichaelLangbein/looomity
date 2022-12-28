@@ -1,0 +1,758 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6FB295C866C00744841 /* LoomityApp.swift */; };
+		3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F702295C866E00744841 /* Preview Assets.xcassets */; };
+		3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F70C295C866E00744841 /* LoomityTests.swift */; };
+		3E42F717295C866E00744841 /* LoomityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F716295C866E00744841 /* LoomityUITests.swift */; };
+		3E42F719295C866E00744841 /* LoomityUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F718295C866E00744841 /* LoomityUITestsLaunchTests.swift */; };
+		3E42F72B295C86BC00744841 /* BoxPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F725295C86B600744841 /* BoxPlacementTests.swift */; };
+		3E42F72C295C86BC00744841 /* GradientDescentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F726295C86B600744841 /* GradientDescentTests.swift */; };
+		3E42F72D295C86BC00744841 /* LooomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F727295C86B600744841 /* LooomityTests.swift */; };
+		3E42F741295C873900744841 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73B295C873900744841 /* Assets.xcassets */; };
+		3E42F742295C873900744841 /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73C295C873900744841 /* Loomis_Head.usdz */; };
+		3E42F743295C873900744841 /* PanGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73D295C873900744841 /* PanGif.gif */; };
+		3E42F744295C873900744841 /* RotateGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73E295C873900744841 /* RotateGif.gif */; };
+		3E42F745295C873900744841 /* ScaleGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73F295C873900744841 /* ScaleGif.gif */; };
+		3E42F746295C873900744841 /* SelectGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F740295C873900744841 /* SelectGif.gif */; };
+		3E42F748295C875200744841 /* TODO.md in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F747295C875200744841 /* TODO.md */; };
+		3E42F797295C8A5B00744841 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F77B295C8A5B00744841 /* ImagePickerView.swift */; };
+		3E42F798295C8A5B00744841 /* SceneKitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F77C295C8A5B00744841 /* SceneKitView.swift */; };
+		3E42F799295C8A5B00744841 /* GifView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F77D295C8A5B00744841 /* GifView.swift */; };
+		3E42F79A295C8A5B00744841 /* VisionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F77F295C8A5B00744841 /* VisionHelpers.swift */; };
+		3E42F79B295C8A5B00744841 /* ReconstructionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F780295C8A5B00744841 /* ReconstructionHelpers.swift */; };
+		3E42F79C295C8A5B00744841 /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F781295C8A5B00744841 /* GradientDescent.swift */; };
+		3E42F79D295C8A5B00744841 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F782295C8A5B00744841 /* DataStructures.swift */; };
+		3E42F79E295C8A5B00744841 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F783295C8A5B00744841 /* ImageSaver.swift */; };
+		3E42F79F295C8A5B00744841 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F784295C8A5B00744841 /* SceneKitHelpers.swift */; };
+		3E42F7A0295C8A5B00744841 /* AnimationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F786295C8A5B00744841 /* AnimationExtension.swift */; };
+		3E42F7A1295C8A5B00744841 /* Textbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F787295C8A5B00744841 /* Textbox.swift */; };
+		3E42F7A2295C8A5B00744841 /* ImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F788295C8A5B00744841 /* ImageExtension.swift */; };
+		3E42F7A3295C8A5B00744841 /* OrientationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F789295C8A5B00744841 /* OrientationExtension.swift */; };
+		3E42F7A4295C8A5B00744841 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78B295C8A5B00744841 /* AboutView.swift */; };
+		3E42F7A5295C8A5B00744841 /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78C295C8A5B00744841 /* AnalysisView.swift */; };
+		3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78D295C8A5B00744841 /* SelectImageView.swift */; };
+		3E42F7A7295C8A5B00744841 /* HeadControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78E295C8A5B00744841 /* HeadControllerView.swift */; };
+		3E42F7A8295C8A5B00744841 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F78F295C8A5B00744841 /* WelcomeView.swift */; };
+		3E42F7A9295C8A5B00744841 /* HelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F790295C8A5B00744841 /* HelpView.swift */; };
+		3E42F7AA295C8A5B00744841 /* TrialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F791295C8A5B00744841 /* TrialView.swift */; };
+		3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F792295C8A5B00744841 /* Experiments.swift */; };
+		3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */; };
+		3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F794295C8A5B00744841 /* TutorialView.swift */; };
+		3E42F7AE295C8A5B00744841 /* StartPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F795295C8A5B00744841 /* StartPageView.swift */; };
+		3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F796295C8A5B00744841 /* HeadView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3E42F709295C866E00744841 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E42F6F0295C866C00744841 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E42F6F7295C866C00744841;
+			remoteInfo = Loomity;
+		};
+		3E42F713295C866E00744841 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E42F6F0295C866C00744841 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E42F6F7295C866C00744841;
+			remoteInfo = Loomity;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3E42F6F8295C866C00744841 /* Loomity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Loomity.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E42F6FB295C866C00744841 /* LoomityApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityApp.swift; sourceTree = "<group>"; };
+		3E42F702295C866E00744841 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		3E42F708295C866E00744841 /* LoomityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LoomityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E42F70C295C866E00744841 /* LoomityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityTests.swift; sourceTree = "<group>"; };
+		3E42F712295C866E00744841 /* LoomityUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LoomityUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3E42F716295C866E00744841 /* LoomityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityUITests.swift; sourceTree = "<group>"; };
+		3E42F718295C866E00744841 /* LoomityUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3E42F725295C86B600744841 /* BoxPlacementTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoxPlacementTests.swift; sourceTree = "<group>"; };
+		3E42F726295C86B600744841 /* GradientDescentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientDescentTests.swift; sourceTree = "<group>"; };
+		3E42F727295C86B600744841 /* LooomityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LooomityTests.swift; sourceTree = "<group>"; };
+		3E42F73B295C873900744841 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../Looomity/Looomity/Assets.xcassets; sourceTree = "<group>"; };
+		3E42F73C295C873900744841 /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = Loomis_Head.usdz; sourceTree = "<group>"; };
+		3E42F73D295C873900744841 /* PanGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = PanGif.gif; sourceTree = "<group>"; };
+		3E42F73E295C873900744841 /* RotateGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = RotateGif.gif; sourceTree = "<group>"; };
+		3E42F73F295C873900744841 /* ScaleGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = ScaleGif.gif; sourceTree = "<group>"; };
+		3E42F740295C873900744841 /* SelectGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = SelectGif.gif; sourceTree = "<group>"; };
+		3E42F747295C875200744841 /* TODO.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
+		3E42F77B295C8A5B00744841 /* ImagePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
+		3E42F77C295C8A5B00744841 /* SceneKitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneKitView.swift; sourceTree = "<group>"; };
+		3E42F77D295C8A5B00744841 /* GifView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GifView.swift; sourceTree = "<group>"; };
+		3E42F77F295C8A5B00744841 /* VisionHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisionHelpers.swift; sourceTree = "<group>"; };
+		3E42F780295C8A5B00744841 /* ReconstructionHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReconstructionHelpers.swift; sourceTree = "<group>"; };
+		3E42F781295C8A5B00744841 /* GradientDescent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
+		3E42F782295C8A5B00744841 /* DataStructures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
+		3E42F783295C8A5B00744841 /* ImageSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
+		3E42F784295C8A5B00744841 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
+		3E42F786295C8A5B00744841 /* AnimationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationExtension.swift; sourceTree = "<group>"; };
+		3E42F787295C8A5B00744841 /* Textbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Textbox.swift; sourceTree = "<group>"; };
+		3E42F788295C8A5B00744841 /* ImageExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageExtension.swift; sourceTree = "<group>"; };
+		3E42F789295C8A5B00744841 /* OrientationExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrientationExtension.swift; sourceTree = "<group>"; };
+		3E42F78B295C8A5B00744841 /* AboutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		3E42F78C295C8A5B00744841 /* AnalysisView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
+		3E42F78D295C8A5B00744841 /* SelectImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectImageView.swift; sourceTree = "<group>"; };
+		3E42F78E295C8A5B00744841 /* HeadControllerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadControllerView.swift; sourceTree = "<group>"; };
+		3E42F78F295C8A5B00744841 /* WelcomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		3E42F790295C8A5B00744841 /* HelpView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
+		3E42F791295C8A5B00744841 /* TrialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrialView.swift; sourceTree = "<group>"; };
+		3E42F792295C8A5B00744841 /* Experiments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
+		3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOngoingView.swift; sourceTree = "<group>"; };
+		3E42F794295C8A5B00744841 /* TutorialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
+		3E42F795295C8A5B00744841 /* StartPageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartPageView.swift; sourceTree = "<group>"; };
+		3E42F796295C8A5B00744841 /* HeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3E42F6F5295C866C00744841 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E42F705295C866E00744841 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E42F70F295C866E00744841 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3E42F6EF295C866C00744841 = {
+			isa = PBXGroup;
+			children = (
+				3E42F747295C875200744841 /* TODO.md */,
+				3E42F6FA295C866C00744841 /* Loomity */,
+				3E42F70B295C866E00744841 /* LoomityTests */,
+				3E42F715295C866E00744841 /* LoomityUITests */,
+				3E42F6F9295C866C00744841 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3E42F6F9295C866C00744841 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F6F8295C866C00744841 /* Loomity.app */,
+				3E42F708295C866E00744841 /* LoomityTests.xctest */,
+				3E42F712295C866E00744841 /* LoomityUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3E42F6FA295C866C00744841 /* Loomity */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F785295C8A5B00744841 /* extensions */,
+				3E42F77E295C8A5B00744841 /* helpers */,
+				3E42F77A295C8A5B00744841 /* representables */,
+				3E42F78A295C8A5B00744841 /* views */,
+				3E42F6FB295C866C00744841 /* LoomityApp.swift */,
+				3E42F73B295C873900744841 /* Assets.xcassets */,
+				3E42F73C295C873900744841 /* Loomis_Head.usdz */,
+				3E42F73D295C873900744841 /* PanGif.gif */,
+				3E42F73E295C873900744841 /* RotateGif.gif */,
+				3E42F73F295C873900744841 /* ScaleGif.gif */,
+				3E42F740295C873900744841 /* SelectGif.gif */,
+				3E42F701295C866E00744841 /* Preview Content */,
+			);
+			path = Loomity;
+			sourceTree = "<group>";
+		};
+		3E42F701295C866E00744841 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F702295C866E00744841 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		3E42F70B295C866E00744841 /* LoomityTests */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F70C295C866E00744841 /* LoomityTests.swift */,
+				3E42F725295C86B600744841 /* BoxPlacementTests.swift */,
+				3E42F726295C86B600744841 /* GradientDescentTests.swift */,
+				3E42F727295C86B600744841 /* LooomityTests.swift */,
+			);
+			path = LoomityTests;
+			sourceTree = "<group>";
+		};
+		3E42F715295C866E00744841 /* LoomityUITests */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F716295C866E00744841 /* LoomityUITests.swift */,
+				3E42F718295C866E00744841 /* LoomityUITestsLaunchTests.swift */,
+			);
+			path = LoomityUITests;
+			sourceTree = "<group>";
+		};
+		3E42F77A295C8A5B00744841 /* representables */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F77B295C8A5B00744841 /* ImagePickerView.swift */,
+				3E42F77C295C8A5B00744841 /* SceneKitView.swift */,
+				3E42F77D295C8A5B00744841 /* GifView.swift */,
+			);
+			path = representables;
+			sourceTree = "<group>";
+		};
+		3E42F77E295C8A5B00744841 /* helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F77F295C8A5B00744841 /* VisionHelpers.swift */,
+				3E42F780295C8A5B00744841 /* ReconstructionHelpers.swift */,
+				3E42F781295C8A5B00744841 /* GradientDescent.swift */,
+				3E42F782295C8A5B00744841 /* DataStructures.swift */,
+				3E42F783295C8A5B00744841 /* ImageSaver.swift */,
+				3E42F784295C8A5B00744841 /* SceneKitHelpers.swift */,
+			);
+			path = helpers;
+			sourceTree = "<group>";
+		};
+		3E42F785295C8A5B00744841 /* extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F786295C8A5B00744841 /* AnimationExtension.swift */,
+				3E42F787295C8A5B00744841 /* Textbox.swift */,
+				3E42F788295C8A5B00744841 /* ImageExtension.swift */,
+				3E42F789295C8A5B00744841 /* OrientationExtension.swift */,
+			);
+			path = extensions;
+			sourceTree = "<group>";
+		};
+		3E42F78A295C8A5B00744841 /* views */ = {
+			isa = PBXGroup;
+			children = (
+				3E42F78B295C8A5B00744841 /* AboutView.swift */,
+				3E42F78C295C8A5B00744841 /* AnalysisView.swift */,
+				3E42F78D295C8A5B00744841 /* SelectImageView.swift */,
+				3E42F78E295C8A5B00744841 /* HeadControllerView.swift */,
+				3E42F78F295C8A5B00744841 /* WelcomeView.swift */,
+				3E42F790295C8A5B00744841 /* HelpView.swift */,
+				3E42F791295C8A5B00744841 /* TrialView.swift */,
+				3E42F792295C8A5B00744841 /* Experiments.swift */,
+				3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */,
+				3E42F794295C8A5B00744841 /* TutorialView.swift */,
+				3E42F795295C8A5B00744841 /* StartPageView.swift */,
+				3E42F796295C8A5B00744841 /* HeadView.swift */,
+			);
+			path = views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3E42F6F7295C866C00744841 /* Loomity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E42F71C295C866E00744841 /* Build configuration list for PBXNativeTarget "Loomity" */;
+			buildPhases = (
+				3E42F6F4295C866C00744841 /* Sources */,
+				3E42F6F5295C866C00744841 /* Frameworks */,
+				3E42F6F6295C866C00744841 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Loomity;
+			productName = Loomity;
+			productReference = 3E42F6F8295C866C00744841 /* Loomity.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3E42F707295C866E00744841 /* LoomityTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E42F71F295C866E00744841 /* Build configuration list for PBXNativeTarget "LoomityTests" */;
+			buildPhases = (
+				3E42F704295C866E00744841 /* Sources */,
+				3E42F705295C866E00744841 /* Frameworks */,
+				3E42F706295C866E00744841 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3E42F70A295C866E00744841 /* PBXTargetDependency */,
+			);
+			name = LoomityTests;
+			productName = LoomityTests;
+			productReference = 3E42F708295C866E00744841 /* LoomityTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3E42F711295C866E00744841 /* LoomityUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3E42F722295C866E00744841 /* Build configuration list for PBXNativeTarget "LoomityUITests" */;
+			buildPhases = (
+				3E42F70E295C866E00744841 /* Sources */,
+				3E42F70F295C866E00744841 /* Frameworks */,
+				3E42F710295C866E00744841 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3E42F714295C866E00744841 /* PBXTargetDependency */,
+			);
+			name = LoomityUITests;
+			productName = LoomityUITests;
+			productReference = 3E42F712295C866E00744841 /* LoomityUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3E42F6F0295C866C00744841 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1410;
+				LastUpgradeCheck = 1410;
+				TargetAttributes = {
+					3E42F6F7295C866C00744841 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+					3E42F707295C866E00744841 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 3E42F6F7295C866C00744841;
+					};
+					3E42F711295C866E00744841 = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = 3E42F6F7295C866C00744841;
+					};
+				};
+			};
+			buildConfigurationList = 3E42F6F3295C866C00744841 /* Build configuration list for PBXProject "Loomity" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3E42F6EF295C866C00744841;
+			productRefGroup = 3E42F6F9295C866C00744841 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3E42F6F7295C866C00744841 /* Loomity */,
+				3E42F707295C866E00744841 /* LoomityTests */,
+				3E42F711295C866E00744841 /* LoomityUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3E42F6F6295C866C00744841 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E42F748295C875200744841 /* TODO.md in Resources */,
+				3E42F744295C873900744841 /* RotateGif.gif in Resources */,
+				3E42F742295C873900744841 /* Loomis_Head.usdz in Resources */,
+				3E42F745295C873900744841 /* ScaleGif.gif in Resources */,
+				3E42F743295C873900744841 /* PanGif.gif in Resources */,
+				3E42F741295C873900744841 /* Assets.xcassets in Resources */,
+				3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */,
+				3E42F746295C873900744841 /* SelectGif.gif in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E42F706295C866E00744841 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E42F710295C866E00744841 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3E42F6F4295C866C00744841 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E42F7A7295C8A5B00744841 /* HeadControllerView.swift in Sources */,
+				3E42F797295C8A5B00744841 /* ImagePickerView.swift in Sources */,
+				3E42F7A0295C8A5B00744841 /* AnimationExtension.swift in Sources */,
+				3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */,
+				3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */,
+				3E42F7A2295C8A5B00744841 /* ImageExtension.swift in Sources */,
+				3E42F799295C8A5B00744841 /* GifView.swift in Sources */,
+				3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */,
+				3E42F7A4295C8A5B00744841 /* AboutView.swift in Sources */,
+				3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */,
+				3E42F79B295C8A5B00744841 /* ReconstructionHelpers.swift in Sources */,
+				3E42F7A3295C8A5B00744841 /* OrientationExtension.swift in Sources */,
+				3E42F79E295C8A5B00744841 /* ImageSaver.swift in Sources */,
+				3E42F798295C8A5B00744841 /* SceneKitView.swift in Sources */,
+				3E42F79D295C8A5B00744841 /* DataStructures.swift in Sources */,
+				3E42F7A9295C8A5B00744841 /* HelpView.swift in Sources */,
+				3E42F7AA295C8A5B00744841 /* TrialView.swift in Sources */,
+				3E42F79F295C8A5B00744841 /* SceneKitHelpers.swift in Sources */,
+				3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */,
+				3E42F7A5295C8A5B00744841 /* AnalysisView.swift in Sources */,
+				3E42F79A295C8A5B00744841 /* VisionHelpers.swift in Sources */,
+				3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */,
+				3E42F7A1295C8A5B00744841 /* Textbox.swift in Sources */,
+				3E42F7AE295C8A5B00744841 /* StartPageView.swift in Sources */,
+				3E42F79C295C8A5B00744841 /* GradientDescent.swift in Sources */,
+				3E42F7A8295C8A5B00744841 /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E42F704295C866E00744841 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */,
+				3E42F72D295C86BC00744841 /* LooomityTests.swift in Sources */,
+				3E42F72C295C86BC00744841 /* GradientDescentTests.swift in Sources */,
+				3E42F72B295C86BC00744841 /* BoxPlacementTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3E42F70E295C866E00744841 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E42F719295C866E00744841 /* LoomityUITestsLaunchTests.swift in Sources */,
+				3E42F717295C866E00744841 /* LoomityUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3E42F70A295C866E00744841 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E42F6F7295C866C00744841 /* Loomity */;
+			targetProxy = 3E42F709295C866E00744841 /* PBXContainerItemProxy */;
+		};
+		3E42F714295C866E00744841 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E42F6F7295C866C00744841 /* Loomity */;
+			targetProxy = 3E42F713295C866E00744841 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3E42F71A295C866E00744841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3E42F71B295C866E00744841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3E42F71D295C866E00744841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Loomity/Preview Content\"";
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This will allow you to analyze photos from your camera.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to the gallery.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your gallery.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.Loomity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3E42F71E295C866E00744841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Loomity/Preview Content\"";
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This will allow you to analyze photos from your camera.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to the gallery.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your gallery.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.Loomity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3E42F720295C866E00744841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LoomityTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Loomity.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Loomity";
+			};
+			name = Debug;
+		};
+		3E42F721295C866E00744841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LoomityTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Loomity.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Loomity";
+			};
+			name = Release;
+		};
+		3E42F723295C866E00744841 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LoomityUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Loomity;
+			};
+			name = Debug;
+		};
+		3E42F724295C866E00744841 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = LD3D7VUY6P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LoomityUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Loomity;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3E42F6F3295C866C00744841 /* Build configuration list for PBXProject "Loomity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E42F71A295C866E00744841 /* Debug */,
+				3E42F71B295C866E00744841 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E42F71C295C866E00744841 /* Build configuration list for PBXNativeTarget "Loomity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E42F71D295C866E00744841 /* Debug */,
+				3E42F71E295C866E00744841 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E42F71F295C866E00744841 /* Build configuration list for PBXNativeTarget "LoomityTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E42F720295C866E00744841 /* Debug */,
+				3E42F721295C866E00744841 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3E42F722295C866E00744841 /* Build configuration list for PBXNativeTarget "LoomityUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E42F723295C866E00744841 /* Debug */,
+				3E42F724295C866E00744841 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3E42F6F0295C866C00744841 /* Project object */;
+}
