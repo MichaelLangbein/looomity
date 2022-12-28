@@ -14,6 +14,10 @@ struct WelcomeView: View {
         VStack {
             Spacer()
             Text("Welcome to Loomity!")
+            Image("nobackground")
+                .resizable()
+                .frame(width: 300, height: 300)
+            Text("Loomity is a tool to help you determine the proportions of faces in your photos.")
             Spacer()
         }
     }
@@ -24,7 +28,7 @@ struct SelectView: View {
         VStack {
             Spacer()
             Text("You can select a model by tapping on it.")
-            GifView("Select").frame(width: 200, height: 200)
+            GifView("SelectGif").frame(width: 200, height: 200)
             Text("You can de-select a model again by tapping on the background.")
             Spacer()
         }.navigationTitle("Selection")
@@ -36,7 +40,7 @@ struct RotateView: View {
         VStack {
             Spacer()
             Text("You can rotate a model by dragging with one finger.")
-            GifView("Rotate").frame(width: 200, height: 200)
+            GifView("RotateGif").frame(width: 200, height: 200)
             Spacer()
         }
     }
@@ -47,7 +51,7 @@ struct ScaleView: View {
         VStack {
             Spacer()
             Text("You can scale a model by pinching with two fingers.")
-            GifView("Scale").frame(width: 200, height: 200)
+            GifView("ScaleGif").frame(width: 200, height: 200)
             Spacer()
         }
     }
@@ -58,7 +62,7 @@ struct TranslateView: View {
         VStack {
             Spacer()
             Text("You can translate a model by panning with two fingers.")
-            GifView("Translate").frame(width: 200, height: 200)
+            GifView("PanGif").frame(width: 200, height: 200)
             Text("If no model is selected, the whole scene will be translated instead.")
             Spacer()
         }
@@ -78,11 +82,14 @@ struct ToolsView: View {
 struct TutorialView: View {
     
     @Binding var show: Bool
+    var withIntro = true
     
     var body: some View {
         TabView {
             
-            WelcomeView()
+            if withIntro {
+                WelcomeView()
+            }
             SelectView()
             RotateView()
             ScaleView()

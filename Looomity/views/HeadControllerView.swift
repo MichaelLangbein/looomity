@@ -77,7 +77,7 @@ struct HeadControllerView: View {
             }
         }
         .sheet(isPresented: $showHelp) {
-            TutorialView(show: $showHelp)
+            TutorialView(show: $showHelp, withIntro: false)
         }
         .onRotate { newOrientation in
             orientation = newOrientation
