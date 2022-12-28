@@ -8,18 +8,15 @@
 import SwiftUI
 
 
-
-struct WelcomeView: View {
+struct ConceptView:  View {
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Welcome to Loomity!")
-            Image("nobackground")
-                .resizable()
-                .frame(width: 300, height: 300)
+        VStack (alignment: .center, spacing: 9) {
             Text("Loomity is a tool to help you determine the proportions of faces in your photos.")
-            Spacer()
+                .multilineTextAlignment(.center)
+            Text("It overlays a [Loomis-head](https://gvaat.com/blog/how-to-draw-the-head-using-the-loomis-method-a-step-by-step-guide/) over your photo's so that you can compare a face's proportions with a reference.")
+                .multilineTextAlignment(.center)
         }
+        .textBox()
     }
 }
 
@@ -31,7 +28,9 @@ struct SelectView: View {
             GifView("SelectGif").frame(width: 200, height: 200)
             Text("You can de-select a model again by tapping on the background.")
             Spacer()
-        }.navigationTitle("Selection")
+        }
+        .textBox()
+        .navigationTitle("Selection")
     }
 }
 
@@ -42,7 +41,7 @@ struct RotateView: View {
             Text("You can rotate a model by dragging with one finger.")
             GifView("RotateGif").frame(width: 200, height: 200)
             Spacer()
-        }
+        }.textBox()
     }
 }
 
@@ -53,7 +52,7 @@ struct ScaleView: View {
             Text("You can scale a model by pinching with two fingers.")
             GifView("ScaleGif").frame(width: 200, height: 200)
             Spacer()
-        }
+        }.textBox()
     }
 }
 
@@ -65,7 +64,7 @@ struct TranslateView: View {
             GifView("PanGif").frame(width: 200, height: 200)
             Text("If no model is selected, the whole scene will be translated instead.")
             Spacer()
-        }
+        }.textBox()
     }
 }
 
@@ -74,7 +73,7 @@ struct ToolsView: View {
         VStack {
             Text("You can switch between a perspective and an orthographic view.")
             Text("You can save your current view to your gallery.")
-        }
+        }.textBox()
     }
 }
 
@@ -82,14 +81,11 @@ struct ToolsView: View {
 struct TutorialView: View {
     
     @Binding var show: Bool
-    var withIntro = true
     
     var body: some View {
         TabView {
-            
-            if withIntro {
-                WelcomeView()
-            }
+
+            ConceptView()
             SelectView()
             RotateView()
             ScaleView()

@@ -45,7 +45,7 @@ struct SelectImageView: View {
                             Text("Analyze")
                         }.buttonStyle(.borderedProminent)
                     }
-                }
+                }.padding()
 
             }
         }

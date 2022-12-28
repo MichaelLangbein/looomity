@@ -27,6 +27,10 @@
 		3E3C4BEE295A35C200D69952 /* HeadControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C4BED295A35C200D69952 /* HeadControllerView.swift */; };
 		3E3C7F432959A0EB0076BBE9 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */; };
 		3E416047294DC0090040A521 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E416046294DC0090040A521 /* Experiments.swift */; };
+		3E42F6E8295C74FD00744841 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6E7295C74FD00744841 /* WelcomeView.swift */; };
+		3E42F6EA295C767500744841 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6E9295C767500744841 /* AboutView.swift */; };
+		3E42F6EC295C772800744841 /* TrialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6EB295C772800744841 /* TrialView.swift */; };
+		3E42F6EE295C7E1500744841 /* Textbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6ED295C7E1500744841 /* Textbox.swift */; };
 		3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */; };
 		3E5884992916FEE70063647C /* GradientDescent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E5884982916FEE70063647C /* GradientDescent.swift */; };
 		3E58849D29170A660063647C /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E58849C29170A660063647C /* Loomis_Head.usdz */; };
@@ -88,6 +92,10 @@
 		3E3C7F41295995ED0076BBE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3E3C7F422959A0EB0076BBE9 /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		3E416046294DC0090040A521 /* Experiments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
+		3E42F6E7295C74FD00744841 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		3E42F6E9295C767500744841 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		3E42F6EB295C772800744841 /* TrialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialView.swift; sourceTree = "<group>"; };
+		3E42F6ED295C7E1500744841 /* Textbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Textbox.swift; sourceTree = "<group>"; };
 		3E454584294CAF7F007B1E07 /* SceneKitHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneKitHelpers.swift; sourceTree = "<group>"; };
 		3E5884982916FEE70063647C /* GradientDescent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescent.swift; sourceTree = "<group>"; };
 		3E58849C29170A660063647C /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = Loomis_Head.usdz; path = ../../../../Downloads/Loomis_Head.usdz; sourceTree = "<group>"; };
@@ -175,6 +183,7 @@
 				3E397B742951EA8400EC637F /* AnimationExtension.swift */,
 				3E397B762951F10800EC637F /* ImageExtension.swift */,
 				3E3C4BEB295A216900D69952 /* OrientationExtension.swift */,
+				3E42F6ED295C7E1500744841 /* Textbox.swift */,
 			);
 			path = extensions;
 			sourceTree = "<group>";
@@ -216,6 +225,8 @@
 			isa = PBXGroup;
 			children = (
 				3E35BF1A29179E5C00F3AA45 /* StartPageView.swift */,
+				3E42F6E7295C74FD00744841 /* WelcomeView.swift */,
+				3E42F6EB295C772800744841 /* TrialView.swift */,
 				3E3C4BE7295A098200D69952 /* TutorialView.swift */,
 				3E07FA0D294B22F500E8E9E1 /* SelectImageView.swift */,
 				3E07FA0F294B40C100E8E9E1 /* AnalysisView.swift */,
@@ -224,6 +235,7 @@
 				3E382B572916A28000CCA2AF /* HeadView.swift */,
 				3E35BF1C2917A22600F3AA45 /* HelpView.swift */,
 				3E416046294DC0090040A521 /* Experiments.swift */,
+				3E42F6E9295C767500744841 /* AboutView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -344,11 +356,14 @@
 				3E382B5A2916A51D00CCA2AF /* VisionHelpers.swift in Sources */,
 				3E397B772951F10800EC637F /* ImageExtension.swift in Sources */,
 				3E371F8A295B8EA60052466D /* GifView.swift in Sources */,
+				3E42F6EE295C7E1500744841 /* Textbox.swift in Sources */,
+				3E42F6E8295C74FD00744841 /* WelcomeView.swift in Sources */,
 				3E397B752951EA8400EC637F /* AnimationExtension.swift in Sources */,
 				3E3C7F432959A0EB0076BBE9 /* ImageSaver.swift in Sources */,
 				3E454585294CAF7F007B1E07 /* SceneKitHelpers.swift in Sources */,
 				3E07FA0E294B22F500E8E9E1 /* SelectImageView.swift in Sources */,
 				3E382B56291699D400CCA2AF /* ImagePickerView.swift in Sources */,
+				3E42F6EA295C767500744841 /* AboutView.swift in Sources */,
 				3E3C4BEE295A35C200D69952 /* HeadControllerView.swift in Sources */,
 				3E397B7A2951FAAE00EC637F /* DataStructures.swift in Sources */,
 				3E382B582916A28000CCA2AF /* HeadView.swift in Sources */,
@@ -356,6 +371,7 @@
 				3E35BF1D2917A22600F3AA45 /* HelpView.swift in Sources */,
 				3E5884992916FEE70063647C /* GradientDescent.swift in Sources */,
 				3E382B472916943F00CCA2AF /* LooomityApp.swift in Sources */,
+				3E42F6EC295C772800744841 /* TrialView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,7 +519,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Looomity/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This way you an analyze photos from your camera.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This way you can analyze photos from your camera.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -544,7 +560,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Looomity/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This way you an analyze photos from your camera.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "This way you can analyze photos from your camera.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "This will save your current view to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This way you can analyze photos from your library.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;

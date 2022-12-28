@@ -1,13 +1,6 @@
 #  TODOs
 
 
-- Onboarding
-    - Create animations: https://editor.rive.app/file/new-file/307063/500/500
-    
-- License:
-    - Loomis-Head: 
-        - https://sketchfab.com/3d-models/loomis-head-b7e2cd611d844df9b69efdc9be6d0215
-        - https://creativecommons.org/licenses/by/4.0/
 
 - Payment
     - Free week

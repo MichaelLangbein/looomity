@@ -9,12 +9,9 @@ import SwiftUI
 
 struct StartPageView: View {
     
-    // AppStorage is a wrapper for UserDefaults.standard
-    @AppStorage("displayOnboarding") private var displayOnboarding: Bool = true
-    
     
     init() {
-        // works globally
+        // applies globally
         
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithTransparentBackground()
@@ -30,10 +27,7 @@ struct StartPageView: View {
     var body: some View {
         NavigationView {
             VStack {
-                SelectImageView()
-            }
-            .fullScreenCover(isPresented: $displayOnboarding) {
-                TutorialView(show: $displayOnboarding)
+                WelcomeView()
             }
         }
     }
