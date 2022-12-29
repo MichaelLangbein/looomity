@@ -1,6 +1,9 @@
 #  TODOs
 
 
+- Optimization
+    - Grad-Desc works, but face-landmarks are being projected incorrectly.
+    - Have re-created Marker-View to find where things go wrong.
 
 - Payment
     - Free week

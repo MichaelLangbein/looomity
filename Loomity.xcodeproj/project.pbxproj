@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3E1BF40E295C8CC100B8947A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E1BF40D295C8CC000B8947A /* Assets.xcassets */; };
 		3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E3081FC295DD077003E1C5A /* loomisNew.usdz */; };
+		3E3E95E1295E1ECE0013BA85 /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */; };
 		3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6FB295C866C00744841 /* LoomityApp.swift */; };
 		3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F702295C866E00744841 /* Preview Assets.xcassets */; };
 		3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F70C295C866E00744841 /* LoomityTests.swift */; };
@@ -68,6 +69,7 @@
 /* Begin PBXFileReference section */
 		3E1BF40D295C8CC000B8947A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E3081FC295DD077003E1C5A /* loomisNew.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = loomisNew.usdz; sourceTree = "<group>"; };
+		3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
 		3E42F6F8295C866C00744841 /* Loomity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Loomity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E42F6FB295C866C00744841 /* LoomityApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityApp.swift; sourceTree = "<group>"; };
 		3E42F702295C866E00744841 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -251,6 +253,7 @@
 				3E42F794295C8A5B00744841 /* TutorialView.swift */,
 				3E42F791295C8A5B00744841 /* TrialView.swift */,
 				3E42F792295C8A5B00744841 /* Experiments.swift */,
+				3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -402,6 +405,7 @@
 				3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */,
 				3E42F7A4295C8A5B00744841 /* AboutView.swift in Sources */,
 				3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */,
+				3E3E95E1295E1ECE0013BA85 /* MarkerView.swift in Sources */,
 				3E42F79B295C8A5B00744841 /* ReconstructionHelpers.swift in Sources */,
 				3E42F7A3295C8A5B00744841 /* OrientationExtension.swift in Sources */,
 				3E42F79E295C8A5B00744841 /* ImageSaver.swift in Sources */,

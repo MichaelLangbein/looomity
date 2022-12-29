@@ -39,6 +39,11 @@ struct HeadControllerView: View {
                 activeFace: $activeFace
             ).ignoresSafeArea()
             
+            MarkerView(
+                observations: observations,
+                image: image
+            ).ignoresSafeArea()
+            
             if orientation == .landscapeRight || orientation == .landscapeLeft {
                 HStack {
                     Spacer()
