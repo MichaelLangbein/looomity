@@ -9,7 +9,16 @@ import UIKit
 import Vision
 
 
-func detectFace(uiImage: UIImage, callback: @escaping ([VNFaceObservation]) -> Void) {
+func detectFacesWithLandmarks(uiImage: UIImage, callback: @escaping ([VNFaceObservation]) -> Void) {
+    detectFaces(uiImage: uiImage) { baseObservations in
+        detectLandmarks(uiImage: uiImage, observations: baseObservations) { landmarkObservations in
+            callback(landmarkObservations)
+        }
+    }
+}
+
+
+func detectFaces(uiImage: UIImage, callback: @escaping ([VNFaceObservation]) -> Void) {
     guard let cgImage = uiImage.cgImage else { return }
     guard let orientation = CGImagePropertyOrientation(
         rawValue: UInt32(uiImage.imageOrientation.rawValue)) else {return}

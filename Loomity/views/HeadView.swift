@@ -44,7 +44,7 @@ struct HeadView: View {
                 height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
                 ar: Float(image.size.width / image.size.height),
                 loadNodes: { view, scene, camera in
-                    return self.getNodes(scene: scene)
+                    return self.getNodes(view: view, scene: scene)
                 },
                 onTap: { gesture, view, nodes in
                     focusOnObservation(view: view, gesture: gesture, nodes: nodes)
@@ -341,10 +341,10 @@ struct HeadView: View {
         return figure
     }
     
-    func getNodes(scene: SCNScene) -> [SCNNode] {
+    func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
 
         // loading model
-        guard let loadedScene = SCNScene(named: "Loomis_Head.usdz") else { return [] }
+        guard let loadedScene = SCNScene(named: "loomisNew.usdz") else { return [] }
         let figure = loadedScene.rootNode
         
         var nodes: [SCNNode] = []
@@ -390,19 +390,19 @@ struct HeadView: View {
         for observation in observations {
             
             // Unwrapping face-detection parameters
-            let roll = Float(truncating: observation.roll!)
+            let roll  = Float(truncating: observation.roll!)
             let pitch = Float(truncating: observation.pitch!)
-            let yaw = Float(truncating: observation.yaw!)
+            let yaw   = Float(truncating: observation.yaw!)
             
-            let leftImg = Float(observation.boundingBox.minX)
-            let rightImg = Float(observation.boundingBox.maxX)
-            let topImg = Float(observation.boundingBox.maxY)
+            let leftImg   = Float(observation.boundingBox.minX)
+            let rightImg  = Float(observation.boundingBox.maxX)
+            let topImg    = Float(observation.boundingBox.maxY)
             let bottomImg = Float(observation.boundingBox.minY)
             
-            let wImg = rightImg - leftImg
-            let hImg = topImg - bottomImg
-            let xImg = leftImg   + wImg / 2.0
-            let yImg = bottomImg + hImg / 2.0
+            let wImg   = rightImg - leftImg
+            let hImg   = topImg - bottomImg
+            let xImg   = leftImg   + wImg / 2.0
+            let yImg   = bottomImg + hImg / 2.0
             let xScene = 2.0 * xImg - 1.0
             let yScene = (2.0 * yImg - 1.0) * Float(ar)
             let cWorld = SCNVector3(x: xScene, y: yScene, z: 0)
@@ -411,7 +411,7 @@ struct HeadView: View {
             
             // we only use width for scale factor because face-detection doesn't include forehead,
             // rendering the height-value useless for scaling.
-            let scaleFactor = 1.3 * (wImg) / figure.boundingSphere.radius
+            let scaleFactor = 3.0 * 1.3 * (wImg) / figure.boundingSphere.radius
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
@@ -422,13 +422,15 @@ struct HeadView: View {
             applyPopAnimation(node: f)
             
             nodes.append(f)
+//             let fOptimized = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
+//             nodes.append(fOptimized)
         }
         
         return nodes
     }
     
     func getFaceModel() -> SCNNode {
-        let loadedScene = SCNScene(named: "Loomis_Head.usdz")!
+        let loadedScene = SCNScene(named: "loomisNew.usdz")!
         let figure = loadedScene.rootNode
         let f = figure.clone()
         f.position = SCNVector3(x: 0, y: 0, z: 0)

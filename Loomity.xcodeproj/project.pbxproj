@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3E1BF40E295C8CC100B8947A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E1BF40D295C8CC000B8947A /* Assets.xcassets */; };
+		3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E3081FC295DD077003E1C5A /* loomisNew.usdz */; };
 		3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6FB295C866C00744841 /* LoomityApp.swift */; };
 		3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F702295C866E00744841 /* Preview Assets.xcassets */; };
 		3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F70C295C866E00744841 /* LoomityTests.swift */; };
@@ -15,7 +16,6 @@
 		3E42F719295C866E00744841 /* LoomityUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F718295C866E00744841 /* LoomityUITestsLaunchTests.swift */; };
 		3E42F72B295C86BC00744841 /* BoxPlacementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F725295C86B600744841 /* BoxPlacementTests.swift */; };
 		3E42F72C295C86BC00744841 /* GradientDescentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F726295C86B600744841 /* GradientDescentTests.swift */; };
-		3E42F72D295C86BC00744841 /* LooomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F727295C86B600744841 /* LooomityTests.swift */; };
 		3E42F742295C873900744841 /* Loomis_Head.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73C295C873900744841 /* Loomis_Head.usdz */; };
 		3E42F743295C873900744841 /* PanGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73D295C873900744841 /* PanGif.gif */; };
 		3E42F744295C873900744841 /* RotateGif.gif in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F73E295C873900744841 /* RotateGif.gif */; };
@@ -67,6 +67,7 @@
 
 /* Begin PBXFileReference section */
 		3E1BF40D295C8CC000B8947A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3E3081FC295DD077003E1C5A /* loomisNew.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = loomisNew.usdz; sourceTree = "<group>"; };
 		3E42F6F8295C866C00744841 /* Loomity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Loomity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E42F6FB295C866C00744841 /* LoomityApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityApp.swift; sourceTree = "<group>"; };
 		3E42F702295C866E00744841 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -77,7 +78,6 @@
 		3E42F718295C866E00744841 /* LoomityUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		3E42F725295C86B600744841 /* BoxPlacementTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoxPlacementTests.swift; sourceTree = "<group>"; };
 		3E42F726295C86B600744841 /* GradientDescentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientDescentTests.swift; sourceTree = "<group>"; };
-		3E42F727295C86B600744841 /* LooomityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LooomityTests.swift; sourceTree = "<group>"; };
 		3E42F73C295C873900744841 /* Loomis_Head.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = Loomis_Head.usdz; sourceTree = "<group>"; };
 		3E42F73D295C873900744841 /* PanGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = PanGif.gif; sourceTree = "<group>"; };
 		3E42F73E295C873900744841 /* RotateGif.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = RotateGif.gif; sourceTree = "<group>"; };
@@ -161,6 +161,7 @@
 			children = (
 				3E42F6FB295C866C00744841 /* LoomityApp.swift */,
 				3E1BF40D295C8CC000B8947A /* Assets.xcassets */,
+				3E3081FC295DD077003E1C5A /* loomisNew.usdz */,
 				3E42F73C295C873900744841 /* Loomis_Head.usdz */,
 				3E42F73D295C873900744841 /* PanGif.gif */,
 				3E42F73E295C873900744841 /* RotateGif.gif */,
@@ -189,7 +190,6 @@
 				3E42F70C295C866E00744841 /* LoomityTests.swift */,
 				3E42F725295C86B600744841 /* BoxPlacementTests.swift */,
 				3E42F726295C86B600744841 /* GradientDescentTests.swift */,
-				3E42F727295C86B600744841 /* LooomityTests.swift */,
 			);
 			path = LoomityTests;
 			sourceTree = "<group>";
@@ -362,6 +362,7 @@
 				3E42F748295C875200744841 /* TODO.md in Resources */,
 				3E42F744295C873900744841 /* RotateGif.gif in Resources */,
 				3E42F742295C873900744841 /* Loomis_Head.usdz in Resources */,
+				3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */,
 				3E42F745295C873900744841 /* ScaleGif.gif in Resources */,
 				3E42F743295C873900744841 /* PanGif.gif in Resources */,
 				3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */,
@@ -424,7 +425,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */,
-				3E42F72D295C86BC00744841 /* LooomityTests.swift in Sources */,
 				3E42F72C295C86BC00744841 /* GradientDescentTests.swift in Sources */,
 				3E42F72B295C86BC00744841 /* BoxPlacementTests.swift in Sources */,
 			);

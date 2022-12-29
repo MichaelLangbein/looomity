@@ -131,7 +131,6 @@ func imageSpace2ClipSpace(_ x: Float, _ y: Float) -> SCNVector4 {
     )
 }
 
-
 func midpoint(_ v1: SCNVector4, _ v2: SCNVector4) -> SCNVector4 {
     return SCNVector4(
         x: (v1.x + v2.x) / 2.0,
@@ -157,7 +156,6 @@ func scalarProd(_ scalar: Float, _ vec: SCNVector4) -> SCNVector4 {
         w: scalar * vec.w
     )
 }
-
 
 func applyCustomShader(_ node: SCNNode) {
     node.geometry?.firstMaterial?.transparencyMode = .aOne

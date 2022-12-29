@@ -7,6 +7,16 @@
 
 import SceneKit
 
+func project(node: SCNNode, sceneView: SCNView) -> SCNVector3 {
+    let nodeWorldPos = node.worldPosition
+    // image coordinates are:
+    // x: left(0) -> right(high)
+    // y: top(0) -> bottom(high)
+    // z: 1?
+    let nodeImgCoords = sceneView.projectPoint(nodeWorldPos)
+    return nodeImgCoords
+}
+
 
 func applyPopAnimation(node: SCNNode, minScale: Float = 0.9, maxScale: Float = 1.1, duration: Double = 0.2) {
     let s = node.scale

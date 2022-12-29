@@ -29,7 +29,7 @@ struct AnalysisView: View {
             }
         }
         .onAppear {
-            detectFace(uiImage: image) { obs in
+            detectFacesWithLandmarks(uiImage: image) { obs in
                 observations = obs
                 currentState = .done
             }

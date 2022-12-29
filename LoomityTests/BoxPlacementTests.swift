@@ -7,7 +7,7 @@
 
 import XCTest
 import SceneKit
-@testable import Looomity
+@testable import Loomity
 
 
 final class BoxPlacementTests: XCTestCase {
@@ -110,8 +110,6 @@ final class BoxPlacementTests: XCTestCase {
         setUp()
         
         let arImg = Float(self.wImg) / Float(self.hImg)
-        let frame = self.sceneView.frame
-        let arCam = Float(frame.width) / Float(frame.height)
         
         let cameraNode = self.sceneView.scene!.rootNode.childNode(withName: "Camera", recursively: true)!
         let plane = self.sceneView.scene!.rootNode.childNode(withName: "Plane", recursively: true)!
