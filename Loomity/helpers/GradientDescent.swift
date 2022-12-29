@@ -48,25 +48,21 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
     func f(x: [Float]) -> Float {
         head.position.x = x[0]
         head.position.y = x[1]
-        head.eulerAngles.x = x[2]
-        head.eulerAngles.y = x[3]
-        head.eulerAngles.z = x[4]
-        head.scale.x = x[5]
-        head.scale.y = x[5]
-        head.scale.z = x[5]
+        // optimization works best when we only focus on the most important paras.
+        // seems to struggle with scale in particular.
+//        head.eulerAngles.x = x[2]
+//        head.eulerAngles.y = x[3]
+//        head.eulerAngles.z = x[4]
+//        head.scale.x = x[5]
+//        head.scale.y = x[5]
+//        head.scale.z = x[5]
         let s = sse(sceneView: sceneView, head: head, observation: observation, image: image)
         return s
     }
-    let initial = [head.position.x, head.position.y, head.eulerAngles.x, head.eulerAngles.y, head.eulerAngles.z, head.scale.x]
+    let initial = [head.position.x, head.position.y]
     let optimal = gd(f: f, initial: initial)
     head.position.x = optimal[0]
     head.position.y = optimal[1]
-    head.eulerAngles.x = optimal[2]
-    head.eulerAngles.y = optimal[3]
-    head.eulerAngles.z = optimal[4]
-    head.scale.x = optimal[5]
-    head.scale.y = optimal[5]
-    head.scale.z = optimal[5]
     return head
 }
 
@@ -74,9 +70,9 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
 func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
     let alpha: Float = 0.01
     var s: Float = 10_000.0  // size of change
-    let sMax: Float = 0.0001
+    let sMax: Float = 0.00001
     var x = initial
-    let jMax = 300  // max iteration
+    let jMax = 1000  // max iteration
     
     var j = 0
     while s > sMax && j < jMax {
@@ -102,6 +98,38 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
     return x
 }
 
+func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> [Float] {
+    let alpha: Float = 0.01
+    var s: Float = 10_000.0  // size of change
+    let sMax: Float = 0.00001
+    var x = initial
+    let jMax = 1000  // max iteration
+    
+    var j = 0
+    while s > sMax && j < jMax {
+        let fx = f(x)
+        
+        var dfdx = [Float](repeating: 0.0, count: initial.count)
+        for i in 0 ..< initial.count {
+            var dx = x
+            dx[i] += alpha
+            let fdx = f(dx)
+            dfdx[i] = (fdx - fx) / alpha
+        }
+        
+        let r: Float = maxRand * (1.0 - Float(j / jMax))
+        for i in 0 ..< initial.count {
+            x[i] = x[i] - alpha * dfdx[i]   + Float.random(in: -r ... r)
+        }
+        s = size(dfdx)
+        
+        j += 1
+        print("\(s) -- \(x)")
+    }
+
+    return x
+}
+
 func size(_ arr: [Float]) -> Float {
     var sum: Float = 0.0
     for v in arr {
@@ -113,6 +141,65 @@ func size(_ arr: [Float]) -> Float {
 
 func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, image: UIImage) -> Float {
     
+
+    /**
+ar = imgH / imgW
+    
+         1  ┌──────────────────────────────────┐      imgCoords│ sceeenCoords
+            ▲                                  │               │1
+            │                                  │               │
+            │                                  │               │
+            │                                  │             1 │0.5 + ar/2
+  0.5+ ar/2 │▲ 1                               │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │0.5
+      0.5│  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │               │
+         │  ││                                 │            0  │0.5 - ar/2
+ 0.5 - ar/2 ├┴────────────────────────────────►│               │
+            │0                                1│               │
+            │                                  │               │
+            │                                  │               │
+          0 ├──────────────────────────────────┘►              │0
+            0                                 1
+
+ imgCoords 0                                   1
+           ─────────────────────────────────────
+           0                                   1
+ screenCoords
+*/
+     
+    let scene_w = sceneView.frame.width
+    let scene_h = sceneView.frame.height
+    
+    let img_w = image.size.width
+    let img_h = image.size.height
+    
+    var xOffset = 0.0
+    var xScale = 1.0
+    var yOffset = 0.0
+    var yScale = 1.0
+    if scene_w > scene_h { // landscape
+        let ar = img_w / img_h
+        xOffset = 0.5 - (ar / 2.0)
+        xScale = ar
+    }
+    else { // portrait
+        let ar = img_h / img_w
+        yOffset = 0.5 - (ar / 2.0)
+        yScale = ar
+    }
+    
+    
     // get important points from model
     let leftEyeL  = head.childNode(withName: "left_eye_left", recursively: true)!
     let leftEyeR  = head.childNode(withName: "left_eye_right", recursively: true)!
@@ -120,14 +207,15 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
     let rightEyeR = head.childNode(withName: "right_eye_right", recursively: true)!
     let nose      = head.childNode(withName: "nose_center", recursively: true)!
     let mouth     = head.childNode(withName: "mouth_center", recursively: true)!
+    
 
     // project those points
-    let leftEyeLProjected  = sceneProjToImageCoords(sceneView.projectPoint(leftEyeL.worldPosition))
-    let leftEyeRProjected  = sceneProjToImageCoords(sceneView.projectPoint(leftEyeR.worldPosition))
-    let rightEyeLProjected = sceneProjToImageCoords(sceneView.projectPoint(rightEyeL.worldPosition))
-    let rightEyeRProjected = sceneProjToImageCoords(sceneView.projectPoint(rightEyeR.worldPosition))
-    let noseProjected      = sceneProjToImageCoords(sceneView.projectPoint(nose.worldPosition))
-    let mouthProjected     = sceneProjToImageCoords(sceneView.projectPoint(mouth.worldPosition))
+    let leftEyeLProjected  = sceneProjToImageCoords(sceneView.projectPoint(leftEyeL.worldPosition),  xOffset, xScale, yOffset, yScale)
+    let leftEyeRProjected  = sceneProjToImageCoords(sceneView.projectPoint(leftEyeR.worldPosition),  xOffset, xScale, yOffset, yScale)
+    let rightEyeLProjected = sceneProjToImageCoords(sceneView.projectPoint(rightEyeL.worldPosition), xOffset, xScale, yOffset, yScale)
+    let rightEyeRProjected = sceneProjToImageCoords(sceneView.projectPoint(rightEyeR.worldPosition), xOffset, xScale, yOffset, yScale)
+    let noseProjected      = sceneProjToImageCoords(sceneView.projectPoint(nose.worldPosition),      xOffset, xScale, yOffset, yScale)
+    let mouthProjected     = sceneProjToImageCoords(sceneView.projectPoint(mouth.worldPosition),     xOffset, xScale, yOffset, yScale)
 
     // get important points from image
     let landmarks = observation.landmarks!
@@ -213,10 +301,10 @@ private func centerPoint(_ points: [CGPoint]) -> CGPoint {
 }
 
 
-private func sceneProjToImageCoords(_ v: SCNVector3) -> CGPoint {
+private func sceneProjToImageCoords(_ v: SCNVector3, _ xOffset: Double, _ xScale: Double, _ yOffset: Double, _ yScale: Double) -> CGPoint {
     return CGPoint(
-        x:       Double(v.x),
-        y: 1.0 - Double(v.y)
+        x:       (Double(v.x) - xOffset) / xScale,
+        y: 1.0 - (Double(v.y) - yOffset) / yScale
     )
 }
 

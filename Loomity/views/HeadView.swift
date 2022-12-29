@@ -421,9 +421,9 @@ struct HeadView: View {
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
             
-            nodes.append(f)
-//             let fOptimized = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-//             nodes.append(fOptimized)
+//            nodes.append(f)
+             let fOptimized = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
+             nodes.append(fOptimized)
         }
         
         return nodes
