@@ -41,7 +41,7 @@ func detectLandmarks(uiImage: UIImage, observations: [VNFaceObservation], callba
         rawValue: UInt32(uiImage.imageOrientation.rawValue)) else {return}
     
     let request = VNDetectFaceLandmarksRequest()
-    //request.inputFaceObservations = observations <-- aparently not even required
+    request.inputFaceObservations = observations
     let handler = VNImageRequestHandler(cgImage: cgImage, orientation: orientation, options: [:])
 
     DispatchQueue.global().async {

@@ -68,27 +68,27 @@ struct MarkerView: View {
                )
                
 
-               ForEach(0 ..< observation.landmarks!.nose!.normalizedPoints.count) { i in
-                   let point = observation.landmarks!.nose!.normalizedPoints[i]
-                      let pointProjected = VNImagePointForFaceLandmarkPoint(
-                        vector_float2(x: Float(point.x), y: Float(point.y)),
-                        observation.boundingBox,
-                        Int(wImg), Int(hImg)
-                      )
-                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
-                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
-                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
-
-                      MyRect(
-                       color: .yellow,
-                       offsetX: pointOffsetX,
-                       offsetY: pointOffsetY,
-                       width: 5,
-                       height: 5
-                      )
-               }
-               ForEach(0 ..< observation.landmarks!.nose!.normalizedPoints.count) { i in
-                   let pt = observation.landmarks!.nose!.normalizedPoints[i]
+//               ForEach(0 ..< observation.landmarks!.nose!.normalizedPoints.count) { i in
+//                   let point = observation.landmarks!.nose!.normalizedPoints[i]
+//                      let pointProjected = VNImagePointForFaceLandmarkPoint(
+//                        vector_float2(x: Float(point.x), y: Float(point.y)),
+//                        observation.boundingBox,
+//                        Int(wImg), Int(hImg)
+//                      )
+//                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
+//                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
+//                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
+//
+//                      MyRect(
+//                       color: .yellow,
+//                       offsetX: pointOffsetX,
+//                       offsetY: pointOffsetY,
+//                       width: 5,
+//                       height: 5
+//                      )
+//               }
+               ForEach(0 ..< observation.landmarks!.leftEyebrow!.normalizedPoints.count) { i in
+                   let pt = observation.landmarks!.leftEyebrow!.normalizedPoints[i]
                    
                    let offsetBboxXImg = observation.boundingBox.minX * wImg
                    let offsetBboxYImg = observation.boundingBox.minY * hImg
@@ -101,64 +101,80 @@ struct MarkerView: View {
                    let yUI = hMinUI +  (hImg - yImg) * alpha
                    
                       MyRect(
-                       color: .blue,
+                       color: .red,
                        offsetX: xUI,
                        offsetY: yUI,
                        width: 5,
                        height: 5
                       )
                }
-               ForEach(0 ..< observation.landmarks!.leftEye!.normalizedPoints.count) { i in
-                   let pt = observation.landmarks!.leftEye!.normalizedPoints[i]
-                   
-                   let offsetBboxXImg = observation.boundingBox.minX * wImg
-                   let offsetBboxYImg = observation.boundingBox.minY * hImg
-                   let wBboxImg       = observation.boundingBox.width * wImg
-                   let hBboxImg       = observation.boundingBox.height * hImg
-                   let xImg = offsetBboxXImg +  pt.x * observation.boundingBox.width * wImg
-                   let yImg = offsetBboxYImg +  pt.y * observation.boundingBox.height * hImg
-                   
-                   let xUI =                   xImg  * alpha
-                   let yUI = hMinUI +  (hImg - yImg) * alpha
-                   
-                      MyRect(
-                       color: .blue,
-                       offsetX: xUI,
-                       offsetY: yUI,
-                       width: 5,
-                       height: 5
-                      )
-               }
-               
-               ForEach(0 ..< observation.landmarks!.rightEye!.normalizedPoints.count) { i in
-                   let point = observation.landmarks!.rightEye!.normalizedPoints[i]
-                   let pointOffsetX =                  point.x  * wImg * alpha
-                   let pointOffsetY = hMinUI +  (1.0 - point.y) * hImg * alpha
-                   
-                      MyRect(
-                       color: .red,
-                       offsetX: pointOffsetX,
-                       offsetY: pointOffsetY,
-                       width: 5,
-                       height: 5
-                      )
-               }
-               ForEach(0 ..< observation.landmarks!.outerLips!.normalizedPoints.count) { i in
-                   let point = observation.landmarks!.outerLips!.normalizedPoints[i]
-                   let pointOffsetX =                  point.x  * wImg * alpha
-                   let pointOffsetY = hMinUI +  (1.0 - point.y) * hImg * alpha
-                   
-                      MyRect(
-                       color: .red,
-                       offsetX: pointOffsetX,
-                       offsetY: pointOffsetY,
-                       width: 5,
-                       height: 5
-                      )
-               }
+//               ForEach(0 ..< observation.landmarks!.rightEyebrow!.normalizedPoints.count) { i in
+//                   let pt = observation.landmarks!.rightEyebrow!.normalizedPoints[i]
+//
+//                   let offsetBboxXImg = observation.boundingBox.minX * wImg
+//                   let offsetBboxYImg = observation.boundingBox.minY * hImg
+//                   let wBboxImg       = observation.boundingBox.width * wImg
+//                   let hBboxImg       = observation.boundingBox.height * hImg
+//                   let xImg = offsetBboxXImg +  pt.x * observation.boundingBox.width * wImg
+//                   let yImg = offsetBboxYImg +  pt.y * observation.boundingBox.height * hImg
+//
+//                   let xUI =                   xImg  * alpha
+//                   let yUI = hMinUI +  (hImg - yImg) * alpha
+//
+//                      MyRect(
+//                       color: .blue,
+//                       offsetX: xUI,
+//                       offsetY: yUI,
+//                       width: 5,
+//                       height: 5
+//                      )
+//               }
+//               let faceBoundingBox = observation.boundingBox.scaled(to: self.view.bounds.size)
+//               let points = convertPointsForFace(observation.landmarks?.leftEye, faceBoundingBox)
            }
        }
     }
+    
+//    func convertPointsForFace(_ landmark: VNFaceLandmarkRegion2D?, _ boundingBox: CGRect) -> [(x: CGFloat, y: CGFloat)] {
+//         if let points = landmark?.normalizedPoints, let count = landmark?.pointCount {
+//             let convertedPoints = convert(points, with: count)
+//
+//             let faceLandmarkPoints = convertedPoints.map { (point: (x: CGFloat, y: CGFloat)) -> (x: CGFloat, y: CGFloat) in
+//                 let pointX = point.x * boundingBox.width + boundingBox.origin.x
+//                 let pointY = point.y * boundingBox.height + boundingBox.origin.y
+//                 return (x: pointX, y: pointY)
+//             }
+//             return faceLandmarkPoints
+//         }
+//     }
+//
+//     func draw(points: [(x: CGFloat, y: CGFloat)]) {
+//         let newLayer = CAShapeLayer()
+//         newLayer.strokeColor = UIColor.red.cgColor
+//         newLayer.lineWidth = 2.0
+//
+//         let path = UIBezierPath()
+//         path.move(to: CGPoint(x: points[0].x, y: points[0].y))
+//         for i in 0..<points.count - 1 {
+//             let point = CGPoint(x: points[i].x, y: points[i].y)
+//             path.addLine(to: point)
+//             path.move(to: point)
+//         }
+//         path.addLine(to: CGPoint(x: points[0].x, y: points[0].y))
+//         newLayer.path = path.cgPath
+//
+//         shapeLayer.addSublayer(newLayer)
+//     }
+//
+//
+//     func convert(_ points: UnsafePointer<vector_float2>, with count: Int) -> [(x: CGFloat, y: CGFloat)] {
+//         var convertedPoints = [(x: CGFloat, y: CGFloat)]()
+//         for i in 0...count {
+//             convertedPoints.append((CGFloat(points[i].x), CGFloat(points[i].y)))
+//         }
+//
+//         return convertedPoints
+//     }
 }
 
 
