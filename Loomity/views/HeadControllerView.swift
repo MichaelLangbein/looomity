@@ -39,10 +39,10 @@ struct HeadControllerView: View {
                 activeFace: $activeFace
             ).ignoresSafeArea()
             
-            LandmarkView(
-                image: image,
-                observations: observations
-            )
+//            MarkerView( // LandmarkView(
+//                observations: observations,
+//                image: image
+//            )
             
             if orientation == .landscapeRight || orientation == .landscapeLeft {
                 HStack {

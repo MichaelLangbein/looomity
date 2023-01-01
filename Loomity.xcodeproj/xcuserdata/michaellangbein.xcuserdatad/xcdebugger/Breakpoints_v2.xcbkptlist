@@ -7,15 +7,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2A6C2493-65BC-4FCF-B4E2-4F9243E22702"
+            uuid = "4CF736D3-E5A5-4E56-A321-1251FD20CC58"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Loomity/helpers/GradientDescent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "262"
-            endingLineNumber = "262"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
             landmarkName = "sse(sceneView:head:observation:image:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -23,32 +23,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B3BCC19D-6F72-41EB-ADAF-C6B1F4182AC3"
+            uuid = "FB27B0B0-81A2-4EA9-A49F-4105276A6148"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Loomity/helpers/GradientDescent.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
-            landmarkName = "gd(f:initial:)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "437C4360-908C-4CAB-ADE9-792638781EF1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Loomity/helpers/GradientDescent.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "230"
-            endingLineNumber = "230"
-            landmarkName = "sse(sceneView:head:observation:image:)"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "sceneProjToImageCoords(_:_:_:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

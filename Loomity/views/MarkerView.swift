@@ -68,46 +68,84 @@ struct MarkerView: View {
                )
                
 
-//               ForEach(0 ..< observation.landmarks!.nose!.normalizedPoints.count) { i in
-//                   let point = observation.landmarks!.nose!.normalizedPoints[i]
-//                      let pointProjected = VNImagePointForFaceLandmarkPoint(
-//                        vector_float2(x: Float(point.x), y: Float(point.y)),
-//                        observation.boundingBox,
-//                        Int(wImg), Int(hImg)
-//                      )
-//                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
-//                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
-//                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
-//
-//                      MyRect(
-//                       color: .yellow,
-//                       offsetX: pointOffsetX,
-//                       offsetY: pointOffsetY,
-//                       width: 5,
-//                       height: 5
-//                      )
-//               }
-               ForEach(0 ..< observation.landmarks!.leftEyebrow!.normalizedPoints.count) { i in
-                   let pt = observation.landmarks!.leftEyebrow!.normalizedPoints[i]
-                   
-                   let offsetBboxXImg = observation.boundingBox.minX * wImg
-                   let offsetBboxYImg = observation.boundingBox.minY * hImg
-                   let wBboxImg       = observation.boundingBox.width * wImg
-                   let hBboxImg       = observation.boundingBox.height * hImg
-                   let xImg = offsetBboxXImg +  pt.x * observation.boundingBox.width * wImg
-                   let yImg = offsetBboxYImg +  pt.y * observation.boundingBox.height * hImg
-                   
-                   let xUI =                   xImg  * alpha
-                   let yUI = hMinUI +  (hImg - yImg) * alpha
-                   
+               ForEach(0 ..< observation.landmarks!.outerLips!.normalizedPoints.count) { i in
+                   let point = observation.landmarks!.outerLips!.normalizedPoints[i]
+                      let pointProjected = VNImagePointForFaceLandmarkPoint(
+                        vector_float2(x: Float(point.x), y: Float(point.y)),
+                        observation.boundingBox,
+                        Int(wImg), Int(hImg)
+                      )
+                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
+                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
+                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
+
                       MyRect(
-                       color: .red,
-                       offsetX: xUI,
-                       offsetY: yUI,
+                       color: .yellow,
+                       offsetX: pointOffsetX,
+                       offsetY: pointOffsetY,
                        width: 5,
                        height: 5
                       )
                }
+               ForEach(0 ..< observation.landmarks!.leftEye!.normalizedPoints.count) { i in
+                   let point = observation.landmarks!.leftEye!.normalizedPoints[i]
+                      let pointProjected = VNImagePointForFaceLandmarkPoint(
+                        vector_float2(x: Float(point.x), y: Float(point.y)),
+                        observation.boundingBox,
+                        Int(wImg), Int(hImg)
+                      )
+                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
+                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
+                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
+
+                      MyRect(
+                       color: .yellow,
+                       offsetX: pointOffsetX,
+                       offsetY: pointOffsetY,
+                       width: 5,
+                       height: 5
+                      )
+               }
+               ForEach(0 ..< observation.landmarks!.rightEye!.normalizedPoints.count) { i in
+                   let point = observation.landmarks!.rightEye!.normalizedPoints[i]
+                      let pointProjected = VNImagePointForFaceLandmarkPoint(
+                        vector_float2(x: Float(point.x), y: Float(point.y)),
+                        observation.boundingBox,
+                        Int(wImg), Int(hImg)
+                      )
+                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
+                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
+                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
+
+                      MyRect(
+                       color: .yellow,
+                       offsetX: pointOffsetX,
+                       offsetY: pointOffsetY,
+                       width: 5,
+                       height: 5
+                      )
+               }
+//               ForEach(0 ..< observation.landmarks!.leftEyebrow!.normalizedPoints.count) { i in
+//                   let pt = observation.landmarks!.leftEyebrow!.normalizedPoints[i]
+//
+//                   let offsetBboxXImg = observation.boundingBox.minX * wImg
+//                   let offsetBboxYImg = observation.boundingBox.minY * hImg
+//                   let wBboxImg       = observation.boundingBox.width * wImg
+//                   let hBboxImg       = observation.boundingBox.height * hImg
+//                   let xImg = offsetBboxXImg +  pt.x * observation.boundingBox.width * wImg
+//                   let yImg = offsetBboxYImg +  pt.y * observation.boundingBox.height * hImg
+//
+//                   let xUI =                   xImg  * alpha
+//                   let yUI = hMinUI +  (hImg - yImg) * alpha
+//
+//                      MyRect(
+//                       color: .red,
+//                       offsetX: xUI,
+//                       offsetY: yUI,
+//                       width: 5,
+//                       height: 5
+//                      )
+//               }
 //               ForEach(0 ..< observation.landmarks!.rightEyebrow!.normalizedPoints.count) { i in
 //                   let pt = observation.landmarks!.rightEyebrow!.normalizedPoints[i]
 //
