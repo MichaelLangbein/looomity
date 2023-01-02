@@ -21,6 +21,9 @@ struct StartPageView: View {
         UINavigationBar.appearance().standardAppearance = navBarAppearance
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.accentColor)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(.accentColor).withAlphaComponent(0.2)
 
     }
     

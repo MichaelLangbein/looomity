@@ -29,6 +29,8 @@ struct ConceptView:  View {
                 .multilineTextAlignment(.center)
             Text("It overlays a [Loomis-head](https://gvaat.com/blog/how-to-draw-the-head-using-the-loomis-method-a-step-by-step-guide/) over your photos so that you can compare a face's proportions with a reference.")
                 .multilineTextAlignment(.center)
+            Text("It tries to place that model nicely over every face in the image, but you may need to do some manual adjustment. The following pages will try to help you do that.")
+                .multilineTextAlignment(.center)
             Spacer()
         }
         .textBox()
@@ -97,7 +99,7 @@ struct ScaleView: View {
                 Button(action: {
                     show = false
                 }, label: {
-                    Image(systemName: "xmark.circle" )
+                    Image(systemName: "xmark.pcircle" )
                         .minimumScaleFactor(0.3)
                         .padding(10)
                 })
@@ -106,6 +108,7 @@ struct ScaleView: View {
             Spacer()
             Text("You can scale a model by pinching with two fingers.")
             GifView("ScaleGif").frame(width: 200, height: 200)
+            Text("If no model is selected, the whole scene will be scaled instead.")
             Spacer()
         }.textBox()
     }
@@ -140,7 +143,7 @@ struct ToolsView: View {
     @Binding var show: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 13) {
+        VStack(alignment: .leading, spacing: 13) {
             HStack {
                 Spacer()
                 Button(action: {

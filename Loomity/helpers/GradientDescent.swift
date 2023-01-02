@@ -66,6 +66,8 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
     return head
 }
 
+// Might also try BNNS Adam: https://developer.apple.com/documentation/accelerate/bnns/adamoptimizer
+
 
 func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
     let alpha: Float = 0.01
@@ -73,6 +75,7 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
     let sMax: Float = 0.00001
     var x = initial
     let jMax = 1000  // max iteration
+    let maxDelta: Float = 0.1  // max change per step
     
     var j = 0
     while s > sMax && j < jMax {
@@ -87,12 +90,21 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
         }
         
         for i in 0 ..< initial.count {
-            x[i] = x[i] - alpha * dfdx[i]
+            var delta = alpha * dfdx[i]
+            if delta > maxDelta {
+                let maxDeltaJ = maxDelta * (Float(jMax - j)) / Float(jMax)
+                let r = Float.random(in: 0.0 ... maxDeltaJ)  // randomizing a little to prevent loops
+                delta =  ( maxDeltaJ + r ) / 2.0
+            } else if delta < -maxDelta {
+                let maxDeltaJ = maxDelta * (Float(jMax - j)) / Float(jMax)
+                let r = Float.random(in: 0.0 ... maxDeltaJ)  // randomizing a little to prevent loops
+                delta = -( maxDeltaJ + r ) / 2.0
+            }
+            x[i] = x[i] - delta
         }
         s = size(dfdx)
         
         j += 1
-        print("\(s) -- \(x)")
     }
 
     return x
@@ -104,6 +116,7 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
     let sMax: Float = 0.00001
     var x = initial
     let jMax = 1000  // max iteration
+    let maxDelta: Float = 0.1  // max change per step
     
     var j = 0
     while s > sMax && j < jMax {
@@ -119,12 +132,17 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
         
         let r: Float = maxRand * (1.0 - Float(j / jMax))
         for i in 0 ..< initial.count {
-            x[i] = x[i] - alpha * dfdx[i]   + Float.random(in: -r ... r)
+            var delta = alpha * dfdx[i]
+            if delta > maxDelta {
+                delta = maxDelta
+            } else if delta < -maxDelta {
+                delta = -maxDelta
+            }
+            x[i] = x[i] - delta + Float.random(in: -r ... r)
         }
         s = size(dfdx)
         
         j += 1
-        print("\(s) -- \(x)")
     }
 
     return x
@@ -264,6 +282,31 @@ private func sceneProjToImageCoords(_ sceneView: SCNView, _ image: UIImage, _ v:
     /*==================================================================
      =          From clipping-coords to screen-relative-coords         =
      =================================================================*/
+
+//    Clipping-space is clipped off where it reaches over the device-bounds
+//    (At least when projection-matrix accounts for aspect-ratio)
+//
+//                     device-screen
+//    ┌────────────┬───────────────────┬─────────────┐ clipping-space
+//    │            │         ▲         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │   X = scene_w / (scene_h * 2) = 0.28125
+//    │            │         │         │             │
+//    │            │         │         │             │
+// -1 │◄───────────┼─────────┼─────────X────────────►│ 1
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         │         │             │
+//    │            │         ▼         │             │
+//    └────────────┴───────────────────┴─────────────┘
+    
     var xClipMin = -1.0
     var xClipMax =  1.0
     var yClipMin = -1.0
@@ -284,6 +327,23 @@ private func sceneProjToImageCoords(_ sceneView: SCNView, _ image: UIImage, _ v:
     /*==================================================================
      =          From screen-relative-coords to img-relative-coords     =
      =================================================================*/
+
+//    ┌──────────────┐ ▲ 1
+//    │              │ │
+//    │              │ │
+//    ├───────────1─▲┤ │ 1.0 - delta = 0.8
+//    │             ││ │
+//    │             ││ │
+//    │             ││ │
+//    │          0.5││ │ 0.5
+//    │             ││ │
+//    │             ││ │
+//    │             ││ │
+//    ├───────────0─┴┤ │ delta = 0.2
+//    │              │ │
+//    │              │ │
+//    └──────────────┘ │ 0
+    
     var xOffset = 0.0
     var yOffset = 0.0
     if scene_w > scene_h { // landscape

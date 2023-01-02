@@ -221,14 +221,14 @@ struct HeadView: View {
         
         switch gesture.state {
         case .began:
-            cameraZOnStartMove = ortho ? Float(camera.orthographicScale) : cameraNode.position.z
+            cameraZOnStartMove = cameraNode.position.z // ortho ? Float(camera.orthographicScale) :
         case .changed:
             guard let z = cameraZOnStartMove else { return }
             var scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
             scaleFactor = min(10, max(0.1, scaleFactor)) // must not go below 0.1 or above 10
             cameraNode.position.z =  z * scaleFactor
-            let f = camera.projectionTransform.m11
-            cameraNode.camera?.orthographicScale = Double(cameraNode.position.z / f)
+            let f = ortho ? Float(camera.focalLength / 12.0) : camera.projectionTransform.m11
+            camera.orthographicScale = Double(cameraNode.position.z / f)
         case .ended:
             cameraZOnStartMove = nil
         case .cancelled, .failed:
