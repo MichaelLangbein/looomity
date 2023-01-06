@@ -1,12 +1,8 @@
 #  TODOs
 
-
-- Better description-text
-
-- Payment
-    - Free week
-    - Then one-time price
-    - https://developer.apple.com/documentation/storekit/in-app_purchase/original_api_for_in-app_purchase/subscriptions_and_offers/implementing_introductory_offers_in_your_app
+- dict.removeValue should also remove key
+- days remaining: initially 7; 
+- 2023-01-06 17:12:17.516281+0100 Loomity[12764:311444] [StoreKit] Making a purchase without listening for transaction updates risks missing successful purchases. Create a Task to iterate Transaction.updates at launch.
 
 
 ## Later
@@ -22,7 +18,7 @@
         - currentOrientation
         - activeFace
         - interaction-states not required.
-    - make the view easily re-creatable from that state
+    - make the view easily recreate-able from that state
     - updates to opacity as well as adding and removing nodes can then be done by manipulating the state object, not by making `onRender` changes to the view.
 
 - Replace UIWindow with Size-Classes

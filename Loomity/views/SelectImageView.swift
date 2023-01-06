@@ -14,39 +14,41 @@ struct SelectImageView: View {
     @State var imageSelectMode: UIImagePickerController.SourceType = .photoLibrary
     
     var body: some View {
-        VStack(alignment: .center) {
-            
-            if (showImagePicker) {
-                ImagePickerView(image: $image, show: $showImagePicker, sourceType: imageSelectMode)
-            }
-            
-            else {
-                Spacer()
+        FullPageView {
+            VStack(alignment: .center) {
                 
-                if let image = self.image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                } else {
-                    Image(systemName: "person.crop.rectangle.fill")
-                        .resizable()
-                        .scaledToFit()
-                        .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
-                        .foregroundColor(.gray)
+                if (showImagePicker) {
+                    ImagePickerView(image: $image, show: $showImagePicker, sourceType: imageSelectMode)
                 }
                 
-                Spacer()
-                
-                HStack {
-                    Button("Gallery", action: pickFromGallery).buttonStyle(.borderedProminent)
-                    Button("Camera", action: pickFromCamera).buttonStyle(.borderedProminent)
-                    if let img = image {
-                        NavigationLink(destination: AnalysisView(image: img)) {
-                            Text("Loomify")
-                        }.buttonStyle(.borderedProminent)
+                else {
+                    Spacer()
+                    
+                    if let image = self.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                    } else {
+                        Image(systemName: "person.crop.rectangle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
+                            .foregroundColor(.gray)
                     }
-                }.padding()
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Button("Gallery", action: pickFromGallery).buttonStyle(.borderedProminent)
+                        Button("Camera", action: pickFromCamera).buttonStyle(.borderedProminent)
+                        if let img = image {
+                            NavigationLink(destination: AnalysisView(image: img)) {
+                                Text("Loomify")
+                            }.buttonStyle(.borderedProminent)
+                        }
+                    }.padding()
 
+                }
             }
         }
         .navigationBarTitle("Select image", displayMode: .inline)

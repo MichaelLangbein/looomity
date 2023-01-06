@@ -1,0 +1,48 @@
+{
+  "identifier" : "F0ED34F3",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0",
+      "familyShareable" : false,
+      "internalID" : "C6A51E7B",
+      "localizations" : [
+        {
+          "description" : "Try it out for free!",
+          "displayName" : "7 day free frial",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "net.codeandcolors.loomity.LoomityFreeTrial",
+      "referenceName" : "LoomityFreeTrial",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "2.49",
+      "familyShareable" : false,
+      "internalID" : "47620D37",
+      "localizations" : [
+        {
+          "description" : "One-time-purchase",
+          "displayName" : "Buy now",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "net.codeandcolors.loomity.LoomityOneTimePurchase",
+      "referenceName" : "LoomityOneTimePurchase",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

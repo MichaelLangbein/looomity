@@ -7,42 +7,63 @@
 
 import SwiftUI
 
+
+
+
 struct WelcomeView: View {
+    @EnvironmentObject private var purchaseManager: PurchaseManager
+    @State var showTutorial = false
+    
     var body: some View {
-        VStack {
-            Image("nobackground")
-                .resizable()
-                .frame(width: 200, height: 200)
-            
-            VStack (alignment: .center, spacing: 9) {
-                Text("Loomity helps you inspect the proportions of faces in your photos.")
-                    .multilineTextAlignment(.center)
-            }
-            .textBox()
-            
-            VStack {
-                NavigationLink(destination: SelectImageView()) {
-                    Text("Select image")
-                        .frame(maxWidth: .infinity)
+        NavigationView {
+            FullPageView {
+                VStack {
+                    Image("nobackground")
+                        .resizable()
+                        .frame(width: 200, height: 200)
+                    
+                    VStack (alignment: .center, spacing: 9) {
+                        Text("Loomity helps you inspect the proportions of faces in your photos.")
+                            .multilineTextAlignment(.center)
+                    }
+                    .textBox()
+                    
+                    HStack {
+                        NavigationLink(destination: SelectImageView()) {
+                            Text("Select image")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(purchaseManager.purchaseState == .newUser || purchaseManager.purchaseState == .inTrialOver)
+
+                        Button("Tutorial") {
+                            showTutorial = true
+                        }.buttonStyle(.borderedProminent)
+                        
+                        NavigationLink(destination: AboutView()) {
+                            Text("About")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        
+
+                    }
+                    .padding(EdgeInsets(top: 0, leading: UIScreen.main.bounds.width * 0.075, bottom: 0, trailing: UIScreen.main.bounds.width * 0.075))
+                    .fixedSize(horizontal: false, vertical: true)
+                    
+                    TrialView().environmentObject(purchaseManager)
                 }
-                .buttonStyle(.borderedProminent)
-                
-                NavigationLink(destination: AboutView()) {
-                    Text("About")
-                        .frame(maxWidth: .infinity)
+                .sheet(isPresented: $showTutorial) {
+                    TutorialView(show: $showTutorial)
                 }
-                .buttonStyle(.borderedProminent)
             }
-            .fixedSize(horizontal: true, vertical: false)
-            
-//            TrialView()
+            .navigationBarTitle("Welcome to Loomity!")
         }
-        .navigationBarTitle("Welcome to Loomity!")
     }
 }
 
 struct WelcomeView_Previews: PreviewProvider {
     static var previews: some View {
-        WelcomeView()
+        WelcomeView().environmentObject(PurchaseManager())
     }
 }

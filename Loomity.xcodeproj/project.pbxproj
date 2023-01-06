@@ -46,8 +46,10 @@
 		3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F792295C8A5B00744841 /* Experiments.swift */; };
 		3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */; };
 		3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F794295C8A5B00744841 /* TutorialView.swift */; };
-		3E42F7AE295C8A5B00744841 /* StartPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F795295C8A5B00744841 /* StartPageView.swift */; };
 		3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F796295C8A5B00744841 /* HeadView.swift */; };
+		3E66139F296754D400C44098 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E66139E296754D400C44098 /* PurchaseManager.swift */; };
+		3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */; };
+		3E706FD129683A23005F5D12 /* FullPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E706FD029683A23005F5D12 /* FullPageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,8 +112,10 @@
 		3E42F792295C8A5B00744841 /* Experiments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Experiments.swift; sourceTree = "<group>"; };
 		3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOngoingView.swift; sourceTree = "<group>"; };
 		3E42F794295C8A5B00744841 /* TutorialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
-		3E42F795295C8A5B00744841 /* StartPageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartPageView.swift; sourceTree = "<group>"; };
 		3E42F796295C8A5B00744841 /* HeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
+		3E66139E296754D400C44098 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
+		3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = LoomityStoreTest.storekit; path = Loomity/LoomityStoreTest.storekit; sourceTree = "<group>"; };
+		3E706FD029683A23005F5D12 /* FullPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +146,7 @@
 		3E42F6EF295C866C00744841 = {
 			isa = PBXGroup;
 			children = (
+				3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */,
 				3E42F747295C875200744841 /* TODO.md */,
 				3E42F6FA295C866C00744841 /* Loomity */,
 				3E42F70B295C866E00744841 /* LoomityTests */,
@@ -225,6 +230,7 @@
 				3E42F782295C8A5B00744841 /* DataStructures.swift */,
 				3E42F783295C8A5B00744841 /* ImageSaver.swift */,
 				3E42F784295C8A5B00744841 /* SceneKitHelpers.swift */,
+				3E66139E296754D400C44098 /* PurchaseManager.swift */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -244,7 +250,7 @@
 		3E42F78A295C8A5B00744841 /* views */ = {
 			isa = PBXGroup;
 			children = (
-				3E42F795295C8A5B00744841 /* StartPageView.swift */,
+				3E706FD029683A23005F5D12 /* FullPageView.swift */,
 				3E42F78F295C8A5B00744841 /* WelcomeView.swift */,
 				3E42F78B295C8A5B00744841 /* AboutView.swift */,
 				3E42F78C295C8A5B00744841 /* AnalysisView.swift */,
@@ -368,6 +374,7 @@
 				3E42F748295C875200744841 /* TODO.md in Resources */,
 				3E42F744295C873900744841 /* RotateGif.gif in Resources */,
 				3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */,
+				3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */,
 				3E42F745295C873900744841 /* ScaleGif.gif in Resources */,
 				3E42F743295C873900744841 /* PanGif.gif in Resources */,
 				3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */,
@@ -400,6 +407,7 @@
 				3E42F7A7295C8A5B00744841 /* HeadControllerView.swift in Sources */,
 				3E42F797295C8A5B00744841 /* ImagePickerView.swift in Sources */,
 				3E42F7A0295C8A5B00744841 /* AnimationExtension.swift in Sources */,
+				3E66139F296754D400C44098 /* PurchaseManager.swift in Sources */,
 				3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */,
 				3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */,
 				3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */,
@@ -408,6 +416,7 @@
 				3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */,
 				3E42F7A4295C8A5B00744841 /* AboutView.swift in Sources */,
 				3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */,
+				3E706FD129683A23005F5D12 /* FullPageView.swift in Sources */,
 				3E3E95E1295E1ECE0013BA85 /* MarkerView.swift in Sources */,
 				3E42F79B295C8A5B00744841 /* ReconstructionHelpers.swift in Sources */,
 				3E42F7A3295C8A5B00744841 /* OrientationExtension.swift in Sources */,
@@ -421,7 +430,6 @@
 				3E42F79A295C8A5B00744841 /* VisionHelpers.swift in Sources */,
 				3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */,
 				3E42F7A1295C8A5B00744841 /* Textbox.swift in Sources */,
-				3E42F7AE295C8A5B00744841 /* StartPageView.swift in Sources */,
 				3E42F79C295C8A5B00744841 /* GradientDescent.swift in Sources */,
 				3E374FF0296028D4005768C7 /* LandmarkView.swift in Sources */,
 				3E42F7A8295C8A5B00744841 /* WelcomeView.swift in Sources */,
@@ -513,7 +521,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -567,7 +575,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -598,7 +606,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -633,7 +641,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -656,7 +664,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LoomityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -676,7 +684,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = net.codeandcolors.LoomityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

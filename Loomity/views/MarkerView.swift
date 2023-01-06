@@ -42,9 +42,9 @@ struct MarkerView: View {
            ForEach(observations, id: \.uuid) { observation in
                
                
-               let arImg = image.size.width / image.size.height
-               let arUI  = geo.size.width   / geo.size.height
-               
+//               let arImg = image.size.width / image.size.height
+//               let arUI  = geo.size.width   / geo.size.height
+//
                let wUI = geo.size.width
                let hUI = geo.size.height
                let wImg = image.size.width
@@ -70,44 +70,6 @@ struct MarkerView: View {
 
                ForEach(0 ..< observation.landmarks!.outerLips!.normalizedPoints.count) { i in
                    let point = observation.landmarks!.outerLips!.normalizedPoints[i]
-                      let pointProjected = VNImagePointForFaceLandmarkPoint(
-                        vector_float2(x: Float(point.x), y: Float(point.y)),
-                        observation.boundingBox,
-                        Int(wImg), Int(hImg)
-                      )
-                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
-                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
-                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
-
-                      MyRect(
-                       color: .yellow,
-                       offsetX: pointOffsetX,
-                       offsetY: pointOffsetY,
-                       width: 5,
-                       height: 5
-                      )
-               }
-               ForEach(0 ..< observation.landmarks!.leftEye!.normalizedPoints.count) { i in
-                   let point = observation.landmarks!.leftEye!.normalizedPoints[i]
-                      let pointProjected = VNImagePointForFaceLandmarkPoint(
-                        vector_float2(x: Float(point.x), y: Float(point.y)),
-                        observation.boundingBox,
-                        Int(wImg), Int(hImg)
-                      )
-                      let pointProjectedNorm = CGPoint(x: pointProjected.x / wImg, y: pointProjected.y / hImg)
-                      let pointOffsetX =                 pointProjectedNorm.x  * wImg * alpha
-                      let pointOffsetY = hMinUI + (1.0 - pointProjectedNorm.y) * hImg * alpha
-
-                      MyRect(
-                       color: .yellow,
-                       offsetX: pointOffsetX,
-                       offsetY: pointOffsetY,
-                       width: 5,
-                       height: 5
-                      )
-               }
-               ForEach(0 ..< observation.landmarks!.rightEye!.normalizedPoints.count) { i in
-                   let point = observation.landmarks!.rightEye!.normalizedPoints[i]
                       let pointProjected = VNImagePointForFaceLandmarkPoint(
                         vector_float2(x: Float(point.x), y: Float(point.y)),
                         observation.boundingBox,

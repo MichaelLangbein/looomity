@@ -9,9 +9,32 @@ import SwiftUI
 
 @main
 struct LoomityApp: App {
+    @StateObject private var purchaseManager = PurchaseManager()
+    
+    init() {
+        // applies globally
+        
+        // Nav-bar
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithTransparentBackground()
+        navBarAppearance.backgroundColor = .white.withAlphaComponent(0.8)
+//        navBarAppearance.shadowColor = .clear
+        UINavigationBar.appearance().standardAppearance = navBarAppearance
+        UINavigationBar.appearance().compactAppearance = navBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+        
+        // Little points in tutorial view
+        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(.accentColor)
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(.accentColor).withAlphaComponent(0.2)
+    }
+    
     var body: some Scene {
         WindowGroup {
-            StartPageView()
+            WelcomeView()
+                .environmentObject(purchaseManager)
+                .task {
+                    await purchaseManager.updatePurchasedProducts()
+                }
         }
     }
 }

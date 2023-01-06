@@ -17,7 +17,7 @@ struct HeadControllerView: View {
 
     @State var showHelp = false
     @StateObject var taskQueue = Queue<SKVTask>()
-    @State var opacity = 1.0
+    @State var opacity = 0.75
     @State var activeFace: UUID?
     @State var usesOrthographicCam = false
     @State var imageSaved = false

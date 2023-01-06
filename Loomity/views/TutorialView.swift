@@ -8,8 +8,15 @@
 import SwiftUI
 
 
-struct ConceptView:  View {
+struct TutorialPageView<Content: View>: View {
+    let content: Content
     @Binding var show: Bool
+    
+    init(show: Binding<Bool>, @ViewBuilder _ content: () -> Content) {
+        self._show = show
+        self.content = content()
+    }
+
 
     var body: some View {
         VStack(alignment: .center, spacing: 13) {
@@ -25,15 +32,26 @@ struct ConceptView:  View {
             }
             
             Spacer()
-            Text("Loomity is a tool to help you determine the proportions of faces in your photos.")
-                .multilineTextAlignment(.center)
-            Text("It overlays a [Loomis-head](https://gvaat.com/blog/how-to-draw-the-head-using-the-loomis-method-a-step-by-step-guide/) over your photos so that you can compare a face's proportions with a reference.")
-                .multilineTextAlignment(.center)
-            Text("It tries to place that model nicely over every face in the image, but you may need to do some manual adjustment. The following pages will try to help you do that.")
-                .multilineTextAlignment(.center)
+            self.content
             Spacer()
         }
         .textBox()
+    }
+}
+
+
+struct ConceptView:  View {
+    @Binding var show: Bool
+
+    var body: some View {
+        TutorialPageView(show: $show) {
+            Text("Loomity is a tool to help you determine the proportions of faces in your photos.")
+            Text("It overlays a [Loomis-head](https://gvaat.com/blog/how-to-draw-the-head-using-the-loomis-method-a-step-by-step-guide/) over your photos so that you can compare a face's proportions with a reference.")
+            Image("loomified")
+                .resizable()
+                .scaledToFit()
+            Text("It tries to place that model nicely over every face in the image, but you may need to do some manual adjustment. The following pages will try to help you do that.")
+        }
     }
 }
 
@@ -41,27 +59,11 @@ struct SelectView: View {
     @Binding var show: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 13) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    show = false
-                }, label: {
-                    Image(systemName: "xmark.circle" )
-                        .minimumScaleFactor(0.3)
-                        .padding(10)
-                })
-            }
-            
-            Spacer()
+        TutorialPageView(show: $show) {
             Text("You can select a model by tapping on it.")
             GifView("SelectGif").frame(width: 200, height: 200)
             Text("You can de-select a model again by tapping on the background.")
-            Spacer()
-
         }
-        .textBox()
-        .navigationTitle("Selection")
     }
 }
 
@@ -69,23 +71,10 @@ struct RotateView: View {
     @Binding var show: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 13) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    show = false
-                }, label: {
-                    Image(systemName: "xmark.circle" )
-                        .minimumScaleFactor(0.3)
-                        .padding(10)
-                })
-            }
-            
-            Spacer()
+        TutorialPageView(show: $show) {
             Text("You can rotate a model by dragging with one finger.")
             GifView("RotateGif").frame(width: 200, height: 200)
-            Spacer()
-        }.textBox()
+        }
     }
 }
 
@@ -93,24 +82,11 @@ struct ScaleView: View {
     @Binding var show: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 13) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    show = false
-                }, label: {
-                    Image(systemName: "xmark.pcircle" )
-                        .minimumScaleFactor(0.3)
-                        .padding(10)
-                })
-            }
-            
-            Spacer()
+        TutorialPageView(show: $show) {
             Text("You can scale a model by pinching with two fingers.")
             GifView("ScaleGif").frame(width: 200, height: 200)
             Text("If no model is selected, the whole scene will be scaled instead.")
-            Spacer()
-        }.textBox()
+        }
     }
 }
 
@@ -118,24 +94,11 @@ struct TranslateView: View {
     @Binding var show: Bool
 
     var body: some View {
-        VStack(alignment: .center, spacing: 13) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    show = false
-                }, label: {
-                    Image(systemName: "xmark.circle" )
-                        .minimumScaleFactor(0.3)
-                        .padding(10)
-                })
-            }
-            
-            Spacer()
+        TutorialPageView(show: $show) {
             Text("You can translate a model by panning with two fingers.")
             GifView("PanGif").frame(width: 200, height: 200)
             Text("If no model is selected, the whole scene will be translated instead.")
-            Spacer()
-        }.textBox()
+        }
     }
 }
 
@@ -143,23 +106,29 @@ struct ToolsView: View {
     @Binding var show: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 13) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    show = false
-                }, label: {
-                    Image(systemName: "xmark.circle" )
-                        .minimumScaleFactor(0.3)
-                        .padding(10)
-                })
-            }
+        TutorialPageView(show: $show) {
+            Text("There are a few additional tools to help you.")
+            Image("ui_cropped")
+                .resizable()
+                .scaledToFit()
+            Text("If loomity did not discover a face in your photo, you can **manually add one**.")
+            Text("You can switch between a **perspective** and an **orthographic** view.")
+            Text("You can **save** your current view to your photo-gallery.")
+        }
+    }
+}
 
-            Spacer()
-            Text("You can switch between a perspective and an orthographic view.")
-            Text("You can save your current view to your photo-gallery.")
-            Spacer()
-        }.textBox()
+struct DoneView: View {
+    @Binding var show: Bool
+    
+    var body: some View {
+        TutorialPageView(show: $show) {
+            Text("You can always revisit this tutorial by tapping the **?** icon.")
+            Image("ui_cropped2")
+                .resizable()
+                .scaledToFit()
+            Text("That's it! Happy sketching :)")
+        }
     }
 }
 
@@ -177,6 +146,7 @@ struct TutorialView: View {
             ScaleView(show: $show)
             TranslateView(show: $show)
             ToolsView(show: $show)
+            DoneView(show: $show)
             
         }
         .background(Color.white)
