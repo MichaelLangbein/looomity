@@ -1,7 +1,5 @@
 #  TODOs
 
-- dict.removeValue should also remove key
-- days remaining: initially 7; 
 - 2023-01-06 17:12:17.516281+0100 Loomity[12764:311444] [StoreKit] Making a purchase without listening for transaction updates risks missing successful purchases. Create a Task to iterate Transaction.updates at launch.
 
 

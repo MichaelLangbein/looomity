@@ -48,8 +48,13 @@ enum PurchaseState {
         if self.purchaseState == .inTrialOngoing {
             let trialEnd = self.trialEndDate
             let today = Date()
-            let daysLeft = Calendar.current.dateComponents([.day], from: today, to: trialEnd)
-            return daysLeft.day
+//             let daysLeft = Calendar.current.dateComponents([.day, .hour, .minute], from: today, to: trialEnd) // <-- doesn't get negative
+            let secondsLeft = trialEnd.timeIntervalSince(today)
+            if secondsLeft <= 0.0 {
+                return 0
+            }
+            let daysLeft = Int(ceil(secondsLeft / (24 * 60 * 60)))
+            return daysLeft
         }
         if self.purchaseState == .inTrialOver {
             return 0
@@ -118,7 +123,7 @@ enum PurchaseState {
             if transaction.revocationDate == nil {
                 self.completedTransactions[transaction.productID] = transaction
             } else {
-                self.completedTransactions.removeValue(forKey: transaction.productID)
+                self.completedTransactions.removeValue(forKey: transaction.productID) // removes key as well
             }
         }
         print("Updated products: \(self.completedTransactions.keys)")
