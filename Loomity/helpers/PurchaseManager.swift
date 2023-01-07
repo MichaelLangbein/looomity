@@ -33,7 +33,7 @@ enum PurchaseState {
             return .hasBought
         }
         if self.completedTransactions.keys.contains(freeTrialID) {
-            let trialEnd = self.trialEndDate
+            let trialEnd = self.trialEndDate!
             let today = Date()
             if today > trialEnd {
                 return .inTrialOver
@@ -46,7 +46,7 @@ enum PurchaseState {
     
     public var trialDaysRemaining: Int? {
         if self.purchaseState == .inTrialOngoing {
-            let trialEnd = self.trialEndDate
+            guard let trialEnd = self.trialEndDate else { return nil }
             let today = Date()
 //             let daysLeft = Calendar.current.dateComponents([.day, .hour, .minute], from: today, to: trialEnd) // <-- doesn't get negative
             let secondsLeft = trialEnd.timeIntervalSince(today)
@@ -62,8 +62,8 @@ enum PurchaseState {
         return nil
     }
     
-    public var trialEndDate: Date {
-        let trialProductTransaction = self.completedTransactions[freeTrialID]!
+    public var trialEndDate: Date? {
+        guard let trialProductTransaction = self.completedTransactions[freeTrialID] else { return nil }
         let trialStartDate = trialProductTransaction.purchaseDate
         let trialEndDate = trialStartDate + TimeInterval(7 * 24 * 60 * 60)
         return trialEndDate
@@ -119,7 +119,7 @@ enum PurchaseState {
             guard case .verified(let transaction) = result else {
                 continue  // not a verified transaction, so just move on to next one
             }
-            
+
             if transaction.revocationDate == nil {
                 self.completedTransactions[transaction.productID] = transaction
             } else {
@@ -135,9 +135,11 @@ enum PurchaseState {
     // made from another device
     private func observeTransactionUpdates() -> Task<Void, Never> {
         Task(priority: .background) { [unowned self] in
-            // using verificationResult directly would be better
-            // but this way works for this tutorial
-            await self.updatePurchasedProducts()
+            for await verificationResult in Transaction.updates {
+                // using verificationResult directly would be better
+                // but this way works for this tutorial
+                await self.updatePurchasedProducts()
+            }
         }
     }
     
