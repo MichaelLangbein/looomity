@@ -60,8 +60,8 @@ struct PickerContainerView: View {
             if presented {
                 ImagePickerView(image: $image, show: $presented)
             }
-            else if image != nil {
-                Image(uiImage: image!).resizable().scaledToFit()
+            else if let img = image {
+                Image(uiImage: img).resizable().scaledToFit()
             }
             Button("Open picker") {
                 presented = true

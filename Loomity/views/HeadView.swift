@@ -76,8 +76,8 @@ struct HeadView: View {
     func update(skc: SceneController, nodes: [SCNNode]) {
         
         for node in nodes {
-            let type = node.value(forKey: "type") as! String
-            if type  == "figure" {
+            guard let type = node.value(forKey: "type") else { continue }
+            if type as! String == "figure" {
                 
                 var maxOpacity = 1.0
                 let obsId = node.value(forKey: "observationId") as! UUID

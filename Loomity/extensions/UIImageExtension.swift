@@ -9,7 +9,7 @@ extension UIImage {
         
         UIGraphicsBeginImageContext(self.size)
         guard let context = UIGraphicsGetCurrentContext() else {
-            fatalError("Unable to initialize context!")
+            fatalError("Unable to initialise context!")
         }
         
         self.draw(in: CGRect(origin: CGPoint.zero, size: self.size))

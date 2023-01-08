@@ -45,29 +45,32 @@ extension UIImage {
             fatalError()
         }
         
-        let ctx = CGContext.init(
+        guard let thisImage = self.cgImage else { return self } // @TODO: Is this ok?
+        
+        guard let context = CGContext.init(
             data: nil,
             width: Int(size.width), height: Int(size.height),
-            bitsPerComponent: self.cgImage!.bitsPerComponent,
+            bitsPerComponent: thisImage.bitsPerComponent,
             bytesPerRow: 0,
-            space: self.cgImage!.colorSpace!,
-            bitmapInfo: self.cgImage!.bitmapInfo.rawValue
-        )!
-        
-        ctx.concatenate(transform)
+            space: thisImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!,
+            bitmapInfo: thisImage.bitmapInfo.rawValue
+        )
+        else { return self }
+
+        context.concatenate(transform)
         
         switch imageOrientation {
         case UIImage.Orientation.left, UIImage.Orientation.leftMirrored, UIImage.Orientation.right, UIImage.Orientation.rightMirrored:
             let rect = CGRectMake(0, 0, size.height, size.width)
-            ctx.draw(self.cgImage!, in: rect)
+            context.draw(thisImage, in: rect)
             break
         default:
             let rect = CGRectMake(0, 0, size.width, size.height)
-            ctx.draw(self.cgImage!, in: rect)
+            context.draw(thisImage, in: rect)
             break
         }
         
-        let cgImage: CGImage = ctx.makeImage()!
+        guard let cgImage: CGImage = context.makeImage() else { return self }
         
         return UIImage(cgImage: cgImage)
     }

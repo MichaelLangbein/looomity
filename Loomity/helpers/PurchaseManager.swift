@@ -18,7 +18,7 @@ let freeTrialID = "net.codeandcolors.loomity.LoomityFreeTrial"
 let oneTimePurchaseID = "net.codeandcolors.loomity.LoomityOneTimePurchase"
 
 enum PurchaseState {
-    case newUser, inTrialOngoing, inTrialOver, hasBought
+    case newUser, inTrialOngoing, inTrialOver, hasBought, error
 }
 
 @MainActor class PurchaseManager: ObservableObject {
@@ -29,11 +29,14 @@ enum PurchaseState {
     private var updates: Task<Void, Never>?
     
     public var purchaseState: PurchaseState {
+        if self.products.count == 0 {
+            return .error
+        }
         if self.completedTransactions.keys.contains(oneTimePurchaseID) {
             return .hasBought
         }
         if self.completedTransactions.keys.contains(freeTrialID) {
-            let trialEnd = self.trialEndDate!
+            guard let trialEnd = self.trialEndDate else { return .error }
             let today = Date()
             if today > trialEnd {
                 return .inTrialOver

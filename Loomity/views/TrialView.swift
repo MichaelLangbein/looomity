@@ -19,15 +19,23 @@ struct TrialView: View {
                 switch purchaseManager.purchaseState {
                 case .newUser:
                     Text("Welcome to Loomity! Get started with a free trial.")
-                    productPurchaseButton(product: purchaseManager.products[freeTrialID]!)
-                    productPurchaseButton(product: purchaseManager.products[oneTimePurchaseID]!)
+                    if let trialProduct = purchaseManager.products[freeTrialID] {
+                        productPurchaseButton(product: trialProduct)
+                    }
+                    if let purchaseProduct = purchaseManager.products[oneTimePurchaseID] {
+                        productPurchaseButton(product: purchaseProduct)
+                    }
                     restoreButton
                 case .inTrialOngoing, .inTrialOver:
                     Text("You're in the trial-period. \(purchaseManager.trialDaysRemaining ?? 0) days remaining.")
-                    productPurchaseButton(product: purchaseManager.products[oneTimePurchaseID]!)
+                    if let purchaseProduct = purchaseManager.products[oneTimePurchaseID] {
+                        productPurchaseButton(product: purchaseProduct)
+                    }
                     restoreButton
                 case .hasBought:
                     Text("Happy sketching!")
+                case .error:
+                    Text("No connection to app-store ... will try to re-connect on next app-start.")
                 }
             } else {
                 Text("... loading ...")

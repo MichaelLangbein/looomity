@@ -60,7 +60,7 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
         return s
     }
     let initial = [head.position.x, head.position.y]
-    let optimal = gd(f: f, initial: initial)
+    let optimal = rand_gd(f: f, initial: initial)
     head.position.x = optimal[0]
     head.position.y = optimal[1]
     return head
@@ -70,16 +70,25 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
 
 
 func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
-    let alpha: Float = 0.01
-    var s: Float = 10_000.0  // size of change
-    let sMax: Float = 0.00001
+    
+    let alpha: Float = 0.01                  // learning rate
+    var s = Float.greatestFiniteMagnitude    // size of change
+    let sMax: Float = 0.00001                // stop when change is less than this
     var x = initial
-    let jMax = 1000  // max iteration
-    let maxDelta: Float = 0.1  // max change per step
+    let jMax = 1000             // max iteration
+    let maxDelta: Float = 0.1   // max change per step
+    
+    var bestXSoFar = x
+    var fMin = Float.greatestFiniteMagnitude
     
     var j = 0
     while s > sMax && j < jMax {
         let fx = f(x)
+        
+        if (fx < fMin) {
+            bestXSoFar = x
+            fMin = fx
+        }
         
         var dfdx = [Float](repeating: 0.0, count: initial.count)
         for i in 0 ..< initial.count {
@@ -93,11 +102,11 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
             var delta = alpha * dfdx[i]
             if delta > maxDelta {
                 let maxDeltaJ = maxDelta * (Float(jMax - j)) / Float(jMax)
-                let r = Float.random(in: 0.0 ... maxDeltaJ)  // randomizing a little to prevent loops
+                let r = Float.random(in: 0.0 ... maxDeltaJ)  // randomising a little to prevent loops
                 delta =  ( maxDeltaJ + r ) / 2.0
             } else if delta < -maxDelta {
                 let maxDeltaJ = maxDelta * (Float(jMax - j)) / Float(jMax)
-                let r = Float.random(in: 0.0 ... maxDeltaJ)  // randomizing a little to prevent loops
+                let r = Float.random(in: 0.0 ... maxDeltaJ)  // randomising a little to prevent loops
                 delta = -( maxDeltaJ + r ) / 2.0
             }
             x[i] = x[i] - delta
@@ -107,20 +116,47 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
         j += 1
     }
 
-    return x
+    return bestXSoFar
 }
 
+
+
+/**
+ * Randomised gradient descent.
+ *  - Some random perturbation to every delta (getting smaller on every iteration)
+ *  - Never strays too far from optimum (= never more than `maxIterationsAwayFromBest`)
+ *  - Always returns best one found so far.
+ */
 func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> [Float] {
-    let alpha: Float = 0.01
-    var s: Float = 10_000.0  // size of change
-    let sMax: Float = 0.00001
+    
+    let alpha: Float = 0.01                  // learning rate
+    var s = Float.greatestFiniteMagnitude    // size of change
+    let sMax: Float = 0.00001                // stop when change is less than this
     var x = initial
-    let jMax = 1000  // max iteration
-    let maxDelta: Float = 0.1  // max change per step
+    let jMax = 1000             // max iteration
+    let maxDelta: Float = 0.1   // max change per step
+    
+    var bestXSoFar = x
+    var fMin = Float.greatestFiniteMagnitude
+    var iterationsAwayFromBest = 0
+    let maxIterationsAwayFromBest = jMax / 5
     
     var j = 0
     while s > sMax && j < jMax {
-        let fx = f(x)
+        var fx = f(x)
+        
+        if (fx < fMin) {
+            bestXSoFar = x
+            fMin = fx
+            iterationsAwayFromBest = 0
+        } else {
+            iterationsAwayFromBest += 1
+            if iterationsAwayFromBest > maxIterationsAwayFromBest {
+                // resetting
+                x = bestXSoFar
+                fx = fMin
+            }
+        }
         
         var dfdx = [Float](repeating: 0.0, count: initial.count)
         for i in 0 ..< initial.count {
@@ -145,7 +181,7 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
         j += 1
     }
 
-    return x
+    return bestXSoFar
 }
 
 func size(_ arr: [Float]) -> Float {
@@ -160,28 +196,36 @@ func size(_ arr: [Float]) -> Float {
 func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, image: UIImage) -> Float {
     
     // get important points from model
-    let leftEyeL  = head.childNode(withName: "left_eye_left", recursively: true)!
-    let leftEyeR  = head.childNode(withName: "left_eye_right", recursively: true)!
-    let rightEyeL = head.childNode(withName: "right_eye_left", recursively: true)!
-    let rightEyeR = head.childNode(withName: "right_eye_right", recursively: true)!
-    let nose      = head.childNode(withName: "nose_center", recursively: true)!
-    let mouth     = head.childNode(withName: "mouth_center", recursively: true)!
+    guard
+        let leftEyeL  = head.childNode(withName: "left_eye_left", recursively: true),
+        let leftEyeR  = head.childNode(withName: "left_eye_right", recursively: true),
+        let rightEyeL = head.childNode(withName: "right_eye_left", recursively: true),
+        let rightEyeR = head.childNode(withName: "right_eye_right", recursively: true),
+        let nose      = head.childNode(withName: "nose_center", recursively: true),
+        let mouth     = head.childNode(withName: "mouth_center", recursively: true)
+    else { return 0.0 }
     // project those points
-    let leftEyeLProjected  = sceneProjToImageCoords(sceneView, image, leftEyeL.worldPosition)
-    let leftEyeRProjected  = sceneProjToImageCoords(sceneView, image, leftEyeR.worldPosition)
-    let rightEyeLProjected = sceneProjToImageCoords(sceneView, image, rightEyeL.worldPosition)
-    let rightEyeRProjected = sceneProjToImageCoords(sceneView, image, rightEyeR.worldPosition)
-    let noseProjected      = sceneProjToImageCoords(sceneView, image, nose.worldPosition)
-    let mouthProjected     = sceneProjToImageCoords(sceneView, image, mouth.worldPosition)
+    let leftEyeLProjected  = sceneProjectToImageCoordinates(sceneView, image, leftEyeL.worldPosition)
+    let leftEyeRProjected  = sceneProjectToImageCoordinates(sceneView, image, leftEyeR.worldPosition)
+    let rightEyeLProjected = sceneProjectToImageCoordinates(sceneView, image, rightEyeL.worldPosition)
+    let rightEyeRProjected = sceneProjectToImageCoordinates(sceneView, image, rightEyeR.worldPosition)
+    let noseProjected      = sceneProjectToImageCoordinates(sceneView, image, nose.worldPosition)
+    let mouthProjected     = sceneProjectToImageCoordinates(sceneView, image, mouth.worldPosition)
 
     // get important points from image
-    let landmarks = observation.landmarks!
-    let leftEyeLTarget   = leftMostPoint(landmarks.leftEye!.normalizedPoints)
-    let leftEyeRTarget   = rightMostPoint(landmarks.leftEye!.normalizedPoints)
-    let rightEyeLTarget  = leftMostPoint(landmarks.rightEye!.normalizedPoints)
-    let rightEyeRTarget  = rightMostPoint(landmarks.rightEye!.normalizedPoints)
-    let noseTarget       = centerPoint(landmarks.noseCrest!.normalizedPoints)
-    let mouthTarget      = centerPoint(landmarks.outerLips!.normalizedPoints)
+    guard let landmarks = observation.landmarks else { return 0.0 }
+    guard
+        let leftEyeLandmark = landmarks.leftEye,
+        let rightEyeLandmark = landmarks.rightEye,
+        let noseCrestLandmark = landmarks.noseCrest,
+        let outerLipsLandmark = landmarks.outerLips
+    else { return 0.0 }
+    let leftEyeLTarget   = leftMostPoint(leftEyeLandmark.normalizedPoints)
+    let leftEyeRTarget   = rightMostPoint(leftEyeLandmark.normalizedPoints)
+    let rightEyeLTarget  = leftMostPoint(rightEyeLandmark.normalizedPoints)
+    let rightEyeRTarget  = rightMostPoint(rightEyeLandmark.normalizedPoints)
+    let noseTarget       = centerPoint(noseCrestLandmark.normalizedPoints)
+    let mouthTarget      = centerPoint(outerLipsLandmark.normalizedPoints)
     // project those points
     let leftEyeLTargetProjected = obsProjToImageCoords(point: leftEyeLTarget, observation: observation)
     let leftEyeRTargetProjected = obsProjToImageCoords(point: leftEyeRTarget, observation: observation)
@@ -246,7 +290,7 @@ private func centerPoint(_ points: [CGPoint]) -> CGPoint {
 }
 
 
-private func sceneProjToImageCoords(_ sceneView: SCNView, _ image: UIImage, _ v: SCNVector3) -> CGPoint {
+private func sceneProjectToImageCoordinates(_ sceneView: SCNView, _ image: UIImage, _ v: SCNVector3) -> CGPoint {
  
     let scene_w = sceneView.frame.width
     let scene_h = sceneView.frame.height
@@ -264,8 +308,13 @@ private func sceneProjToImageCoords(_ sceneView: SCNView, _ image: UIImage, _ v:
     } else {
         arScreen = scene_w / scene_h
     }
-    let cameraNode = sceneView.scene!.rootNode.childNode(withName: "Camera", recursively: true)!
-    let camera = cameraNode.camera!
+    
+    guard
+        let scene = sceneView.scene,
+        let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true),
+        let camera = cameraNode.camera
+    else { return CGPoint() }
+    
     let projectionMatrix = camera.projectionTransform
     var updatedProjectionMatrix = projectionMatrix
     if (updatedProjectionMatrix.m11 == updatedProjectionMatrix.m22) {
@@ -382,25 +431,4 @@ private func obsProjToImageCoords(point: CGPoint, observation: VNFaceObservation
 
 private func vectorDiff(_ v1: CGPoint, _ v2: CGPoint) -> Float {
     return Float(pow(v1.x - v2.x, 2.0) + pow(v1.y - v2.y, 2.0))
-}
-
-func applyDelta(sceneView: SCNView, deltaX: Float, deltaY: Float, deltaScale: Float, deltaYaw: Float, deltaRoll: Float, deltaPitch: Float) {
-    guard let scene = sceneView.scene else { return }
-    
-    let head = scene.rootNode.childNode(withName: "Head", recursively: true)!
-    head.position = SCNVector3(
-        x: head.position.x + deltaX,
-        y: head.position.y + deltaY,
-        z: 0
-    )
-    head.eulerAngles = SCNVector3(
-        x: head.eulerAngles.x + deltaPitch,
-        y: head.eulerAngles.y + deltaYaw,
-        z: head.eulerAngles.z + deltaRoll
-    )
-    head.scale = SCNVector3(
-        x: 1.0 + deltaScale,
-        y: 1.0 + deltaScale,
-        z: 1.0 + deltaScale
-    )
 }

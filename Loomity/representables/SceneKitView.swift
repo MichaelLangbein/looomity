@@ -183,9 +183,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        if let onRender = self.onRender {
-            onRender(renderer, self.sceneView!, self.nodes)
-        }
+        guard
+            let onRender = self.onRender,
+            let view = self.sceneView
+        else { return }
+        onRender(renderer, view, self.nodes)
     }
     
     public func screenshot() -> UIImage? {
@@ -195,7 +197,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     
     public func objectOpacity(_ opacity: Double) {
         for node in nodes {
-            let type = node.value(forKey: "type") as! String
+            guard let type = node.value(forKey: "type") as? String else { continue }
             if type == "figure" {
                 node.opacity = opacity
             }
@@ -208,38 +210,50 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     }
     
     @objc func handlePan(panGesture: UIPanGestureRecognizer) {
-        guard let onPan = self.onPan else { return }
-        let view = self.sceneView!
+        guard
+            let onPan = self.onPan,
+            let view = self.sceneView
+        else { return }
         onPan(panGesture, view, self.nodes)
     }
     
     @objc func handleDoublePan(panGesture: UIPanGestureRecognizer) {
-        guard let onDoublePan = self.onDoublePan else { return }
-        let view = self.sceneView!
+        guard
+            let onDoublePan = self.onDoublePan,
+            let view = self.sceneView
+        else { return }
         onDoublePan(panGesture, view, self.nodes)
     }
     
     @objc func handleTap(tapGesture: UITapGestureRecognizer) {
-        guard let onTap = self.onTap else { return }
-        let view = self.sceneView!
+        guard
+            let onTap = self.onTap,
+            let view = self.sceneView
+        else { return }
         onTap(tapGesture, view, self.nodes)
     }
     
     @objc func handlePinch(pinchGesture: UIPinchGestureRecognizer) {
-        guard let onPinch = self.onPinch else { return }
-        let view = self.sceneView!
+        guard
+            let onPinch = self.onPinch,
+            let view = self.sceneView
+        else { return }
         onPinch(pinchGesture, view, self.nodes)
     }
     
     @objc func handleSwipe(swipeGesture: UISwipeGestureRecognizer) {
-        guard let onSwipe = self.onSwipe else { return }
-        let view = self.sceneView!
+        guard
+            let onSwipe = self.onSwipe,
+            let view = self.sceneView
+        else { return }
         onSwipe(swipeGesture, view, self.nodes)
     }
     
     @objc func handleRotate(rotateGesture: UIRotationGestureRecognizer) {
-        guard let onRotate = self.onRotate else { return }
-        let view = self.sceneView!
+        guard
+            let onRotate = self.onRotate,
+            let view = self.sceneView
+        else { return }
         onRotate(rotateGesture, view, self.nodes)
     }
     
@@ -251,7 +265,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     
     func removeNodes(predicate: (SCNNode) -> Bool) {
         self.nodes.removeAll(where: predicate)
-        for child in self.sceneView!.scene!.rootNode.childNodes {
+        guard
+            let view = self.sceneView,
+            let scene = view.scene
+        else { return }
+        for child in scene.rootNode.childNodes {
             if predicate(child) {
                 child.removeFromParentNode()
             }
@@ -279,7 +297,7 @@ struct SceneKitView: UIViewControllerRepresentable {
     @State var nodes: [SCNNode] = []
     // Should rendering continue when no action is going on?
     var renderContinuously = false
-    // Shoule default-camera-control be used?
+    // Should default-camera-control be used?
     var defaultCameraControl = false
     // Called on each frame
     var onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)?
