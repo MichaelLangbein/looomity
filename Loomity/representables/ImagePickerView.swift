@@ -27,12 +27,12 @@ struct ImagePickerView: UIViewControllerRepresentable {
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
         var parent: ImagePickerView
-     
         init(_ parent: ImagePickerView) {
             self.parent = parent
         }
     
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
                 parent.image = image.fixedOrientation()
             }
@@ -42,7 +42,6 @@ struct ImagePickerView: UIViewControllerRepresentable {
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             parent.show = false
         }
-        
     }
     
     func makeCoordinator() -> Coordinator {

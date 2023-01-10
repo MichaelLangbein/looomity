@@ -38,16 +38,17 @@ struct SelectImageView: View {
                     
                     Spacer()
                     
-                    HStack {
-                        Button("Gallery", action: pickFromGallery).buttonStyle(.borderedProminent)
-                        Button("Camera", action: pickFromCamera).buttonStyle(.borderedProminent)
-                        if let img = image {
-                            NavigationLink(destination: AnalysisView(image: img)) {
-                                Text("Loomify")
-                            }.buttonStyle(.borderedProminent)
-                        }
-                    }.padding()
-
+                    VStack {
+                        HStack {
+                            Button("Gallery", action: pickFromGallery).foregroundColor(.white).buttonStyle(.borderedProminent)
+                            Button("Camera", action: pickFromCamera).foregroundColor(.white).buttonStyle(.borderedProminent)
+                            if let img = image {
+                                NavigationLink(destination: AnalysisView(image: img)) {
+                                    Text("Loomify").foregroundColor(.white)
+                                }.buttonStyle(.borderedProminent)
+                            }
+                        }.padding()
+                    }.textBox()
                 }
             }
         }

@@ -9,7 +9,7 @@ import SwiftUI
 
 
 let backgroundGradient = LinearGradient(
-    gradient: Gradient(colors: [.white, .accentColor.opacity(0.4)]),
+    gradient: Gradient(colors: [.white.opacity(0.0), .accentColor.opacity(0.4)]),
     startPoint: .top,
     endPoint: .bottom
 )

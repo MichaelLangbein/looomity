@@ -149,7 +149,7 @@ struct TutorialView: View {
             DoneView(show: $show)
             
         }
-        .background(Color.white)
+        .background(.background)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
     }
 }

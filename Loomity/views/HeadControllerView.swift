@@ -53,7 +53,7 @@ struct HeadControllerView: View {
                     }
                     .frame(width: 0.2 * UIScreen.main.bounds.width)
                     .padding()
-                    .background(.white.opacity(0.8))
+                    .background(.gray.opacity(0.2)) // .background.opacity(0.8))
                     .cornerRadius(15)
                 }
             }
@@ -67,7 +67,7 @@ struct HeadControllerView: View {
                         }
                     }
                     .padding()
-                    .background(.white.opacity(0.8))
+                    .background(.gray.opacity(0.2)) // .background.opacity(0.8))
                     .cornerRadius(15)
                 }
             }

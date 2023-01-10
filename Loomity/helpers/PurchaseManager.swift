@@ -21,7 +21,7 @@ enum PurchaseState {
     case newUser, inTrialOngoing, inTrialOver, hasBought, error
 }
 
-@MainActor class PurchaseManager: ObservableObject {
+@MainActor class PurchaseManager: NSObject, ObservableObject {
     
     @Published private(set) var productsLoaded = false
     @Published private(set) var completedTransactions: [String: Transaction] = [:]
@@ -72,7 +72,9 @@ enum PurchaseState {
         return trialEndDate
     }
     
-    init() {
+    override init() {
+        super.init()
+        SKPaymentQueue.default().add(self)
         self.updates = observeTransactionUpdates()
     }
     
@@ -144,6 +146,21 @@ enum PurchaseState {
                 await self.updatePurchasedProducts()
             }
         }
+    }
+    
+}
+
+
+// StoreKit 1 stuff.
+// This is to handle users being directed to the app
+// directly from an AppStore when clicking an IAP.
+extension PurchaseManager: SKPaymentTransactionObserver {
+    
+    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+    }
+    
+    func paymentQueue(_ queue: SKPaymentQueue, shouldAddStorePayment payment: SKPayment, for product: SKProduct) -> Bool {
+        return true
     }
     
 }

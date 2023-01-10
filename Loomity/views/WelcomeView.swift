@@ -58,7 +58,7 @@ struct WelcomeView: View {
                 }
             }
             .navigationBarTitle("Welcome to Loomity!")
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

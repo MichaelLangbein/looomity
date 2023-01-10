@@ -12,8 +12,11 @@ extension VStack {
         return self
             .foregroundColor(.primary)
             .padding()
-            .background(.gray.opacity(0.2))
-            .cornerRadius(15)
+            .background(
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(.gray.opacity(0.2))
+//                    .shadow(color: .primary, radius: 3)
+            )
             .padding()
     }
 }
