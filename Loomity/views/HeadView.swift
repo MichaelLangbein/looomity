@@ -247,7 +247,11 @@ struct HeadView: View {
             panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
-        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
+        guard
+            let scene = view.scene,
+            let figure = getFigureForId(obsId: obsId, nodes: nodes),
+            let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true)
+        else { return }
         
         switch gesture.state {
         case .began:
@@ -255,8 +259,9 @@ struct HeadView: View {
         case .changed:
             guard let startPos = positionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            figure.position.x = startPos.x + Float(translation.x / image.size.width) * 8.0
-            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 8.0
+                              //  start    + relative translation             * a bit faster * slower when zoomed in
+            figure.position.x = startPos.x + Float(translation.x / image.size.width)  * 4.0  * cameraNode.position.z
+            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0  * cameraNode.position.z
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -278,8 +283,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = globalPositionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width) * 8.0
-            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 8.0
+            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width)  * 4.0 * cameraNode.position.z
+            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 4.0 * cameraNode.position.z
         case .ended:
             globalPositionOnStartMove = nil
         case .cancelled, .failed:

@@ -148,7 +148,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         cameraNode.camera = camera
         sceneView.pointOfView = cameraNode
 
-        // Gesture recognizers
+        // Gesture recognisers
         let tapRecognizer    = UITapGestureRecognizer(      target: self, action: #selector(handleTap(tapGesture:))       )
         let pinchRecognizer  = UIPinchGestureRecognizer(    target: self, action: #selector(handlePinch(pinchGesture:))   )
         let swipeRecognizer  = UISwipeGestureRecognizer(    target: self, action: #selector(handleSwipe(swipeGesture:))   )
