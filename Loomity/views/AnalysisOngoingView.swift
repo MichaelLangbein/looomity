@@ -18,12 +18,16 @@ struct AnalysisOngoingView: View {
             
             ProgressView()
                 .progressViewStyle(CircularProgressViewStyle())
-                .scaleEffect(4)
+                .scaleEffect(3)
                 .padding().padding()
             
-            Text("Attempting to place Loomis model nicely...")
-                .foregroundColor(.gray)
-            
+            VStack(alignment: .center, spacing: 7.5) {
+                Text("Attempting to place Loomis model over faces ...")
+                    .foregroundColor(.gray)
+                Text("Move the model by hand until it fits perfectly!")
+                    .foregroundColor(.gray)
+
+            }
             
             Spacer()
         }

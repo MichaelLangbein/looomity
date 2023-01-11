@@ -50,6 +50,7 @@
 		3E66139F296754D400C44098 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E66139E296754D400C44098 /* PurchaseManager.swift */; };
 		3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */; };
 		3E706FD129683A23005F5D12 /* FullPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E706FD029683A23005F5D12 /* FullPageView.swift */; };
+		3EA32F95296F575A00E77B61 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA32F94296F575A00E77B61 /* PrivacyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +117,7 @@
 		3E66139E296754D400C44098 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = LoomityStoreTest.storekit; path = Loomity/LoomityStoreTest.storekit; sourceTree = "<group>"; };
 		3E706FD029683A23005F5D12 /* FullPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPageView.swift; sourceTree = "<group>"; };
+		3EA32F94296F575A00E77B61 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,6 +266,7 @@
 				3E42F792295C8A5B00744841 /* Experiments.swift */,
 				3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */,
 				3E374FEF296028D4005768C7 /* LandmarkView.swift */,
+				3EA32F94296F575A00E77B61 /* PrivacyView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 				3E42F79C295C8A5B00744841 /* GradientDescent.swift in Sources */,
 				3E374FF0296028D4005768C7 /* LandmarkView.swift in Sources */,
 				3E42F7A8295C8A5B00744841 /* WelcomeView.swift in Sources */,
+				3EA32F95296F575A00E77B61 /* PrivacyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

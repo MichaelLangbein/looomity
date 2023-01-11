@@ -19,8 +19,6 @@ struct AboutView: View {
                 
                 Text("under a [creative-commons 4.0](https://creativecommons.org/licenses/by/4.0/) license.")
                 
-                Text("This app does not collect any user-data.")
-                
             }
             .textBox()
         }

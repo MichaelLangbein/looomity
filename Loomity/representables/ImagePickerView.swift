@@ -22,7 +22,16 @@ struct ImagePickerView: UIViewControllerRepresentable {
         return imagePicker
     }
     
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
+//        print("Updating")
+//        if uiViewController.sourceType == .camera {
+//            if uiViewController.cameraDevice == .front {
+//                uiViewController.cameraViewTransform = CGAffineTransformScale(CGAffineTransformIdentity, -1.0, 1.0)
+//            } else {
+//                uiViewController.cameraViewTransform = CGAffineTransformIdentity
+//            }
+//        }
+    }
     
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -32,7 +41,6 @@ struct ImagePickerView: UIViewControllerRepresentable {
         }
     
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
                 parent.image = image.fixedOrientation()
             }

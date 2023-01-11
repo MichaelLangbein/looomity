@@ -26,11 +26,11 @@ struct GifView: UIViewRepresentable {
         view.backgroundColor = UIColor.clear
         view.scrollView.backgroundColor = UIColor.clear
         view.scrollView.isScrollEnabled = false
+        view.allowsBackForwardNavigationGestures = false
+        view.allowsLinkPreview = false
         
         return view
     }
     
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        // TODO
-    }
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
 }
