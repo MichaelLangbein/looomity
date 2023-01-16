@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3E1BF40E295C8CC100B8947A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E1BF40D295C8CC000B8947A /* Assets.xcassets */; };
 		3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E3081FC295DD077003E1C5A /* loomisNew.usdz */; };
+		3E34CED02975EA4700D5345C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E34CECF2975EA4700D5345C /* CameraView.swift */; };
 		3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E374FEB296027C0005768C7 /* UIImageExtension.swift */; };
 		3E374FF0296028D4005768C7 /* LandmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E374FEF296028D4005768C7 /* LandmarkView.swift */; };
 		3E3E95E1295E1ECE0013BA85 /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */; };
@@ -73,6 +74,7 @@
 /* Begin PBXFileReference section */
 		3E1BF40D295C8CC000B8947A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E3081FC295DD077003E1C5A /* loomisNew.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = loomisNew.usdz; sourceTree = "<group>"; };
+		3E34CECF2975EA4700D5345C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		3E374FEB296027C0005768C7 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		3E374FEF296028D4005768C7 /* LandmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkView.swift; sourceTree = "<group>"; };
 		3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
@@ -267,6 +269,7 @@
 				3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */,
 				3E374FEF296028D4005768C7 /* LandmarkView.swift */,
 				3EA32F94296F575A00E77B61 /* PrivacyView.swift */,
+				3E34CECF2975EA4700D5345C /* CameraView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -422,6 +425,7 @@
 				3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */,
 				3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */,
 				3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */,
+				3E34CED02975EA4700D5345C /* CameraView.swift in Sources */,
 				3E42F7A2295C8A5B00744841 /* ImageExtension.swift in Sources */,
 				3E42F799295C8A5B00744841 /* GifView.swift in Sources */,
 				3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */,
