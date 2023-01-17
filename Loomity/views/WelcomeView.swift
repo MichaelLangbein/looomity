@@ -50,7 +50,8 @@ struct WelcomeView: View {
                         }.buttonStyle(.borderedProminent)
                     
                     }
-                    .padding(EdgeInsets(top: 0, leading: UIScreen.main.bounds.width * 0.075, bottom: 0, trailing: UIScreen.main.bounds.width * 0.075))
+                    .padding(.leading)
+                    .padding(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
                     
                     
