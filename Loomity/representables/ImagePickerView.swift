@@ -23,14 +23,6 @@ struct ImagePickerView: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-//        print("Updating")
-//        if uiViewController.sourceType == .camera {
-//            if uiViewController.cameraDevice == .front {
-//                uiViewController.cameraViewTransform = CGAffineTransformScale(CGAffineTransformIdentity, -1.0, 1.0)
-//            } else {
-//                uiViewController.cameraViewTransform = CGAffineTransformIdentity
-//            }
-//        }
     }
     
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {

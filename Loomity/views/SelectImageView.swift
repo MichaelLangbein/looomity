@@ -11,14 +11,19 @@ struct SelectImageView: View {
     @State var image: UIImage?;
     @State var showSelectOptions = false
     @State var showImagePicker = false
-    @State var imageSelectMode: UIImagePickerController.SourceType = .photoLibrary
+    @State var showCamera = false
     
     var body: some View {
         FullPageView {
             VStack(alignment: .center) {
                 
-                if (showImagePicker) {
-                    ImagePickerView(image: $image, show: $showImagePicker, sourceType: imageSelectMode)
+                if (showImagePicker || showCamera) {
+                    if (showImagePicker) {
+                        ImagePickerView(image: $image, show: $showImagePicker, sourceType: .photoLibrary)
+                    }
+                    if (showCamera) {
+                        CustomCameraView(capturedImage: $image, isDisplayed: $showCamera)
+                    }
                 }
                 
                 else {
@@ -57,13 +62,11 @@ struct SelectImageView: View {
     
     
     func pickFromGallery() {
-        imageSelectMode = .photoLibrary
         showImagePicker = true
     }
     
     func pickFromCamera() {
-        imageSelectMode = .camera
-        showImagePicker = true
+        showCamera = true
     }
     
     func toAnalysis() {

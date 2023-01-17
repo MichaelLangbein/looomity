@@ -40,71 +40,123 @@ class CameraService {
     
     var session: AVCaptureSession?
     var delegate: AVCapturePhotoCaptureDelegate?
-//    var devicePosition: AVCaptureDevice.Position = .back
-    
+    var devicePosition: AVCaptureDevice.Position = .back
+    var frontDevice: AVCaptureDevice?
+    var backDevice: AVCaptureDevice?
     let output = AVCapturePhotoOutput()
     let previewLayer = AVCaptureVideoPreviewLayer()
-    
+
     func start(delegate: AVCapturePhotoCaptureDelegate, completion: @escaping (Error?) -> ()) {
         self.delegate = delegate
-        checkPermissions(completion: completion)
+        self.detectCameras()
+        self.checkPermissions { permission in
+            guard permission else { return }
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                self?.setupCamera(completion: completion)
+            }
+        }
     }
     
-//    func setPosition(position: AVCaptureDevice.Position) {
-//        https://developer.apple.com/documentation/avfoundation/capture_setup/choosing_a_capture_device
-//        self.devicePosition = position
-//        self.setupCamera()
-//    }
-//    private func getBestDevice(position: AVCaptureDevice.Position) {
-//        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInDualCamera, .builtInWideAngleCamera, .builtInTrueDepthCamera, .builtInTripleCamera, .builtInDualWideCamera, .builtInUltraWideCamera], mediaType: .video, position: position)
-//
-//    }
+    func switchCamera() {
+        self.devicePosition = self.devicePosition == .back ?  .front :  .back
+        guard
+            let newDevice = self.getCurrentDevice(),
+            let session = self.session,
+            let currentInput = session.inputs.first
+        else { return }
+        session.removeInput(currentInput)
+        do {
+            let newInput = try AVCaptureDeviceInput(device: newDevice)
+            if session.canAddInput(newInput) {
+                session.addInput(newInput)
+            }
+            if devicePosition == .front {
+                previewLayer.transform = CATransform3DScale(CATransform3DIdentity, -1.0, 1.0, 1.0)
+            } else {
+                previewLayer.transform = CATransform3DIdentity
+            }
+        } catch {
+            print(error)
+        }
+    }
     
     func capturePhoto(with settings: AVCapturePhotoSettings = AVCapturePhotoSettings()) {
         output.capturePhoto(with: settings, delegate: self.delegate!)
     }
     
-    private func checkPermissions(completion: @escaping (Error?) -> ()) {
+    // may not yet be up to date upon startup
+    func hasTwoCams() -> Bool {
+        return self.frontDevice != nil && self.backDevice != nil
+    }
+    
+    private func detectCameras() {
+        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInDualCamera, .builtInWideAngleCamera, .builtInTrueDepthCamera, .builtInTripleCamera, .builtInDualWideCamera, .builtInUltraWideCamera], mediaType: .video, position: .unspecified)
+        let devices = discoverySession.devices
+        guard !devices.isEmpty else { return }
+        self.frontDevice = devices.first(where: { $0.position == .front })
+        self.backDevice = devices.first(where: { $0.position == .back })
+        if self.frontDevice == nil {
+            self.devicePosition = .back
+        }
+        if self.backDevice == nil {
+            self.devicePosition = .front
+        }
+    }
+    
+    private func getCurrentDevice() -> AVCaptureDevice? {
+        if self.devicePosition == .front && self.frontDevice != nil {
+            return self.frontDevice
+        }
+        if self.devicePosition == .back && self.backDevice != nil {
+            return self.backDevice
+        }
+        return nil
+    }
+
+    private func checkPermissions(withPermission: @escaping (Bool) -> ()) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                guard granted else { return }
-                DispatchQueue.main.async {
-                    self?.setupCamera(completion: completion)
-                }
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                withPermission(granted)
             }
-        case .restricted:
-            break
-        case .denied:
             break
         case .authorized:
-            setupCamera(completion: completion)
+            withPermission(true)
+        case .restricted, .denied:
+            withPermission(false)
+            break
         @unknown default:
+            withPermission(false)
             break
         }
     }
     
     private func setupCamera(completion: @escaping (Error?) -> ()) {
         let session = AVCaptureSession()
-        if let device = AVCaptureDevice.default(for: .video) { // @TODO: replace with `getBestDevice(direction)
-            do {
-                let input = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(input) {
-                    session.addInput(input)
-                }
-                if session.canAddOutput(output) {
-                    session.addOutput(output)
-                }
-                previewLayer.videoGravity = .resizeAspectFill
-                previewLayer.session = session
-                session.startRunning()
-                self.session = session
-                
-            } catch {
-                completion(error)
-            }
+        guard let device = self.getCurrentDevice() else { return }
             
+        do {
+            let input = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(input) {
+                session.addInput(input)
+            }
+            if session.canAddOutput(output) {
+                session.addOutput(output)
+            }
+            previewLayer.videoGravity = .resizeAspectFill
+            previewLayer.session = session
+            if devicePosition == .front {
+                previewLayer.transform = CATransform3DScale(CATransform3DIdentity, -1.0, 1.0, 1.0)
+            } else {
+                previewLayer.transform = CATransform3DIdentity
+            }
+            session.startRunning()
+            self.session = session
+            
+        } catch {
+            completion(error)
         }
+            
     }
 }
 
@@ -161,7 +213,7 @@ struct CustomCameraView: View {
     
     let cameraService = CameraService()
     @Binding var capturedImage: UIImage?
-    @Environment(\.presentationMode) private var presentationMode
+    @Binding var isDisplayed: Bool
     
     var body: some View {
         ZStack {
@@ -169,8 +221,9 @@ struct CustomCameraView: View {
                 switch result {
                 case .success(let photo):
                     if let data = photo.fileDataRepresentation() {
-                        self.capturedImage = UIImage(data: data)
-                        presentationMode.wrappedValue.dismiss()
+                        let uiImage = UIImage(data: data)!
+                        self.capturedImage = uiImage.fixedOrientation()
+                        self.isDisplayed = false
                     } else {
                         print("Error: no image data found")
                     }
@@ -181,14 +234,40 @@ struct CustomCameraView: View {
             
             VStack {
                 Spacer()
-                Button {
-                    cameraService.capturePhoto()
-                } label: {
-                    Image(systemName: "circle")
-                        .font(.system(size: 72))
-                        .foregroundColor(.white)
+                
+                HStack(alignment: .center) {
+                    
+                    Button {
+                        isDisplayed = false
+                    } label: {
+                        Image(systemName: "arrowshape.turn.up.backward.circle")
+                            .font(.system(size: 40))
+                            .foregroundColor(.white)
+                    }
+                    
+                    Spacer()
+                    
+                    Button {
+                        cameraService.capturePhoto()
+                    } label: {
+                        Image(systemName: "circle")
+                            .font(.system(size: 72))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.bottom)
+
+                    Spacer()
+                    
+                    Button {
+                        cameraService.switchCamera()
+                    } label: {
+                        Image(systemName: "arrow.triangle.2.circlepath.camera")
+                            .font(.system(size: 40))
+                            .foregroundColor(.white)
+                    }
                 }
-                .padding(.bottom)
+                .padding(.leading)
+                .padding(.trailing)
             }
         }
     }
@@ -224,7 +303,7 @@ struct CameraPreviewView: View {
                 }
                 .padding()
                 .sheet(isPresented: $isPresented, content: {
-                    CustomCameraView(capturedImage: $capturedImage)
+                    CustomCameraView(capturedImage: $capturedImage, isDisplayed: $isPresented)
                 })
             }
         }

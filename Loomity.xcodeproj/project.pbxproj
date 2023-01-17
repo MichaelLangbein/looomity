@@ -222,6 +222,7 @@
 				3E42F77B295C8A5B00744841 /* ImagePickerView.swift */,
 				3E42F77C295C8A5B00744841 /* SceneKitView.swift */,
 				3E42F77D295C8A5B00744841 /* GifView.swift */,
+				3E34CECF2975EA4700D5345C /* CameraView.swift */,
 			);
 			path = representables;
 			sourceTree = "<group>";
@@ -269,7 +270,6 @@
 				3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */,
 				3E374FEF296028D4005768C7 /* LandmarkView.swift */,
 				3EA32F94296F575A00E77B61 /* PrivacyView.swift */,
-				3E34CECF2975EA4700D5345C /* CameraView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
