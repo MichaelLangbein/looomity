@@ -57,6 +57,10 @@ class CameraService {
         }
     }
     
+//    func onRotate(orientation: UIDeviceOrientation) {
+//        previewLayer.videoGravity = .resizeAspectFill
+//    }
+    
     func switchCamera() {
         self.devicePosition = self.devicePosition == .back ?  .front :  .back
         guard
@@ -84,7 +88,6 @@ class CameraService {
         output.capturePhoto(with: settings, delegate: self.delegate!)
     }
     
-    // may not yet be up to date upon startup
     func hasTwoCams() -> Bool {
         return self.frontDevice != nil && self.backDevice != nil
     }
@@ -161,13 +164,36 @@ class CameraService {
 }
 
 
-class PhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
-    let parent: CameraView
+
+class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
+    
+    private var cameraService: CameraService
     private var didFinishProcessingPhoto: (Result<AVCapturePhoto, Error>) -> ()
     
-    init(parent: CameraView, didFinishProcessingPhoto: @escaping (Result<AVCapturePhoto, Error>) -> ()) {
-        self.parent = parent
+    init(
+        cameraService: CameraService,
+        didFinishProcessingPhoto: @escaping (Result<AVCapturePhoto, Error>) -> ()
+    ) {
+        self.cameraService = cameraService
         self.didFinishProcessingPhoto = didFinishProcessingPhoto
+        super.init(nibName: nil, bundle: nil)
+        cameraService.start(delegate: self) { error in
+            if let error = error {
+                didFinishProcessingPhoto(.failure(error))
+                return
+            }
+        }
+        self.view.backgroundColor = .systemBackground
+        self.view.layer.addSublayer(cameraService.previewLayer)
+        self.cameraService.previewLayer.frame = self.view.bounds
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        self.cameraService.previewLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
@@ -179,33 +205,15 @@ class PhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
     }
 }
 
-
 struct CameraView: UIViewControllerRepresentable {
-    
     let cameraService: CameraService
     let didFinishProcessingPhoto: (Result<AVCapturePhoto, Error>) -> ()
     
     func makeUIViewController(context: Context) -> UIViewController {
-        
-        cameraService.start(delegate: context.coordinator) { error in
-            if let error = error {
-                didFinishProcessingPhoto(.failure(error))
-                return
-            }
-        }
-        
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .systemBackground
-        viewController.view.layer.addSublayer(cameraService.previewLayer)
-        cameraService.previewLayer.frame = viewController.view.bounds
-        return viewController
+        return CameraViewController(cameraService: cameraService, didFinishProcessingPhoto: didFinishProcessingPhoto)
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-    }
-    
-    func makeCoordinator() -> PhotoDelegate {
-        PhotoDelegate(parent: self, didFinishProcessingPhoto: didFinishProcessingPhoto)
     }
 }
 
