@@ -10,22 +10,13 @@ import SwiftUI
 import AVFoundation
 
 
+
+
 /**
- UIKit Standard-Pattern
- Service
-    Accesses some system-process
-    Connects the processes output to a delegate
- Delegate
-    Glue code between service and controller
- Controller
-    Uses process-output in a view
+ Shared between CustomCameraView (from where it gets user-inputs)
+ and CameraController (from where it gets ui-events and to which it gives its previewLayer)
  
- Example 1: SceneKit
- Example 2: AVFoundation
- */
-
-
-/**
+ 
  Device <---- a hardware device
     Input
     Output
@@ -57,14 +48,10 @@ class CameraService {
         }
     }
     
-//    func onRotate(orientation: UIDeviceOrientation) {
-//        previewLayer.videoGravity = .resizeAspectFill
-//    }
-    
     func switchCamera() {
-        self.devicePosition = self.devicePosition == .back ?  .front :  .back
+        let newDevicePosition: AVCaptureDevice.Position = self.devicePosition == .back ?  .front :  .back
         guard
-            let newDevice = self.getCurrentDevice(),
+            let newDevice = self.getDevice(position: newDevicePosition),
             let session = self.session,
             let currentInput = session.inputs.first
         else { return }
@@ -74,22 +61,63 @@ class CameraService {
             if session.canAddInput(newInput) {
                 session.addInput(newInput)
             }
-            if devicePosition == .front {
-                previewLayer.transform = CATransform3DScale(CATransform3DIdentity, -1.0, 1.0, 1.0)
-            } else {
-                previewLayer.transform = CATransform3DIdentity
-            }
+            self.devicePosition = newDevicePosition
         } catch {
             print(error)
         }
+        
+//        if self.devicePosition == .back {
+//            if let videoToPhotoConnection = self.output.connection(with: .video) {
+//                if videoToPhotoConnection.isVideoMirroringSupported {
+//                    videoToPhotoConnection.automaticallyAdjustsVideoMirroring = false
+//                    videoToPhotoConnection.isVideoMirrored = true
+//                }
+//            }
+//        } else {
+//            if let videoToPhotoConnection = self.output.connection(with: .video) {
+//                if videoToPhotoConnection.isVideoMirroringSupported {
+//                    videoToPhotoConnection.automaticallyAdjustsVideoMirroring = false
+//                    videoToPhotoConnection.isVideoMirrored = false
+//                }
+//            }
+//        }
     }
     
     func capturePhoto(with settings: AVCapturePhotoSettings = AVCapturePhotoSettings()) {
+        guard
+            let videoToPhotoConnection = output.connection(with: .video),
+            let videoToPreviewConnection = previewLayer.connection
+        else {
+            output.capturePhoto(with: settings, delegate: self.delegate!)
+            return
+        }
+        videoToPhotoConnection.videoOrientation = videoToPreviewConnection.videoOrientation
         output.capturePhoto(with: settings, delegate: self.delegate!)
     }
-    
-    func hasTwoCams() -> Bool {
-        return self.frontDevice != nil && self.backDevice != nil
+        
+    func willTransition(size: CGSize, newOrientation: UIInterfaceOrientation?) {
+        // https://developer.apple.com/documentation/avfoundation/avcaptureconnection/1389415-videoorientation
+        // https://stackoverflow.com/questions/21258372/avcapturevideopreviewlayer-landscape-orientation/62505962#62505962
+        // https://stackoverflow.com/questions/26069874/what-is-the-right-way-to-handle-orientation-changes-in-ios-8
+        // https://stackoverflow.com/questions/28820933/ios-viewwilltransitiontosize-and-device-orientation
+        // https://stackoverflow.com/questions/30202597/preventing-avcapturevideopreviewlayer-from-rotating-but-allow-ui-layer-to-rotat
+
+        self.previewLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        guard let connection = self.previewLayer.connection else { return }
+        if connection.isVideoOrientationSupported {
+            switch newOrientation {
+            case .portrait:
+                connection.videoOrientation = .portrait
+            case .landscapeLeft:
+                connection.videoOrientation = .landscapeLeft
+            case .landscapeRight:
+                connection.videoOrientation = .landscapeRight
+            case .portraitUpsideDown:
+                connection.videoOrientation = .portraitUpsideDown
+            default:
+                break
+            }
+        }
     }
     
     private func detectCameras() {
@@ -103,6 +131,19 @@ class CameraService {
         }
         if self.backDevice == nil {
             self.devicePosition = .front
+        }
+    }
+    
+    private func getDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+        switch position {
+        case .front:
+            return self.frontDevice
+        case .back:
+            return self.backDevice
+        case .unspecified:
+            return self.backDevice != nil ? self.backDevice : self.frontDevice
+        @unknown default:
+            return self.backDevice != nil ? self.backDevice : self.frontDevice
         }
     }
     
@@ -148,11 +189,6 @@ class CameraService {
             }
             previewLayer.videoGravity = .resizeAspectFill
             previewLayer.session = session
-            if devicePosition == .front {
-                previewLayer.transform = CATransform3DScale(CATransform3DIdentity, -1.0, 1.0, 1.0)
-            } else {
-                previewLayer.transform = CATransform3DIdentity
-            }
             session.startRunning()
             self.session = session
             
@@ -164,15 +200,18 @@ class CameraService {
 }
 
 
+enum ProcessingError: Error {
+    case errorWhileProcessing
+}
 
 class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     
     private var cameraService: CameraService
-    private var didFinishProcessingPhoto: (Result<AVCapturePhoto, Error>) -> ()
+    private var didFinishProcessingPhoto: (Result<UIImage, Error>) -> ()
     
     init(
         cameraService: CameraService,
-        didFinishProcessingPhoto: @escaping (Result<AVCapturePhoto, Error>) -> ()
+        didFinishProcessingPhoto: @escaping (Result<UIImage, Error>) -> ()
     ) {
         self.cameraService = cameraService
         self.didFinishProcessingPhoto = didFinishProcessingPhoto
@@ -193,7 +232,8 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        self.cameraService.previewLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        let newOrientation = self.view.window?.windowScene?.interfaceOrientation
+        self.cameraService.willTransition(size: size, newOrientation: newOrientation)
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
@@ -201,13 +241,46 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
             didFinishProcessingPhoto(.failure(error))
             return
         }
-        didFinishProcessingPhoto(.success(photo))
+        let data = photo.fileDataRepresentation()!
+        let uiImage = UIImage(data: data)!
+        if cameraService.devicePosition == .front {
+            let imageFixed = uiImage.fixedOrientation()
+        
+            /**
+                @TODO:
+                    uiImage has orientation = .right
+                    when I call uiImage.withOrientationFlippedHorizontally(), I get .rightMirrored ...
+                    ... which weirdly doesn't help when then called with .fixedOrientation().
+             */
+            var transform = CGAffineTransformIdentity
+            transform = CGAffineTransformTranslate(transform, imageFixed.size.width, 0)
+            transform = CGAffineTransformScale(transform, -1.0, 1.0)
+            guard let cgImage = imageFixed.cgImage else { didFinishProcessingPhoto(.success(imageFixed)); return }
+            guard let context = CGContext.init(
+                data: nil,
+                width: Int(imageFixed.size.width), height: Int(imageFixed.size.height),
+                bitsPerComponent: cgImage.bitsPerComponent,
+                bytesPerRow: 0,
+                space: cgImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!,
+                bitmapInfo: cgImage.bitmapInfo.rawValue
+            )  else { didFinishProcessingPhoto(.success(imageFixed)); return }
+            context.concatenate(transform)
+            let rect = CGRectMake(0, 0, imageFixed.size.width, imageFixed.size.height)
+            context.draw(cgImage, in: rect)
+            guard let newCgImage = context.makeImage() else { didFinishProcessingPhoto(.success(imageFixed)); return }
+            let imageFixed2 = UIImage(cgImage: newCgImage)
+            didFinishProcessingPhoto(.success(imageFixed2))
+
+        } else {
+            let imageFixed = uiImage.fixedOrientation()
+            didFinishProcessingPhoto(.success(imageFixed))
+        }
     }
 }
 
-struct CameraView: UIViewControllerRepresentable {
+struct CameraRepresentableView: UIViewControllerRepresentable {
     let cameraService: CameraService
-    let didFinishProcessingPhoto: (Result<AVCapturePhoto, Error>) -> ()
+    let didFinishProcessingPhoto: (Result<UIImage, Error>) -> ()
     
     func makeUIViewController(context: Context) -> UIViewController {
         return CameraViewController(cameraService: cameraService, didFinishProcessingPhoto: didFinishProcessingPhoto)
@@ -225,16 +298,11 @@ struct CustomCameraView: View {
     
     var body: some View {
         ZStack {
-            CameraView(cameraService: cameraService) { result in
+            CameraRepresentableView(cameraService: cameraService) { result in
                 switch result {
                 case .success(let photo):
-                    if let data = photo.fileDataRepresentation() {
-                        let uiImage = UIImage(data: data)!
-                        self.capturedImage = uiImage.fixedOrientation()
-                        self.isDisplayed = false
-                    } else {
-                        print("Error: no image data found")
-                    }
+                    self.capturedImage = photo
+                    self.isDisplayed = false
                 case .failure(let error):
                     print(error.localizedDescription)
                 }

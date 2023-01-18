@@ -23,7 +23,7 @@ struct HeadControllerView: View {
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
-    @State var orientation = UIApplication.shared.windows.first?.windowScene?.interfaceOrientation.isPortrait ?? true ? UIDeviceOrientation.portrait : UIDeviceOrientation.landscapeLeft  // Pretty weird hack for initial orientation
+    @State var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
         

@@ -33,12 +33,12 @@ extension UIImage {
         
         switch imageOrientation {
         case .upMirrored, .downMirrored:
-            CGAffineTransformTranslate(transform, size.width, 0)
-            CGAffineTransformScale(transform, -1, 1)
+            transform = CGAffineTransformTranslate(transform, size.width, 0)
+            transform = CGAffineTransformScale(transform, -1, 1)
             break
         case .leftMirrored, .rightMirrored:
-            CGAffineTransformTranslate(transform, size.height, 0)
-            CGAffineTransformScale(transform, -1, 1)
+            transform = CGAffineTransformTranslate(transform, size.height, 0)
+            transform = CGAffineTransformScale(transform, -1, 1)
         case .up, .down, .left, .right:
             break
         @unknown default:
