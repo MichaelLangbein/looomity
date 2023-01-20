@@ -55,32 +55,22 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
         let data = photo.fileDataRepresentation()!
         let uiImage = UIImage(data: data)!
         if cameraManager.devicePosition == .front {
-            let imageFixed = uiImage.fixedOrientation()
-        
-            /**
-                @TODO:
-                    uiImage has orientation = .right
-                    when I call uiImage.withOrientationFlippedHorizontally(), I get .rightMirrored ...
-                    ... which weirdly doesn't help when then called with .fixedOrientation().
-             */
-            var transform = CGAffineTransformIdentity
-            transform = CGAffineTransformTranslate(transform, imageFixed.size.width, 0)
-            transform = CGAffineTransformScale(transform, -1.0, 1.0)
-            guard let cgImage = imageFixed.cgImage else { handlePhoto(.success(imageFixed)); return }
-            guard let context = CGContext.init(
-                data: nil,
-                width: Int(imageFixed.size.width), height: Int(imageFixed.size.height),
-                bitsPerComponent: cgImage.bitsPerComponent,
-                bytesPerRow: 0,
-                space: cgImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!,
-                bitmapInfo: cgImage.bitmapInfo.rawValue
-            )  else { handlePhoto(.success(imageFixed)); return }
-            context.concatenate(transform)
-            let rect = CGRectMake(0, 0, imageFixed.size.width, imageFixed.size.height)
-            context.draw(cgImage, in: rect)
-            guard let newCgImage = context.makeImage() else { handlePhoto(.success(imageFixed)); return }
-            let imageFixed2 = UIImage(cgImage: newCgImage)
-            handlePhoto(.success(imageFixed2))
+            var trueOrientation = uiImage.imageOrientation
+            switch uiImage.imageOrientation {
+            case .right:                          // selfie-cam, portrait-orientation
+                trueOrientation = .leftMirrored
+            case .up:                             // selfie-cam, landscape-orientation (tilted right)
+                trueOrientation = .upMirrored
+            case .down:                           // selfie-cam, landscape-orientation (tilted left)
+                trueOrientation = .downMirrored
+            case .left:                           // selfie-cam, portrait orientation upside down
+                trueOrientation = .rightMirrored
+            default:
+                trueOrientation = uiImage.imageOrientation
+            }
+            let imageCorrectedOrientation = UIImage(cgImage: uiImage.cgImage!, scale: 1.0, orientation: trueOrientation)
+            let imageFixed = imageCorrectedOrientation.fixedOrientation()
+            handlePhoto(.success(imageFixed))
 
         } else {
             let imageFixed = uiImage.fixedOrientation()

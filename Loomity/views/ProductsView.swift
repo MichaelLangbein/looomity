@@ -52,7 +52,7 @@ struct TrialProductView: View {
     var body: some View {
         ProductView(
             title: product.displayName,
-            logo: "TestImage",
+            logo: "trial_preview",
             active: state == .newUser || state == .inTrialOngoing
         ) {
             switch state {
@@ -93,7 +93,11 @@ struct OneTimeProductView: View {
     let onBuyTapped: () -> ()
     
     var body: some View {
-        ProductView(title: "One-time purchase", logo: "TestImage2", active: true) {
+        ProductView(
+            title: "One-time purchase",
+            logo: "onetimepurchase_preview",
+            active: state != .hasBought
+        ) {
             switch state {
             case .newUser, .inTrialOngoing, .inTrialOver:
                 VStack (alignment: .leading) {

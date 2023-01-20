@@ -113,13 +113,20 @@ struct TranslateView: View {
 
 struct ToolsView: View {
     @Binding var show: Bool
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         TutorialPageView(show: $show, title: "More tools") {
             Text("There are a few additional tools to help you.")
-            Image("ui_cropped")
-                .resizable()
-                .scaledToFit()
+            if colorScheme == .light {
+                Image("ui_cropped")
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image("ui_cropped_dark")
+                    .resizable()
+                    .scaledToFit()
+            }
             VStack(alignment: .leading, spacing: 7.5) {
                 Text("If loomity did not discover a face in your photo, you can **manually add one**.")
                 Text("You can switch between a **perspective** and an **orthographic** view.")
@@ -131,14 +138,23 @@ struct ToolsView: View {
 
 struct DoneView: View {
     @Binding var show: Bool
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         TutorialPageView(show: $show, title: "Have fun!") {
             VStack(alignment: .leading, spacing: 7.5) {
                 Text("You can always revisit this tutorial by tapping the **?** icon.")
-                Image("ui_cropped2")
-                    .resizable()
-                    .scaledToFit()
+
+                if colorScheme == .light {
+                    Image("ui_cropped2")
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Image("ui_cropped2_dark")
+                        .resizable()
+                        .scaledToFit()
+                }
+                
                 Text("That's it! Happy sketching :)")
             }
         }
