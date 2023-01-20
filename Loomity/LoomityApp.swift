@@ -35,6 +35,13 @@ struct LoomityApp: App {
                 .task {
                     await purchaseManager.updatePurchasedProducts()
                 }
+                .task {
+                    do {
+                        try await purchaseManager.loadProducts()
+                    } catch {
+                        print(error)
+                    }
+                }
         }
     }
 }

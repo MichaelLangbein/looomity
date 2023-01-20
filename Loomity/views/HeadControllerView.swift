@@ -15,6 +15,9 @@ struct HeadControllerView: View {
     // Parameters for detected faces
     var observations: [VNFaceObservation]
 
+    // Function that allows us to go back programmatically
+    @Environment(\.dismiss) var dismiss
+    
     @State var showHelp = false
     @StateObject var taskQueue = Queue<SKVTask>()
     @State var opacity = 0.75
@@ -23,11 +26,12 @@ struct HeadControllerView: View {
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
+    @State var alertNoFacesDetected = false
     @State var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
-        
         ZStack {
+            
             HeadView(
                 image: image,
                 observations: observations,
@@ -53,7 +57,7 @@ struct HeadControllerView: View {
                     }
                     .frame(width: 0.2 * UIScreen.main.bounds.width)
                     .padding()
-                    .background(.gray.opacity(0.2)) // .background.opacity(0.8))
+                    .background(.background.opacity(0.7)) // (.gray.opacity(0.2))
                     .cornerRadius(15)
                 }
             }
@@ -67,7 +71,7 @@ struct HeadControllerView: View {
                         }
                     }
                     .padding()
-                    .background(.gray.opacity(0.2)) // .background.opacity(0.8))
+                    .background(.background.opacity(0.7)) // (.gray.opacity(0.2))
                     .cornerRadius(15)
                 }
             }
@@ -81,6 +85,20 @@ struct HeadControllerView: View {
                 Label("Help", systemImage: "questionmark.circle")
             }
         }
+        .onAppear {
+            if self.observations.count < 1 {
+                self.alertNoFacesDetected = true
+            }
+        }
+        .alert(
+            "Couldn't detect any faces in your image.",
+            isPresented: $alertNoFacesDetected,
+            actions: {
+                Button("Continue") {}
+                Button("Pick another photo") { dismiss() }
+            },
+            message: {Text("However, you can always place a model manually by tapping on 'Add model'.")}
+        )
         .sheet(isPresented: $showHelp) {
             TutorialView(show: $showHelp)
         }
@@ -98,6 +116,7 @@ struct HeadControllerView: View {
         }
     }
     
+    @State var showRemoveModelModal = false
     var controlButtons: some View {
         Group {
             // Add or remove model
@@ -111,10 +130,19 @@ struct HeadControllerView: View {
             }
             if activeFace != nil {
                 Button {
-                    taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace))
+                    self.showRemoveModelModal = true
                 } label: {
                     Text("Remove model").frame(maxWidth: .infinity)
-                }.buttonStyle(.borderedProminent)
+                }
+//                .buttonStyle(.bordered)
+                .alert(
+                    "Do you really want to remove this model?",
+                    isPresented: $showRemoveModelModal,
+                    actions: {
+                        Button("Remove") { taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace)) }
+                        Button("Cancel") { showRemoveModelModal = false }
+                    }
+                )
             }
 
             // Toggle cam-mode
@@ -141,7 +169,8 @@ struct HeadControllerView: View {
                 Button("Continue") {}
             }.buttonStyle(.borderedProminent)
 
-        }    }
+        }
+    }
     
     
     func onImageSaved() {

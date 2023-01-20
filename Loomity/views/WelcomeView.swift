@@ -59,15 +59,19 @@ struct WelcomeView: View {
                         Spacer()
                     }
                     
-                    TrialView().environmentObject(purchaseManager)
+//                    TrialView()
+                    ProductStateView()
                     
                     HStack {
+                        Spacer()
                         NavigationLink(destination: AboutView()) {
                             Text("About")
                         }
+                        Spacer()
                         NavigationLink(destination: PrivacyView()) {
                             Text("Privacy")
                         }
+                        Spacer()
                     }
                     .padding()
                 }

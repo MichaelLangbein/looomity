@@ -47,6 +47,10 @@ enum PurchaseState {
         return .newUser
     }
     
+    public var mayUse: Bool {
+        return self.purchaseState == .hasBought || self.purchaseState == .inTrialOngoing
+    }
+    
     public var trialDaysRemaining: Int? {
         if self.purchaseState == .inTrialOngoing {
             guard let trialEnd = self.trialEndDate else { return nil }

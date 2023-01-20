@@ -1,4 +1,5 @@
 // Adjusted from https://gist.github.com/schickling/b5d86cb070130f80bb40
+// Maybe try one of the later versions from that same page.
 
 import UIKit
 

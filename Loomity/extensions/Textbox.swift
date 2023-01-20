@@ -9,7 +9,20 @@ import SwiftUI
 
 extension VStack {
     func textBox() -> some View {
-        return self
+        modifier(TextBox())
+    }
+}
+
+extension HStack {
+    func textBox() -> some View {
+        modifier(TextBox())
+    }
+}
+
+
+struct TextBox: ViewModifier {
+    func body(content: Content) -> some View {
+        content
             .foregroundColor(.primary)
             .padding()
             .background(
