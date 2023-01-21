@@ -26,7 +26,7 @@ struct Experiments: View {
                }
                .frame(width: 0.5 * UIScreen.main.bounds.width)
                .padding()
-               .background(.white.opacity(0.8))
+               .background(.background.opacity(0.8))
                .cornerRadius(15)
            }
        }

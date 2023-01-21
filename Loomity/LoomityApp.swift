@@ -17,7 +17,7 @@ struct LoomityApp: App {
         // Nav-bar
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithTransparentBackground()
-        navBarAppearance.backgroundColor = .white.withAlphaComponent(0.8)
+        navBarAppearance.backgroundColor = .systemBackground.withAlphaComponent(0.8)
 //        navBarAppearance.shadowColor = .clear
         UINavigationBar.appearance().standardAppearance = navBarAppearance
         UINavigationBar.appearance().compactAppearance = navBarAppearance
@@ -34,6 +34,13 @@ struct LoomityApp: App {
                 .environmentObject(purchaseManager)
                 .task {
                     await purchaseManager.updatePurchasedProducts()
+                }
+                .task {
+                    do {
+                        try await purchaseManager.loadProducts()
+                    } catch {
+                        print(error)
+                    }
                 }
         }
     }

@@ -9,9 +9,11 @@
 /* Begin PBXBuildFile section */
 		3E1BF40E295C8CC100B8947A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E1BF40D295C8CC000B8947A /* Assets.xcassets */; };
 		3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E3081FC295DD077003E1C5A /* loomisNew.usdz */; };
+		3E34CED02975EA4700D5345C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E34CECF2975EA4700D5345C /* CameraView.swift */; };
 		3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E374FEB296027C0005768C7 /* UIImageExtension.swift */; };
 		3E374FF0296028D4005768C7 /* LandmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E374FEF296028D4005768C7 /* LandmarkView.swift */; };
 		3E3E95E1295E1ECE0013BA85 /* MarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */; };
+		3E3F649D297A9BAA00264524 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E3F649C297A9BAA00264524 /* CameraManager.swift */; };
 		3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F6FB295C866C00744841 /* LoomityApp.swift */; };
 		3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E42F702295C866E00744841 /* Preview Assets.xcassets */; };
 		3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F70C295C866E00744841 /* LoomityTests.swift */; };
@@ -47,9 +49,11 @@
 		3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */; };
 		3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F794295C8A5B00744841 /* TutorialView.swift */; };
 		3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F796295C8A5B00744841 /* HeadView.swift */; };
+		3E4EEB74297A6ECD001E8313 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4EEB73297A6ECD001E8313 /* ProductsView.swift */; };
 		3E66139F296754D400C44098 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E66139E296754D400C44098 /* PurchaseManager.swift */; };
 		3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */; };
 		3E706FD129683A23005F5D12 /* FullPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E706FD029683A23005F5D12 /* FullPageView.swift */; };
+		3EA32F95296F575A00E77B61 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA32F94296F575A00E77B61 /* PrivacyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,9 +76,11 @@
 /* Begin PBXFileReference section */
 		3E1BF40D295C8CC000B8947A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3E3081FC295DD077003E1C5A /* loomisNew.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = loomisNew.usdz; sourceTree = "<group>"; };
+		3E34CECF2975EA4700D5345C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		3E374FEB296027C0005768C7 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		3E374FEF296028D4005768C7 /* LandmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandmarkView.swift; sourceTree = "<group>"; };
 		3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerView.swift; sourceTree = "<group>"; };
+		3E3F649C297A9BAA00264524 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		3E42F6F8295C866C00744841 /* Loomity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Loomity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E42F6FB295C866C00744841 /* LoomityApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomityApp.swift; sourceTree = "<group>"; };
 		3E42F702295C866E00744841 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -113,9 +119,11 @@
 		3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOngoingView.swift; sourceTree = "<group>"; };
 		3E42F794295C8A5B00744841 /* TutorialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		3E42F796295C8A5B00744841 /* HeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
+		3E4EEB73297A6ECD001E8313 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
 		3E66139E296754D400C44098 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = LoomityStoreTest.storekit; path = Loomity/LoomityStoreTest.storekit; sourceTree = "<group>"; };
 		3E706FD029683A23005F5D12 /* FullPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPageView.swift; sourceTree = "<group>"; };
+		3EA32F94296F575A00E77B61 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -218,6 +226,7 @@
 				3E42F77B295C8A5B00744841 /* ImagePickerView.swift */,
 				3E42F77C295C8A5B00744841 /* SceneKitView.swift */,
 				3E42F77D295C8A5B00744841 /* GifView.swift */,
+				3E34CECF2975EA4700D5345C /* CameraView.swift */,
 			);
 			path = representables;
 			sourceTree = "<group>";
@@ -232,6 +241,7 @@
 				3E42F783295C8A5B00744841 /* ImageSaver.swift */,
 				3E42F784295C8A5B00744841 /* SceneKitHelpers.swift */,
 				3E66139E296754D400C44098 /* PurchaseManager.swift */,
+				3E3F649C297A9BAA00264524 /* CameraManager.swift */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -261,9 +271,11 @@
 				3E42F796295C8A5B00744841 /* HeadView.swift */,
 				3E42F794295C8A5B00744841 /* TutorialView.swift */,
 				3E42F791295C8A5B00744841 /* TrialView.swift */,
+				3E4EEB73297A6ECD001E8313 /* ProductsView.swift */,
 				3E42F792295C8A5B00744841 /* Experiments.swift */,
 				3E3E95E0295E1ECE0013BA85 /* MarkerView.swift */,
 				3E374FEF296028D4005768C7 /* LandmarkView.swift */,
+				3EA32F94296F575A00E77B61 /* PrivacyView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -419,8 +431,10 @@
 				3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */,
 				3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */,
 				3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */,
+				3E34CED02975EA4700D5345C /* CameraView.swift in Sources */,
 				3E42F7A2295C8A5B00744841 /* ImageExtension.swift in Sources */,
 				3E42F799295C8A5B00744841 /* GifView.swift in Sources */,
+				3E3F649D297A9BAA00264524 /* CameraManager.swift in Sources */,
 				3E42F7AB295C8A5B00744841 /* Experiments.swift in Sources */,
 				3E42F7A4295C8A5B00744841 /* AboutView.swift in Sources */,
 				3E42F6FC295C866C00744841 /* LoomityApp.swift in Sources */,
@@ -439,8 +453,10 @@
 				3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */,
 				3E42F7A1295C8A5B00744841 /* Textbox.swift in Sources */,
 				3E42F79C295C8A5B00744841 /* GradientDescent.swift in Sources */,
+				3E4EEB74297A6ECD001E8313 /* ProductsView.swift in Sources */,
 				3E374FF0296028D4005768C7 /* LandmarkView.swift in Sources */,
 				3E42F7A8295C8A5B00744841 /* WelcomeView.swift in Sources */,
+				3EA32F95296F575A00E77B61 /* PrivacyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -599,7 +615,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Loomity/Preview Content\"";
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
@@ -634,7 +650,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Loomity/Preview Content\"";
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;

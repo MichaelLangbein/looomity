@@ -110,7 +110,8 @@ struct HeadView: View {
             while let task = self.taskQueue.dequeue() {
                 switch task.type {
                 case .addNode:
-                    let node = getFaceModel()
+                    let scene = skc.sceneView?.scene
+                    let node = getNewFaceModel(scene: scene)
                     skc.newNode(node: node)
                     activeFace = node.value(forKey: "observationId") as? UUID
                 case .removeNode:
@@ -247,7 +248,11 @@ struct HeadView: View {
             panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
-        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
+        guard
+            let scene = view.scene,
+            let figure = getFigureForId(obsId: obsId, nodes: nodes),
+            let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true)
+        else { return }
         
         switch gesture.state {
         case .began:
@@ -255,8 +260,9 @@ struct HeadView: View {
         case .changed:
             guard let startPos = positionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            figure.position.x = startPos.x + Float(translation.x / image.size.width) * 8.0
-            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 8.0
+                              //  start    + relative translation             * a bit faster * slower when zoomed in
+            figure.position.x = startPos.x + Float(translation.x / image.size.width)  * 4.0  * cameraNode.position.z
+            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0  * cameraNode.position.z
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -278,8 +284,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = globalPositionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width) * 8.0
-            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 8.0
+            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width)  * 4.0 * cameraNode.position.z
+            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 4.0 * cameraNode.position.z
         case .ended:
             globalPositionOnStartMove = nil
         case .cancelled, .failed:
@@ -429,13 +435,27 @@ struct HeadView: View {
         return nodes
     }
     
-    func getFaceModel() -> SCNNode {
+    func getNewFaceModel(scene: SCNScene?) -> SCNNode {
         let loadedScene = SCNScene(named: "loomisNew.usdz")!
         let figure = loadedScene.rootNode
+        
+        var newPosition = SCNVector3(x: 0, y: 0, z: 0)
+        var scale: Float = 1.0
+        var lookAt = SCNVector3(x: 0, y: 0, z: 1.0)
+        if let cameraNode = scene?.rootNode.childNode(withName: "Camera", recursively: true) {
+            newPosition.x = cameraNode.position.x
+            newPosition.y = cameraNode.position.y
+            scale = cameraNode.position.z / 2.0
+            if scale < 0 {
+                scale = -scale
+            }
+            lookAt = cameraNode.position
+        }
+        
         let f = figure.clone()
-        f.position = SCNVector3(x: 0, y: 0, z: 0)
-        f.look(at: SCNVector3(x: 0, y: 0, z: 1))
-        let scaleFactor = 1.0 / f.boundingSphere.radius
+        f.position = newPosition
+        f.look(at: lookAt) // SCNVector3(x: newPosition.x, y: newPosition.y, z: 10000))
+        let scaleFactor = scale / f.boundingSphere.radius
         f.scale = SCNVector3(x: scaleFactor, y: scaleFactor, z: scaleFactor)
         let newUUID = UUID()
         f.setValue(newUUID, forKey: "root")

@@ -22,12 +22,12 @@ struct ImagePickerView: UIViewControllerRepresentable {
         return imagePicker
     }
     
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
+    }
     
     final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
         var parent: ImagePickerView
-     
         init(_ parent: ImagePickerView) {
             self.parent = parent
         }
@@ -42,7 +42,6 @@ struct ImagePickerView: UIViewControllerRepresentable {
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             parent.show = false
         }
-        
     }
     
     func makeCoordinator() -> Coordinator {

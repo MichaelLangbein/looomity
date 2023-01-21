@@ -1,4 +1,5 @@
 // Adjusted from https://gist.github.com/schickling/b5d86cb070130f80bb40
+// Maybe try one of the later versions from that same page.
 
 import UIKit
 
@@ -6,40 +7,40 @@ extension UIImage {
 
     func fixedOrientation() -> UIImage {
         
-        if imageOrientation == UIImage.Orientation.up {
+        if imageOrientation == .up {
             return self
         }
         
         var transform: CGAffineTransform = CGAffineTransformIdentity
         
         switch imageOrientation {
-        case UIImage.Orientation.down, UIImage.Orientation.downMirrored:
+        case .down, .downMirrored:
             transform = CGAffineTransformTranslate(transform, size.width, size.height)
             transform = CGAffineTransformRotate(transform, .pi)
             break
-        case UIImage.Orientation.left, UIImage.Orientation.leftMirrored:
+        case .left, .leftMirrored:
             transform = CGAffineTransformTranslate(transform, size.width, 0)
             transform = CGAffineTransformRotate(transform, .pi / 2)
             break
-        case UIImage.Orientation.right, UIImage.Orientation.rightMirrored:
+        case .right, .rightMirrored:
             transform = CGAffineTransformTranslate(transform, 0, size.height)
             transform = CGAffineTransformRotate(transform, -.pi / 2)
             break
-        case UIImage.Orientation.up, UIImage.Orientation.upMirrored:
+        case .up, .upMirrored:
             break
         @unknown default:
             fatalError()
         }
         
         switch imageOrientation {
-        case UIImage.Orientation.upMirrored, UIImage.Orientation.downMirrored:
-            CGAffineTransformTranslate(transform, size.width, 0)
-            CGAffineTransformScale(transform, -1, 1)
+        case .upMirrored, .downMirrored:
+            transform = CGAffineTransformTranslate(transform, size.width, 0)
+            transform = CGAffineTransformScale(transform, -1, 1)
             break
-        case UIImage.Orientation.leftMirrored, UIImage.Orientation.rightMirrored:
-            CGAffineTransformTranslate(transform, size.height, 0)
-            CGAffineTransformScale(transform, -1, 1)
-        case UIImage.Orientation.up, UIImage.Orientation.down, UIImage.Orientation.left, UIImage.Orientation.right:
+        case .leftMirrored, .rightMirrored:
+            transform = CGAffineTransformTranslate(transform, size.height, 0)
+            transform = CGAffineTransformScale(transform, -1, 1)
+        case .up, .down, .left, .right:
             break
         @unknown default:
             fatalError()
@@ -60,7 +61,7 @@ extension UIImage {
         context.concatenate(transform)
         
         switch imageOrientation {
-        case UIImage.Orientation.left, UIImage.Orientation.leftMirrored, UIImage.Orientation.right, UIImage.Orientation.rightMirrored:
+        case .left, .leftMirrored, .right, .rightMirrored:
             let rect = CGRectMake(0, 0, size.height, size.width)
             context.draw(thisImage, in: rect)
             break
