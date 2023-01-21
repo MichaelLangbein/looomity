@@ -23,7 +23,7 @@ struct WelcomeView: View {
                     // To prevent `navigationViewTitle` to overlap with logo.
                     Spacer(minLength: UIScreen.main.bounds.height * 0.18)
                     
-                    Image("nobackground")
+                    Image("logo_alpha")
                         .resizable()
                         .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
                         .frame(maxWidth: 200, maxHeight: 200)

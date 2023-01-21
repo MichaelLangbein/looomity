@@ -19,14 +19,13 @@ struct ProductView<Content: View>: View {
     
     var body: some View {
         VStack {
-            HStack {
-                VStack {
-                    Text(title)
-                        .foregroundColor(.accentColor)
-                        .font(.title)
-        
-                    content
-                }
+            Text(title)
+                .foregroundColor(.accentColor)
+                .font(.title)
+                .padding(.leading)
+            
+            HStack (alignment: .top, spacing: 7.5) {
+                content
                 
                 Spacer()
                 
@@ -52,15 +51,14 @@ struct TrialProductView: View {
     var body: some View {
         ProductView(
             title: product.displayName,
-            logo: "trial_preview",
+            logo: "logo_trial_light",
             active: state == .newUser || state == .inTrialOngoing
         ) {
             switch state {
             case .newUser:
-                VStack (alignment: .leading) {
-                    Text("Try it out!")
+                VStack (alignment: .leading, spacing: 7.5) {
                     Text("\u{2022} Use Loomity for 7 days without restrictions.")
-                    Text("\u{2022} No worries, we don't automatically convert your trial into a subscription.")
+                    Text("\u{2022} No worries, we won't automatically convert your trial into a subscription.")
                     Button {
                         onBuyTapped()
                     } label: {
@@ -95,13 +93,12 @@ struct OneTimeProductView: View {
     var body: some View {
         ProductView(
             title: "One-time purchase",
-            logo: "onetimepurchase_preview",
+            logo: "logo_full_light",
             active: state != .hasBought
         ) {
             switch state {
             case .newUser, .inTrialOngoing, .inTrialOver:
-                VStack (alignment: .leading) {
-                    Text("Buy now:")
+                VStack (alignment: .leading, spacing: 7.5) {
                     Text("\u{2022} Get unlimited use of Loomity.")
                     Text("\u{2022} No subscription: buy it once and it'll always be yours.")
                     Button {
@@ -126,26 +123,56 @@ struct OneTimeProductView: View {
 struct ProductsView: View {
     @EnvironmentObject var purchaseManager: PurchaseManager
     @State var purchaseOngoing = false
+    @State var orientation: UIDeviceOrientation = .unknown
     
     var body: some View {
         FullPageView {
             ZStack {
                 if purchaseManager.productsLoaded {
-                    VStack {
-                        if let trialProduct = purchaseManager.products[freeTrialID] {
-                            TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
-                                self.purchaseProduct(product: trialProduct)
-                            }
+                    
+                    
+                    if (self.orientation == .landscapeLeft || self.orientation == .landscapeRight) {
+                        VStack {
+                            HStack {
+                                if let trialProduct = purchaseManager.products[freeTrialID] {
+                                    TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
+                                        self.purchaseProduct(product: trialProduct)
+                                    }
+                                    .frame(maxHeight: .infinity)
+                                }
+                                if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
+                                    OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
+                                        self.purchaseProduct(product: oneTimeProduct)
+                                    }
+                                    .frame(maxHeight: .infinity)
+                                }
+
+                            }.fixedSize(horizontal: false, vertical: true)
+                            restoreButton
                         }
-                        if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
-                            OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
-                                self.purchaseProduct(product: oneTimeProduct)
-                            }
-                        }
-                        restoreButton
+                        .saturation(self.purchaseOngoing ? 0.0 : 1.0)
+                        .opacity(self.purchaseOngoing ? 0.7 : 1.0)
                     }
-                    .saturation(self.purchaseOngoing ? 0.0 : 1.0)
-                    .opacity(self.purchaseOngoing ? 0.7 : 1.0)
+                    
+                    else {
+                        VStack {
+                            if let trialProduct = purchaseManager.products[freeTrialID] {
+                                TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
+                                    self.purchaseProduct(product: trialProduct)
+                                }
+                            }
+                            if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
+                                OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
+                                    self.purchaseProduct(product: oneTimeProduct)
+                                }
+                            }
+                            restoreButton
+                        }
+                        .saturation(self.purchaseOngoing ? 0.0 : 1.0)
+                        .opacity(self.purchaseOngoing ? 0.7 : 1.0)
+                    }
+
+                    
                 } else {
                     Text("Loading ...")
                 }
@@ -156,6 +183,9 @@ struct ProductsView: View {
             }
 
         }.navigationBarTitle("Products", displayMode: .inline)
+            .onRotate { orientation in
+                self.orientation = orientation
+            }
     }
     
     func purchaseProduct(product: Product) {
