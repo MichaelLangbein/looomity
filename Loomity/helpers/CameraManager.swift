@@ -62,22 +62,6 @@ class CameraManager: ObservableObject {
         } catch {
             print(error)
         }
-        
-//        if self.devicePosition == .back {
-//            if let videoToPhotoConnection = self.output.connection(with: .video) {
-//                if videoToPhotoConnection.isVideoMirroringSupported {
-//                    videoToPhotoConnection.automaticallyAdjustsVideoMirroring = false
-//                    videoToPhotoConnection.isVideoMirrored = true
-//                }
-//            }
-//        } else {
-//            if let videoToPhotoConnection = self.output.connection(with: .video) {
-//                if videoToPhotoConnection.isVideoMirroringSupported {
-//                    videoToPhotoConnection.automaticallyAdjustsVideoMirroring = false
-//                    videoToPhotoConnection.isVideoMirrored = false
-//                }
-//            }
-//        }
     }
     
     func capturePhoto(with settings: AVCapturePhotoSettings = AVCapturePhotoSettings()) {

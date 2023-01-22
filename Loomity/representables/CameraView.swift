@@ -26,7 +26,9 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     ) {
         self.cameraManager = cameraManager
         self.handlePhoto = didFinishProcessingPhoto
+        
         super.init(nibName: nil, bundle: nil)
+        
         cameraManager.start(delegate: self) { error in
             if let error = error {
                 didFinishProcessingPhoto(.failure(error))
@@ -100,7 +102,10 @@ struct CameraRepresentableView: UIViewControllerRepresentable {
     let didFinishProcessingPhoto: (Result<UIImage, Error>) -> ()
     
     func makeUIViewController(context: Context) -> UIViewController {
-        return CameraViewController(cameraManager: cameraManager, didFinishProcessingPhoto: didFinishProcessingPhoto)
+        return CameraViewController(
+            cameraManager: cameraManager,
+            didFinishProcessingPhoto: didFinishProcessingPhoto
+        )
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
@@ -112,6 +117,7 @@ struct CustomCameraView: View {
     @Binding var capturedImage: UIImage?
     @Binding var isDisplayed: Bool
     private let cameraManager = CameraManager()
+    @State var hasTwoCameras = false
     
     var body: some View {
         ZStack {
@@ -158,9 +164,14 @@ struct CustomCameraView: View {
                             .font(.system(size: 40))
                             .foregroundColor(.white)
                     }
+                    .disabled(!self.hasTwoCameras)
                 }
                 .padding(.leading)
                 .padding(.trailing)
+            }
+        }.onAppear {
+            if self.cameraManager.frontDevice != nil && self.cameraManager.backDevice != nil {
+                self.hasTwoCameras = true
             }
         }
     }
