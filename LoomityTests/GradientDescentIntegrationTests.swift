@@ -21,6 +21,18 @@ final class GradientDescentIntegrationTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
+    
+    func testDetection() throws {
+        let expectation = expectation(description: "Expects a face to be detected in test-image")
+        let image = UIImage(named: "TestImage")!
+        detectFacesWithLandmarks(uiImage: image) { observations in
+            if observations.count > 0 {
+                expectation.fulfill()
+            }
+        }
+        wait(for: [expectation], timeout: 20)
+    }
+    
     private var observations: [VNFaceObservation] = []
     
     func testOnRealImage() throws {
@@ -29,6 +41,7 @@ final class GradientDescentIntegrationTests: XCTestCase {
         // Any test you write for XCTest can be annotated as throws and async.
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+        
         let expectation = expectation(description: "Expects optimised models to be placed better than non-optimized ones.")
 
         let image = UIImage(named: "TestImage")!
@@ -39,7 +52,7 @@ final class GradientDescentIntegrationTests: XCTestCase {
             ar: Float(image.size.width / image.size.height),
             loadNodes: { view, scene, camera in
                 let loadedScene = SCNScene(named: "loomisNew.usdz")!
-                var figure = loadedScene.rootNode
+                let figure = loadedScene.rootNode
                 
                 var nodes: [SCNNode] = []
                 let ar = Float(image.size.width / image.size.height)
@@ -73,9 +86,9 @@ final class GradientDescentIntegrationTests: XCTestCase {
                     
                     let fOptimized = gradientDescent(sceneView: view, head: figure, observation: observation, image: image)
                     
-                    XCTAssert(fOptimized.position.x != figure.position.x)
-                    XCTAssert(fOptimized.position.y != figure.position.y)
-                    XCTAssert(fOptimized.position.z != figure.position.z)
+                    XCTAssert(fOptimized.position.x != cWorld.x)
+                    XCTAssert(fOptimized.position.y != cWorld.y)
+                    XCTAssert(fOptimized.position.z == cWorld.z)  // no change in z-coordinate
                     expectation.fulfill()
                     
                     nodes.append(fOptimized)
@@ -85,6 +98,7 @@ final class GradientDescentIntegrationTests: XCTestCase {
         )
 
         detectFacesWithLandmarks(uiImage: image) { observations in
+            self.observations = observations
             sceneController.viewDidLoad()
         }
         
