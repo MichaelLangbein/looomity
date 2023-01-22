@@ -21,29 +21,29 @@ struct WelcomeView: View {
                 VStack {
                     
                     // To prevent `navigationViewTitle` to overlap with logo.
-                    // Spacer(minLength: UIScreen.main.bounds.height * 0.18)
-                    Spacer()
+                     Spacer(minLength: UIScreen.main.bounds.height * 0.18)
                     
-                    
-                    ZStack {
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [
-                                    Color(.systemBackground), .accentColor
-                                ]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ))
-                            .frame(maxWidth: 200, maxHeight: 200)
-                            .cornerRadius(30)
-                            .shadow(radius: 5)
-//                            .opacity(0.5)
-                        
-                        Image("logo_alpha")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
-                            .frame(maxWidth: 200, maxHeight: 200)
-                            .padding(.trailing)
+                    if self.orientation != .landscapeLeft && self.orientation != .landscapeRight {
+                        ZStack {
+                            Rectangle()
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(.systemBackground), .accentColor
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ))
+                                .frame(maxWidth: 200, maxHeight: 200)
+                                .cornerRadius(30)
+                                .shadow(radius: 5)
+    //                            .opacity(0.5)
+                            
+                            Image("logo_alpha")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
+                                .frame(maxWidth: 200, maxHeight: 200)
+                                .padding(.trailing)
+                        }
                     }
 
                     
@@ -74,7 +74,7 @@ struct WelcomeView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     
                     
-                    if self.orientation == .unknown || self.orientation == .portrait {
+                    if self.orientation != .landscapeLeft && self.orientation != .landscapeRight {
                         Spacer()
                     }
                     
