@@ -5,7 +5,7 @@ import UIKit
 
 extension UIImage {
 
-    func fixedOrientation() -> UIImage {
+    func fixedOrientation() -> UIImage? {
         
         if imageOrientation == .up {
             return self
@@ -46,14 +46,17 @@ extension UIImage {
             fatalError()
         }
         
-        guard let thisImage = self.cgImage else { return self } // @TODO: Is this ok?
+        guard
+            let thisImage = self.cgImage,
+            let colorSpace = thisImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)
+        else { return nil }
         
         guard let context = CGContext.init(
             data: nil,
             width: Int(size.width), height: Int(size.height),
             bitsPerComponent: thisImage.bitsPerComponent,
             bytesPerRow: 0,
-            space: thisImage.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!,
+            space: colorSpace,
             bitmapInfo: thisImage.bitmapInfo.rawValue
         )
         else { return self }
@@ -71,7 +74,7 @@ extension UIImage {
             break
         }
         
-        guard let cgImage: CGImage = context.makeImage() else { return self }
+        guard let cgImage: CGImage = context.makeImage() else { return nil }
         
         return UIImage(cgImage: cgImage)
     }

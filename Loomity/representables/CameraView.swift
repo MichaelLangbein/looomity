@@ -52,8 +52,14 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
             handlePhoto(.failure(error))
             return
         }
-        let data = photo.fileDataRepresentation()!
-        let uiImage = UIImage(data: data)!
+        guard
+            let data = photo.fileDataRepresentation(),
+            let uiImage = UIImage(data: data)
+        else {
+            handlePhoto(.failure(ProcessingError.errorWhileProcessing))
+            return
+        }
+        
         if cameraManager.devicePosition == .front {
             var trueOrientation = uiImage.imageOrientation
             switch uiImage.imageOrientation {
@@ -68,12 +74,22 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
             default:
                 trueOrientation = uiImage.imageOrientation
             }
-            let imageCorrectedOrientation = UIImage(cgImage: uiImage.cgImage!, scale: 1.0, orientation: trueOrientation)
-            let imageFixed = imageCorrectedOrientation.fixedOrientation()
+            guard let cgImage = uiImage.cgImage else {
+                handlePhoto(.success(uiImage))
+                return
+            }
+            let imageCorrectedOrientation = UIImage(cgImage: cgImage, scale: 1.0, orientation: trueOrientation)
+            guard let imageFixed = imageCorrectedOrientation.fixedOrientation() else {
+                handlePhoto(.success(uiImage))
+                return
+            }
             handlePhoto(.success(imageFixed))
 
         } else {
-            let imageFixed = uiImage.fixedOrientation()
+            guard let imageFixed = uiImage.fixedOrientation() else {
+                handlePhoto(.success(uiImage))
+                return
+            }
             handlePhoto(.success(imageFixed))
         }
     }
