@@ -44,10 +44,6 @@ final class GradientDescentTests: XCTestCase {
         XCTAssert(opt[1] > 0.5)
         XCTAssert(opt[1] < 1.5)
     }
-    
-    func testOnImage() throws {
-        
-    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
