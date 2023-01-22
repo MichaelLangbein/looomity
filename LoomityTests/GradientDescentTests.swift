@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import SwiftUI
 @testable import Loomity
 
 
@@ -15,7 +16,8 @@ func f(x: [Float]) -> Float {
 
 final class GradientDescentTests: XCTestCase {
 
-    override func setUpWithError() throws {
+    
+    func setUpWithError() async throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
@@ -33,15 +35,18 @@ final class GradientDescentTests: XCTestCase {
         XCTAssert(opt[1] < 1.5)
     }
     
-//    func testGdOnImage() {    
-//    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func testRandGd() {
+        let initial: [Float] = [0.0, 0.0]
+        let opt = rand_gd(f: f, initial: initial)
+        XCTAssert(opt.count == initial.count)
+        XCTAssert(opt[0] > 3.5)
+        XCTAssert(opt[0] < 4.5)
+        XCTAssert(opt[1] > 0.5)
+        XCTAssert(opt[1] < 1.5)
+    }
+    
+    func testOnImage() throws {
+        
     }
 
     func testPerformanceExample() throws {

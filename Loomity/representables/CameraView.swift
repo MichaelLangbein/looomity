@@ -26,7 +26,9 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
     ) {
         self.cameraManager = cameraManager
         self.handlePhoto = didFinishProcessingPhoto
+        
         super.init(nibName: nil, bundle: nil)
+        
         cameraManager.start(delegate: self) { error in
             if let error = error {
                 didFinishProcessingPhoto(.failure(error))
@@ -52,8 +54,14 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
             handlePhoto(.failure(error))
             return
         }
-        let data = photo.fileDataRepresentation()!
-        let uiImage = UIImage(data: data)!
+        guard
+            let data = photo.fileDataRepresentation(),
+            let uiImage = UIImage(data: data)
+        else {
+            handlePhoto(.failure(ProcessingError.errorWhileProcessing))
+            return
+        }
+        
         if cameraManager.devicePosition == .front {
             var trueOrientation = uiImage.imageOrientation
             switch uiImage.imageOrientation {
@@ -68,12 +76,22 @@ class CameraViewController: UIViewController, AVCapturePhotoCaptureDelegate {
             default:
                 trueOrientation = uiImage.imageOrientation
             }
-            let imageCorrectedOrientation = UIImage(cgImage: uiImage.cgImage!, scale: 1.0, orientation: trueOrientation)
-            let imageFixed = imageCorrectedOrientation.fixedOrientation()
+            guard let cgImage = uiImage.cgImage else {
+                handlePhoto(.success(uiImage))
+                return
+            }
+            let imageCorrectedOrientation = UIImage(cgImage: cgImage, scale: 1.0, orientation: trueOrientation)
+            guard let imageFixed = imageCorrectedOrientation.fixedOrientation() else {
+                handlePhoto(.success(uiImage))
+                return
+            }
             handlePhoto(.success(imageFixed))
 
         } else {
-            let imageFixed = uiImage.fixedOrientation()
+            guard let imageFixed = uiImage.fixedOrientation() else {
+                handlePhoto(.success(uiImage))
+                return
+            }
             handlePhoto(.success(imageFixed))
         }
     }
@@ -84,7 +102,10 @@ struct CameraRepresentableView: UIViewControllerRepresentable {
     let didFinishProcessingPhoto: (Result<UIImage, Error>) -> ()
     
     func makeUIViewController(context: Context) -> UIViewController {
-        return CameraViewController(cameraManager: cameraManager, didFinishProcessingPhoto: didFinishProcessingPhoto)
+        return CameraViewController(
+            cameraManager: cameraManager,
+            didFinishProcessingPhoto: didFinishProcessingPhoto
+        )
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
@@ -96,6 +117,7 @@ struct CustomCameraView: View {
     @Binding var capturedImage: UIImage?
     @Binding var isDisplayed: Bool
     private let cameraManager = CameraManager()
+    @State var hasTwoCameras = false
     
     var body: some View {
         ZStack {
@@ -142,9 +164,14 @@ struct CustomCameraView: View {
                             .font(.system(size: 40))
                             .foregroundColor(.white)
                     }
+                    .disabled(!self.hasTwoCameras)
                 }
                 .padding(.leading)
                 .padding(.trailing)
+            }
+        }.onAppear {
+            if self.cameraManager.frontDevice != nil && self.cameraManager.backDevice != nil {
+                self.hasTwoCameras = true
             }
         }
     }

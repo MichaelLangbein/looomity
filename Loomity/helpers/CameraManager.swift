@@ -34,13 +34,13 @@ class CameraManager: ObservableObject {
     let output = AVCapturePhotoOutput()
     let previewLayer = AVCaptureVideoPreviewLayer()
 
-    func start(delegate: AVCapturePhotoCaptureDelegate, completion: @escaping (Error?) -> ()) {
+    func start(delegate: AVCapturePhotoCaptureDelegate, onError: @escaping (Error?) -> ()) {
         self.delegate = delegate
         self.detectCameras()
         self.checkPermissions { permission in
             guard permission else { return }
             DispatchQueue.global(qos: .background).async { [weak self] in
-                self?.setupCamera(completion: completion)
+                self?.setupCamera(handleError: onError)
             }
         }
     }
@@ -62,22 +62,6 @@ class CameraManager: ObservableObject {
         } catch {
             print(error)
         }
-        
-//        if self.devicePosition == .back {
-//            if let videoToPhotoConnection = self.output.connection(with: .video) {
-//                if videoToPhotoConnection.isVideoMirroringSupported {
-//                    videoToPhotoConnection.automaticallyAdjustsVideoMirroring = false
-//                    videoToPhotoConnection.isVideoMirrored = true
-//                }
-//            }
-//        } else {
-//            if let videoToPhotoConnection = self.output.connection(with: .video) {
-//                if videoToPhotoConnection.isVideoMirroringSupported {
-//                    videoToPhotoConnection.automaticallyAdjustsVideoMirroring = false
-//                    videoToPhotoConnection.isVideoMirrored = false
-//                }
-//            }
-//        }
     }
     
     func capturePhoto(with settings: AVCapturePhotoSettings = AVCapturePhotoSettings()) {
@@ -172,7 +156,7 @@ class CameraManager: ObservableObject {
         }
     }
     
-    private func setupCamera(completion: @escaping (Error?) -> ()) {
+    private func setupCamera(handleError: @escaping (Error?) -> ()) {
         let session = AVCaptureSession()
         guard let device = self.getCurrentDevice() else { return }
             
@@ -190,7 +174,7 @@ class CameraManager: ObservableObject {
             self.session = session
             
         } catch {
-            completion(error)
+            handleError(error)
         }
             
     }
