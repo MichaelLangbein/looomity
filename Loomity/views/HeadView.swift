@@ -426,13 +426,82 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
-            
 //            nodes.append(f)
-             let fOptimized = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-             nodes.append(fOptimized)
+            
+            let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
+            nodes.append(fOptimised)
+            
+//            for point in getAllPoints(observation: observation) {
+//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+//                box.firstMaterial?.diffuse.contents = Color(.yellow)
+//                let node = SCNNode(geometry: box)
+//                node.position = observationRelative2ScenePos(rect: observation.boundingBox, point: point, width: image.cgImage!.width, height: image.cgImage!.height)
+//                scene.rootNode.addChildNode(node)
+//            }
         }
         
         return nodes
+    }
+    
+    func __observationRelative2ScenePos(rect: CGRect, point: CGPoint, width: Int, height: Int) -> SCNVector3 {
+        let imgRelPoint = __rectRel2ImgRel(rect: rect, point: point)
+        let sceneRelPos = __imgRel2SceneRel(point: imgRelPoint, width: width, height: height)
+        return sceneRelPos
+    }
+
+    func __rectRel2ImgRel(rect: CGRect, point: CGPoint) -> CGPoint {
+//        let xImg = rect.width * point.x + rect.origin.x
+//        let yImg = rect.height * point.y + rect.origin.y
+//        return CGPoint(x: xImg, y: yImg)
+        let projected = VNImagePointForFaceLandmarkPoint(
+            vector_float2(x: Float(point.x), y: Float(point.y)),
+            rect,
+            1, 1 // Int(image.size.width), Int(image.size.height)
+        )
+        return projected
+    }
+
+    func __imgRel2SceneRel(point: CGPoint, width: Int, height: Int) -> SCNVector3 {
+        let xImg = Float(point.x)
+        let yImg = Float(point.y)
+
+        let wImgScene: Float = 2.0
+        let ar = Float(height) / Float(width)
+        let hImgScene = ar * wImgScene
+
+        let xScene = xImg * wImgScene - 1.0
+        let yScene = (yImg * hImgScene) - (hImgScene / 2.0)
+        let zScene: Float = 0.0
+        return SCNVector3(x: xScene, y: yScene, z: zScene)
+    }
+    
+    func __getAllPoints(observation: VNFaceObservation) -> [CGPoint] {
+        var points: [CGPoint] = []
+        for point in observation.landmarks!.outerLips!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.nose!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.leftEye!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.rightEye!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.leftEyebrow!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.rightEyebrow!.normalizedPoints {
+            points.append(point);
+        }
+//        for point in observation.landmarks!.faceContour!.normalizedPoints {
+//            points.append(point);
+//        }
+        for point in observation.landmarks!.medianLine!.normalizedPoints {
+            points.append(point)
+        }
+        return points;
     }
     
     func getNewFaceModel(scene: SCNScene?) -> SCNNode {
