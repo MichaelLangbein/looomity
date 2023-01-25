@@ -166,6 +166,11 @@ func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int) -> SCN
     return SCNVector3(x: xScene, y: yScene, z: zScene)
 }
 
+/**
+ Much simpler than `scene2imageLong`, but doesn't account for perspective distortion
+ which likely occurs on faces far off to the edges of the scene.
+ Not a problem for ortho-view, though!
+ */
 func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat) -> CGPoint {
     let xScene = point.x
     let yScene = point.y

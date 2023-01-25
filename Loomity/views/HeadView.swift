@@ -392,20 +392,19 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
-//            nodes.append(f)
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
             nodes.append(fOptimised)
             
-            for point in __getAllPoints(observation: observation) {
-                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-                box.firstMaterial?.diffuse.contents = Color(.yellow)
-                let node = SCNNode(geometry: box)
-                let imagePoint = landmark2image(point, observation.boundingBox)
-                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
-                node.position = scenePoint
-                scene.rootNode.addChildNode(node)
-            }
+//            for point in __getAllPoints(observation: observation) {
+//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+//                box.firstMaterial?.diffuse.contents = Color(.yellow)
+//                let node = SCNNode(geometry: box)
+//                let imagePoint = landmark2image(point, observation.boundingBox)
+//                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
+//                node.position = scenePoint
+//                scene.rootNode.addChildNode(node)
+//            }
         }
         
         return nodes
