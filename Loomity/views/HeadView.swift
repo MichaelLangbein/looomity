@@ -350,7 +350,13 @@ struct HeadView: View {
     func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
 
         // loading model
-        guard let loadedScene = SCNScene(named: "loomisNew.usdz") else { return [] }
+        #if DEBUG
+        print("Loading debugging model")
+        let modelName = "loomisNewDebugging.scn"
+        #else
+        let modelName = "loomisNew.usdz"
+        #endif
+        guard let loadedScene = SCNScene(named: modelName) else { return [] }
         let figure = loadedScene.rootNode
         
         var nodes: [SCNNode] = []
@@ -375,16 +381,18 @@ struct HeadView: View {
             let roll  = Float(truncating: observation.roll!)
             let pitch = Float(truncating: observation.pitch!)
             let yaw   = Float(truncating: observation.yaw!)
-            
+
             let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
             
             let f = figure.clone()
             
             // we only use width for scale factor because face-detection doesn't include forehead,
             // rendering the height-value useless for scaling.
+            let headHeightPerWidth: Float = 1.3
             let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
-            let scaleFactor = 3.0 * 1.3 * (wImg) / figure.boundingSphere.radius
-            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
+            let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
+            let orthoFaceCorrection: Float = self.usesOrthographicCam ? 0.25 * wImg : 0.0  // simulating some jaw-protrusion even if in ortho-view
+            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor * (1.0 + orthoFaceCorrection), z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             f.opacity = self.unfocussedOpacity
@@ -392,19 +400,22 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
+//            scene.rootNode.addChildNode(f.clone())
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
             nodes.append(fOptimised)
             
-//            for point in __getAllPoints(observation: observation) {
-//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-//                box.firstMaterial?.diffuse.contents = Color(.yellow)
-//                let node = SCNNode(geometry: box)
-//                let imagePoint = landmark2image(point, observation.boundingBox)
-//                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
-//                node.position = scenePoint
-//                scene.rootNode.addChildNode(node)
-//            }
+            #if DEBUG
+            for point in __getAllPoints(observation: observation) {
+                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+                box.firstMaterial?.diffuse.contents = Color(.yellow)
+                let node = SCNNode(geometry: box)
+                let imagePoint = landmark2image(point, observation.boundingBox)
+                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
+                node.position = scenePoint
+                scene.rootNode.addChildNode(node)
+            }
+            #endif
         }
         
         return nodes
@@ -439,6 +450,13 @@ struct HeadView: View {
         }
         return points;
     }
+
+    func setModelColor(model: SCNNode, color: UIColor) {
+        model.geometry?.firstMaterial?.diffuse.contents = color
+        for child in model.childNodes {
+            setModelColor(model: child, color: color)
+        }
+    }
     
     func getNewFaceModel(scene: SCNScene?) -> SCNNode {
         let loadedScene = SCNScene(named: "loomisNew.usdz")!
@@ -461,6 +479,7 @@ struct HeadView: View {
         f.position = newPosition
         f.look(at: lookAt) // SCNVector3(x: newPosition.x, y: newPosition.y, z: 10000))
         let scaleFactor = scale / f.boundingSphere.radius
+        
         f.scale = SCNVector3(x: scaleFactor, y: scaleFactor, z: scaleFactor)
         let newUUID = UUID()
         f.setValue(newUUID, forKey: "root")

@@ -48,21 +48,24 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
     func f(x: [Float]) -> Float {
         head.position.x = x[0]
         head.position.y = x[1]
-        // optimization works best when we only focus on the most important paras.
+        // optimisation works best when we only focus on the most important paras.
         // seems to struggle with scale in particular.
 //        head.eulerAngles.x = x[2]
 //        head.eulerAngles.y = x[3]
 //        head.eulerAngles.z = x[4]
-//        head.scale.x = x[5]
-//        head.scale.y = x[5]
-//        head.scale.z = x[5]
+//        head.scale.x = x[2]
+//        head.scale.y = x[2]
+//        head.scale.z = x[2]
         let s = sse(sceneView: sceneView, head: head, observation: observation, image: image)
         return s
     }
-    let initial = [head.position.x, head.position.y]
+    let initial = [head.position.x, head.position.y, head.scale.x]
     let optimal = rand_gd(f: f, initial: initial)
     head.position.x = optimal[0]
     head.position.y = optimal[1]
+//    head.scale.x = optimal[2]
+//    head.scale.y = optimal[2]
+//    head.scale.z = optimal[2]
     return head
 }
 
@@ -286,7 +289,7 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
         + vectorDiff(mouthProjected, mouthTargetProjected)
         + vectorDiff(mouthLProjected, mouthLTargetProjected)
         + vectorDiff(mouthRProjected, mouthRTargetProjected)
-        + vectorDiff(chinProjected, chinTargetProjected)
+        + 3 * vectorDiff(chinProjected, chinTargetProjected)  // giving extra weight to chin, because few landmarks in lower half of face.
     )
     return s
 }

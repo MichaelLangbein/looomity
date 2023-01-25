@@ -152,7 +152,9 @@ func landmark2image(_ point: CGPoint, _ boundingBox: CGRect) -> CGPoint {
 }
 
 
-func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int) -> SCNVector3 {
+func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int, _ ortho: Bool = true) -> SCNVector3 {
+    // @TODO: correction if not orthographic view
+    
     let xImg = Float(point.x)
     let yImg = Float(point.y)
 
@@ -171,7 +173,9 @@ func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int) -> SCN
  which likely occurs on faces far off to the edges of the scene.
  Not a problem for ortho-view, though!
  */
-func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat) -> CGPoint {
+func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ ortho: Bool = true) -> CGPoint {
+    // @TODO: correction if not orthographic view
+    
     let xScene = point.x
     let yScene = point.y
     
@@ -181,7 +185,11 @@ func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFl
     
     let xImg = (xScene + 1.0) / wImgScene
     let yImg = (yScene + (hImgScene / 2.0)) / hImgScene
-    return CGPoint(x: Double(xImg), y: Double(yImg))
+    
+    // @TODO: where is this weird behaviour coming from?
+    let weirdCorrectionFactor: Float = imageWidth > imageHeight ? 0.1: 0.05
+    
+    return CGPoint(x: Double(xImg), y: Double(yImg + weirdCorrectionFactor))
 }
 
 
