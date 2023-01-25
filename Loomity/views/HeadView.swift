@@ -355,30 +355,6 @@ struct HeadView: View {
         
         var nodes: [SCNNode] = []
         
-        
-//        ImageRelative               SceneKit               ImageRel    Scene
-//
-//     1  ▲                               ▲ ar                      1 ▲ ar
-//        │                               │                           │
-//        │                             1 │                           │ 1
-//        │                               │                           │
-//        │                               │                           │
-//        │                     -1        │        1                  │
-//        │                     ◄─────────┼────────►                  │ 0
-//        │                               │                           │
-//        │                               │                           │
-//        │                               │                           │
-//        │                            -1 │                           │ -1
-//        │                               │                           │
-//     0  └─────────────►                 ▼ -ar                     0 ▼ -ar
-//        0             1
-//
-//                       Scene
-//                       -1        0         1
-//                       ◄───────────────────►
-//                       0                   1
-//                       ImageRel
-
         // Normally here we'd have to account for `image.imageOrientation != .up`
         // But this is already fixed manually after taking the image in the image-picker
         
@@ -400,23 +376,13 @@ struct HeadView: View {
             let pitch = Float(truncating: observation.pitch!)
             let yaw   = Float(truncating: observation.yaw!)
             
-            let leftImg   = Float(observation.boundingBox.minX)
-            let rightImg  = Float(observation.boundingBox.maxX)
-            let topImg    = Float(observation.boundingBox.maxY)
-            let bottomImg = Float(observation.boundingBox.minY)
-            
-            let wImg   = rightImg - leftImg
-            let hImg   = topImg - bottomImg
-            let xImg   = leftImg   + wImg / 2.0
-            let yImg   = bottomImg + hImg / 2.0
-            let xScene = 2.0 * xImg - 1.0
-            let yScene = (2.0 * yImg - 1.0) * Float(ar)
-            let cWorld = SCNVector3(x: xScene, y: yScene, z: 0)
+            let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
             
             let f = figure.clone()
             
             // we only use width for scale factor because face-detection doesn't include forehead,
             // rendering the height-value useless for scaling.
+            let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
             let scaleFactor = 3.0 * 1.3 * (wImg) / figure.boundingSphere.radius
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
@@ -431,49 +397,20 @@ struct HeadView: View {
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
             nodes.append(fOptimised)
             
-//            for point in getAllPoints(observation: observation) {
-//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-//                box.firstMaterial?.diffuse.contents = Color(.yellow)
-//                let node = SCNNode(geometry: box)
-//                node.position = observationRelative2ScenePos(rect: observation.boundingBox, point: point, width: image.cgImage!.width, height: image.cgImage!.height)
-//                scene.rootNode.addChildNode(node)
-//            }
+            for point in __getAllPoints(observation: observation) {
+                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+                box.firstMaterial?.diffuse.contents = Color(.yellow)
+                let node = SCNNode(geometry: box)
+                let imagePoint = landmark2image(point, observation.boundingBox)
+                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
+                node.position = scenePoint
+                scene.rootNode.addChildNode(node)
+            }
         }
         
         return nodes
     }
-    
-    func __observationRelative2ScenePos(rect: CGRect, point: CGPoint, width: Int, height: Int) -> SCNVector3 {
-        let imgRelPoint = __rectRel2ImgRel(rect: rect, point: point)
-        let sceneRelPos = __imgRel2SceneRel(point: imgRelPoint, width: width, height: height)
-        return sceneRelPos
-    }
 
-    func __rectRel2ImgRel(rect: CGRect, point: CGPoint) -> CGPoint {
-//        let xImg = rect.width * point.x + rect.origin.x
-//        let yImg = rect.height * point.y + rect.origin.y
-//        return CGPoint(x: xImg, y: yImg)
-        let projected = VNImagePointForFaceLandmarkPoint(
-            vector_float2(x: Float(point.x), y: Float(point.y)),
-            rect,
-            1, 1 // Int(image.size.width), Int(image.size.height)
-        )
-        return projected
-    }
-
-    func __imgRel2SceneRel(point: CGPoint, width: Int, height: Int) -> SCNVector3 {
-        let xImg = Float(point.x)
-        let yImg = Float(point.y)
-
-        let wImgScene: Float = 2.0
-        let ar = Float(height) / Float(width)
-        let hImgScene = ar * wImgScene
-
-        let xScene = xImg * wImgScene - 1.0
-        let yScene = (yImg * hImgScene) - (hImgScene / 2.0)
-        let zScene: Float = 0.0
-        return SCNVector3(x: xScene, y: yScene, z: zScene)
-    }
     
     func __getAllPoints(observation: VNFaceObservation) -> [CGPoint] {
         var points: [CGPoint] = []

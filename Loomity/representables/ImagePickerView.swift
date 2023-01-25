@@ -36,6 +36,8 @@ struct ImagePickerView: UIViewControllerRepresentable {
             if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
                 if let fixedImage = image.fixedOrientation() {
                     parent.image = fixedImage
+                } else {
+                    parent.image = image
                 }
             }
             parent.show = false
