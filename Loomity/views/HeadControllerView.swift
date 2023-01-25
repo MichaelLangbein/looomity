@@ -22,7 +22,7 @@ struct HeadControllerView: View {
     @StateObject var taskQueue = Queue<SKVTask>()
     @State var opacity = 0.75
     @State var activeFace: UUID?
-    @State var usesOrthographicCam = false
+    @State var usesOrthographicCam = true
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
@@ -42,11 +42,6 @@ struct HeadControllerView: View {
                 opacity: $opacity,
                 activeFace: $activeFace
             ).ignoresSafeArea()
-            
-//            MarkerView( // LandmarkView(
-//                observations: observations,
-//                image: image
-//            )
             
             if orientation == .landscapeRight || orientation == .landscapeLeft {
                 HStack {
@@ -144,19 +139,6 @@ struct HeadControllerView: View {
                     }
                 )
             }
-
-            // Toggle cam-mode
-            Button {
-                if usesOrthographicCam == true {
-                    taskQueue.enqueue(SKVTask(type: .setPerspectiveCam))
-                    usesOrthographicCam = false
-                } else {
-                    taskQueue.enqueue(SKVTask(type: .setOrthographicCam))
-                    usesOrthographicCam = true
-                }
-            } label: {
-                Text("\(usesOrthographicCam ? "Perspective" : "Ortho") view").frame(maxWidth: .infinity)
-            }.buttonStyle(.borderedProminent)
 
             // Save image
             Button {

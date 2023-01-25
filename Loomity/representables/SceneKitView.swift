@@ -110,19 +110,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         let camera = SCNCamera()
         camera.zNear = 0.01
         camera.zFar = 100
-        camera.usesOrthographicProjection = false
+        camera.usesOrthographicProjection = true  // using ortho-view by default now - less confusing during panning.
         camera.projectionDirection = width > height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
         
-//        let cameraSmallestAngle = camera.projectionDirection == .horizontal ?
-//            Float(camera.fieldOfView) * Float(height) / Float(width) :
-//            Float(camera.fieldOfView) * Float(width) / Float(height)
-//        let halfViewAngleRads = (cameraSmallestAngle / 2.0) * (2.0 * .pi / 360.0)
-//        let halfWidthClippingSpace: Float = 1.0
-//        let zCam = halfWidthClippingSpace / tan(halfViewAngleRads)
-        
-
 //        Portrait orientation: x stretches screen
 //        Image-quad right-most-point: (1 0 z 1)
 //        |f 0 0 0| |1|    |f|    |f/z|  <-- must be 1 in clipping space

@@ -350,35 +350,17 @@ struct HeadView: View {
     func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
 
         // loading model
-        guard let loadedScene = SCNScene(named: "loomisNew.usdz") else { return [] }
+        #if DEBUG
+        print("Loading debugging model")
+        let modelName = "loomisNewDebugging.scn"
+        #else
+        let modelName = "loomisNew.usdz"
+        #endif
+        guard let loadedScene = SCNScene(named: modelName) else { return [] }
         let figure = loadedScene.rootNode
         
         var nodes: [SCNNode] = []
         
-        
-//        ImageRelative               SceneKit               ImageRel    Scene
-//
-//     1  ▲                               ▲ ar                      1 ▲ ar
-//        │                               │                           │
-//        │                             1 │                           │ 1
-//        │                               │                           │
-//        │                               │                           │
-//        │                     -1        │        1                  │
-//        │                     ◄─────────┼────────►                  │ 0
-//        │                               │                           │
-//        │                               │                           │
-//        │                               │                           │
-//        │                            -1 │                           │ -1
-//        │                               │                           │
-//     0  └─────────────►                 ▼ -ar                     0 ▼ -ar
-//        0             1
-//
-//                       Scene
-//                       -1        0         1
-//                       ◄───────────────────►
-//                       0                   1
-//                       ImageRel
-
         // Normally here we'd have to account for `image.imageOrientation != .up`
         // But this is already fixed manually after taking the image in the image-picker
         
@@ -399,26 +381,18 @@ struct HeadView: View {
             let roll  = Float(truncating: observation.roll!)
             let pitch = Float(truncating: observation.pitch!)
             let yaw   = Float(truncating: observation.yaw!)
-            
-            let leftImg   = Float(observation.boundingBox.minX)
-            let rightImg  = Float(observation.boundingBox.maxX)
-            let topImg    = Float(observation.boundingBox.maxY)
-            let bottomImg = Float(observation.boundingBox.minY)
-            
-            let wImg   = rightImg - leftImg
-            let hImg   = topImg - bottomImg
-            let xImg   = leftImg   + wImg / 2.0
-            let yImg   = bottomImg + hImg / 2.0
-            let xScene = 2.0 * xImg - 1.0
-            let yScene = (2.0 * yImg - 1.0) * Float(ar)
-            let cWorld = SCNVector3(x: xScene, y: yScene, z: 0)
+
+            let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
             
             let f = figure.clone()
             
             // we only use width for scale factor because face-detection doesn't include forehead,
             // rendering the height-value useless for scaling.
-            let scaleFactor = 3.0 * 1.3 * (wImg) / figure.boundingSphere.radius
-            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
+            let headHeightPerWidth: Float = 1.3
+            let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
+            let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
+            let orthoFaceCorrection: Float = self.usesOrthographicCam ? 0.25 * wImg : 0.0  // simulating some jaw-protrusion even if in ortho-view
+            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor * (1.0 + orthoFaceCorrection), z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             f.opacity = self.unfocussedOpacity
@@ -426,13 +400,62 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
+//            scene.rootNode.addChildNode(f.clone())
             
-//            nodes.append(f)
-             let fOptimized = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-             nodes.append(fOptimized)
+            let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
+            nodes.append(fOptimised)
+            
+            #if DEBUG
+            for point in __getAllPoints(observation: observation) {
+                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+                box.firstMaterial?.diffuse.contents = Color(.yellow)
+                let node = SCNNode(geometry: box)
+                let imagePoint = landmark2image(point, observation.boundingBox)
+                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
+                node.position = scenePoint
+                scene.rootNode.addChildNode(node)
+            }
+            #endif
         }
         
         return nodes
+    }
+
+    
+    func __getAllPoints(observation: VNFaceObservation) -> [CGPoint] {
+        var points: [CGPoint] = []
+        for point in observation.landmarks!.outerLips!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.nose!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.leftEye!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.rightEye!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.leftEyebrow!.normalizedPoints {
+            points.append(point);
+        }
+        for point in observation.landmarks!.rightEyebrow!.normalizedPoints {
+            points.append(point);
+        }
+//        for point in observation.landmarks!.faceContour!.normalizedPoints {
+//            points.append(point);
+//        }
+        for point in observation.landmarks!.medianLine!.normalizedPoints {
+            points.append(point)
+        }
+        return points;
+    }
+
+    func setModelColor(model: SCNNode, color: UIColor) {
+        model.geometry?.firstMaterial?.diffuse.contents = color
+        for child in model.childNodes {
+            setModelColor(model: child, color: color)
+        }
     }
     
     func getNewFaceModel(scene: SCNScene?) -> SCNNode {
@@ -456,6 +479,7 @@ struct HeadView: View {
         f.position = newPosition
         f.look(at: lookAt) // SCNVector3(x: newPosition.x, y: newPosition.y, z: 10000))
         let scaleFactor = scale / f.boundingSphere.radius
+        
         f.scale = SCNVector3(x: scaleFactor, y: scaleFactor, z: scaleFactor)
         let newUUID = UUID()
         f.setValue(newUUID, forKey: "root")

@@ -48,21 +48,24 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
     func f(x: [Float]) -> Float {
         head.position.x = x[0]
         head.position.y = x[1]
-        // optimization works best when we only focus on the most important paras.
+        // optimisation works best when we only focus on the most important paras.
         // seems to struggle with scale in particular.
 //        head.eulerAngles.x = x[2]
 //        head.eulerAngles.y = x[3]
 //        head.eulerAngles.z = x[4]
-//        head.scale.x = x[5]
-//        head.scale.y = x[5]
-//        head.scale.z = x[5]
+//        head.scale.x = x[2]
+//        head.scale.y = x[2]
+//        head.scale.z = x[2]
         let s = sse(sceneView: sceneView, head: head, observation: observation, image: image)
         return s
     }
-    let initial = [head.position.x, head.position.y]
+    let initial = [head.position.x, head.position.y, head.scale.x]
     let optimal = rand_gd(f: f, initial: initial)
     head.position.x = optimal[0]
     head.position.y = optimal[1]
+//    head.scale.x = optimal[2]
+//    head.scale.y = optimal[2]
+//    head.scale.z = optimal[2]
     return head
 }
 
@@ -72,6 +75,7 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
 func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
     
     let alpha: Float = 0.01                  // learning rate
+    let deltaX: Float = 0.001                // deltaX for df/dx calculation
     var s = Float.greatestFiniteMagnitude    // size of change
     let sMax: Float = 0.00001                // stop when change is less than this
     var x = initial
@@ -93,9 +97,9 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
         var dfdx = [Float](repeating: 0.0, count: initial.count)
         for i in 0 ..< initial.count {
             var dx = x
-            dx[i] += alpha
+            dx[i] += deltaX
             let fdx = f(dx)
-            dfdx[i] = (fdx - fx) / alpha
+            dfdx[i] = (fdx - fx) / deltaX
         }
         
         for i in 0 ..< initial.count {
@@ -128,12 +132,13 @@ func gd(f: ([Float]) -> Float, initial: [Float]) -> [Float] {
  *  - Always returns best one found so far.
  */
 func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> [Float] {
-    
+
     let alpha: Float = 0.01                  // learning rate
+    let deltaX: Float = 0.001                 // deltaX for df/dx calculation
     var s = Float.greatestFiniteMagnitude    // size of change
     let sMax: Float = 0.00001                // stop when change is less than this
     var x = initial
-    let jMax = 1000             // max iteration
+    let jMax = 5000             // max iteration
     let maxDelta: Float = 0.1   // max change per step
     
     var bestXSoFar = x
@@ -143,8 +148,12 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
     
     var j = 0
     while s > sMax && j < jMax {
-        var fx = f(x)
         
+        //------------- Evaluate --------------------------------------------------//
+        var fx = f(x)
+//        print("\(x) \(fx)")
+
+        //------------- If too far away, go back to last optimum ------------------//
         if (fx < fMin) {
             bestXSoFar = x
             fMin = fx
@@ -155,26 +164,33 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
                 // resetting
                 x = bestXSoFar
                 fx = fMin
+                iterationsAwayFromBest = 0
             }
         }
         
+        //------------- dfdx ------------------------------------------------------//
         var dfdx = [Float](repeating: 0.0, count: initial.count)
         for i in 0 ..< initial.count {
             var dx = x
-            dx[i] += alpha
+            dx[i] += deltaX
             let fdx = f(dx)
-            dfdx[i] = (fdx - fx) / alpha
+            dfdx[i] = (fdx - fx) / deltaX
         }
         
-        let r: Float = maxRand * (1.0 - Float(j / jMax))
+        //----------- x = x - alpha * dfdx ---------------------------------------//
+        let fractionLeft: Float = (1.0 - Float(j / jMax))
         for i in 0 ..< initial.count {
-            var delta = alpha * dfdx[i]
+            //--------- reducing learning rate, but never all the way to 0 -------//
+            var delta = max(fractionLeft, 0.2) * alpha * dfdx[i]
+            //--------- preventing jumps that are too far ------------------------//
             if delta > maxDelta {
                 delta = maxDelta
             } else if delta < -maxDelta {
                 delta = -maxDelta
             }
-            x[i] = x[i] - delta + Float.random(in: -r ... r)
+            //-------- adding some randomness -------------------------------------//
+            delta += Float.random(in: -maxRand * fractionLeft  ... maxRand * fractionLeft)
+            x[i] = x[i] - delta
         }
         s = size(dfdx)
         
@@ -197,64 +213,83 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
     
     // get important points from model
     guard
+        let eyeBrowL  = head.childNode(withName: "eyebrow_left_r", recursively: true),
+        let eyeBrowR  = head.childNode(withName: "eyebrow_right_l", recursively: true),
         let leftEyeL  = head.childNode(withName: "left_eye_left", recursively: true),
         let leftEyeR  = head.childNode(withName: "left_eye_right", recursively: true),
         let rightEyeL = head.childNode(withName: "right_eye_left", recursively: true),
         let rightEyeR = head.childNode(withName: "right_eye_right", recursively: true),
         let nose      = head.childNode(withName: "nose_center", recursively: true),
-        let mouth     = head.childNode(withName: "mouth_center", recursively: true)
+        let mouth     = head.childNode(withName: "mouth_center", recursively: true),
+        let mouthL    = head.childNode(withName: "mouth_left", recursively: true),
+        let mouthR    = head.childNode(withName: "mouth_right", recursively: true),
+        let chin      = head.childNode(withName: "chin", recursively: true)
     else { return 0.0 }
+    
+    let imageWidth = image.size.width
+    let imageHeight = image.size.height
+    
     // project those points
-    let leftEyeLProjected  = sceneProjectToImageCoordinates(sceneView, image, leftEyeL.worldPosition)
-    let leftEyeRProjected  = sceneProjectToImageCoordinates(sceneView, image, leftEyeR.worldPosition)
-    let rightEyeLProjected = sceneProjectToImageCoordinates(sceneView, image, rightEyeL.worldPosition)
-    let rightEyeRProjected = sceneProjectToImageCoordinates(sceneView, image, rightEyeR.worldPosition)
-    let noseProjected      = sceneProjectToImageCoordinates(sceneView, image, nose.worldPosition)
-    let mouthProjected     = sceneProjectToImageCoordinates(sceneView, image, mouth.worldPosition)
+    let leftEyeBrowProjected  = scene2image(eyeBrowL.worldPosition, imageWidth, imageHeight)
+    let rightEyeBrowProjected = scene2image(eyeBrowR.worldPosition, imageWidth, imageHeight)
+    let leftEyeLProjected     = scene2image(leftEyeL.worldPosition, imageWidth, imageHeight)
+    let leftEyeRProjected     = scene2image(leftEyeR.worldPosition, imageWidth, imageHeight)
+    let rightEyeLProjected    = scene2image(rightEyeL.worldPosition, imageWidth, imageHeight)
+    let rightEyeRProjected    = scene2image(rightEyeR.worldPosition, imageWidth, imageHeight)
+    let noseProjected         = scene2image(nose.worldPosition, imageWidth, imageHeight)
+    let mouthProjected        = scene2image(mouth.worldPosition, imageWidth, imageHeight)
+    let mouthLProjected       = scene2image(mouthL.worldPosition, imageWidth, imageHeight)
+    let mouthRProjected       = scene2image(mouthR.worldPosition, imageWidth, imageHeight)
+    let chinProjected         = scene2image(chin.worldPosition, imageWidth, imageHeight)
 
     // get important points from image
     guard let landmarks = observation.landmarks else { return 0.0 }
     guard
-        let leftEyeLandmark = landmarks.leftEye,
-        let rightEyeLandmark = landmarks.rightEye,
-        let noseCrestLandmark = landmarks.noseCrest,
-        let outerLipsLandmark = landmarks.outerLips
+        let leftEyeBrowLandmark  = landmarks.leftEyebrow,
+        let rightEyeBrowLandmark = landmarks.rightEyebrow,
+        let leftEyeLandmark      = landmarks.leftEye,
+        let rightEyeLandmark     = landmarks.rightEye,
+        let noseCrestLandmark    = landmarks.noseCrest,
+        let outerLipsLandmark    = landmarks.outerLips,
+        let medianLandmark       = landmarks.medianLine
     else { return 0.0 }
-    let leftEyeLTarget   = leftMostPoint(leftEyeLandmark.normalizedPoints)
-    let leftEyeRTarget   = rightMostPoint(leftEyeLandmark.normalizedPoints)
-    let rightEyeLTarget  = leftMostPoint(rightEyeLandmark.normalizedPoints)
-    let rightEyeRTarget  = rightMostPoint(rightEyeLandmark.normalizedPoints)
-    let noseTarget       = centerPoint(noseCrestLandmark.normalizedPoints)
-    let mouthTarget      = centerPoint(outerLipsLandmark.normalizedPoints)
+    let leftEyeBrowTarget  = rightMostPoint(leftEyeBrowLandmark.normalizedPoints)
+    let rightEyeBrowTarget = leftMostPoint(rightEyeBrowLandmark.normalizedPoints)
+    let leftEyeLTarget     = leftMostPoint(leftEyeLandmark.normalizedPoints)
+    let leftEyeRTarget     = rightMostPoint(leftEyeLandmark.normalizedPoints)
+    let rightEyeLTarget    = leftMostPoint(rightEyeLandmark.normalizedPoints)
+    let rightEyeRTarget    = rightMostPoint(rightEyeLandmark.normalizedPoints)
+    let noseTarget         = centerPoint(noseCrestLandmark.normalizedPoints)
+    let mouthTarget        = centerPoint(outerLipsLandmark.normalizedPoints)
+    let mouthLTarget       = leftMostPoint(outerLipsLandmark.normalizedPoints)
+    let mouthRTarget       = rightMostPoint(outerLipsLandmark.normalizedPoints)
+    let chinTarget         = lowestPoint(medianLandmark.normalizedPoints)
     // project those points
-    let leftEyeLTargetProjected = obsProjToImageCoords(point: leftEyeLTarget, observation: observation)
-    let leftEyeRTargetProjected = obsProjToImageCoords(point: leftEyeRTarget, observation: observation)
-    let rightEyeLTargetProjected = obsProjToImageCoords(point: rightEyeLTarget, observation: observation)
-    let rightEyeRTargetProjected = obsProjToImageCoords(point: rightEyeRTarget, observation: observation)
-    let noseTargetProjected = obsProjToImageCoords(point: noseTarget, observation: observation)
-    let mouthTargetProjected = obsProjToImageCoords(point: mouthTarget, observation: observation)
-    
-//    let imagePlaneOpt = sceneView.scene?.rootNode.childNode(withName: "ImagePlane", recursively: true)
-//    if let imagePlane = imagePlaneOpt {
-//        if let geo = imagePlane.geometry {
-//            print(geo.boundingBox.min)
-//            print(geo.boundingBox.max)
-//            print(sceneProjToImageCoords(sceneView, image, geo.boundingBox.min))
-//            print(sceneProjToImageCoords(sceneView, image, geo.boundingBox.max))
-//            print(leftEyeLTargetProjected)
-//            print(rightEyeRTargetProjected)
-//            print(noseTargetProjected)
-//        }
-//    }
+    let leftEyeBrowTargetProjected = landmark2image(leftEyeBrowTarget, observation.boundingBox)
+    let rightEyeBrowTargetProjected = landmark2image(rightEyeBrowTarget, observation.boundingBox)
+    let leftEyeLTargetProjected = landmark2image(leftEyeLTarget, observation.boundingBox)
+    let leftEyeRTargetProjected = landmark2image(leftEyeRTarget, observation.boundingBox)
+    let rightEyeLTargetProjected = landmark2image(rightEyeLTarget, observation.boundingBox)
+    let rightEyeRTargetProjected = landmark2image(rightEyeRTarget, observation.boundingBox)
+    let noseTargetProjected = landmark2image(noseTarget, observation.boundingBox)
+    let mouthTargetProjected = landmark2image(mouthTarget, observation.boundingBox)
+    let mouthLTargetProjected = landmark2image(mouthLTarget, observation.boundingBox)
+    let mouthRTargetProjected = landmark2image(mouthRTarget, observation.boundingBox)
+    let chinTargetProjected = landmark2image(chinTarget, observation.boundingBox)
     
     // compare projected points with face-landmarks
     let s = (
-          vectorDiff(leftEyeLProjected, leftEyeLTargetProjected)
+          vectorDiff(leftEyeBrowProjected, leftEyeBrowTargetProjected)
+        + vectorDiff(rightEyeBrowProjected, rightEyeBrowTargetProjected)
+        + vectorDiff(leftEyeLProjected, leftEyeLTargetProjected)
         + vectorDiff(leftEyeRProjected, leftEyeRTargetProjected)
         + vectorDiff(rightEyeLProjected, rightEyeLTargetProjected)
         + vectorDiff(rightEyeRProjected, rightEyeRTargetProjected)
         + vectorDiff(noseProjected, noseTargetProjected)
         + vectorDiff(mouthProjected, mouthTargetProjected)
+        + vectorDiff(mouthLProjected, mouthLTargetProjected)
+        + vectorDiff(mouthRProjected, mouthRTargetProjected)
+        + 3 * vectorDiff(chinProjected, chinTargetProjected)  // giving extra weight to chin, because few landmarks in lower half of face.
     )
     return s
 }
@@ -279,6 +314,16 @@ private func rightMostPoint(_ points: [CGPoint]) -> CGPoint {
     return rightPoint
 }
 
+private func lowestPoint(_ points: [CGPoint]) -> CGPoint {
+    var lowestPoint = points[0]
+    for point in points {
+        if point.y > lowestPoint.y {  // landmarks' y-values are 0 on top and 1 at bottom.
+            lowestPoint = point
+        }
+    }
+    return lowestPoint
+}
+
 private func centerPoint(_ points: [CGPoint]) -> CGPoint {
     let xMean = points.reduce(0.0, { intermediate, point in
         intermediate + point.x
@@ -289,145 +334,6 @@ private func centerPoint(_ points: [CGPoint]) -> CGPoint {
     return CGPoint(x: xMean, y: yMean)
 }
 
-
-private func sceneProjectToImageCoordinates(_ sceneView: SCNView, _ image: UIImage, _ v: SCNVector3) -> CGPoint {
- 
-    let scene_w = sceneView.frame.width
-    let scene_h = sceneView.frame.height
-    
-    let img_w = image.size.width
-    let img_h = image.size.height
-    
-    
-    /*==================================================================
-     =          From word-coords to clipping-coords                    =
-     =================================================================*/
-    var arScreen = 1.0
-    if scene_w > scene_h { // landscape
-        arScreen = scene_h / scene_w
-    } else {
-        arScreen = scene_w / scene_h
-    }
-    
-    guard
-        let scene = sceneView.scene,
-        let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true),
-        let camera = cameraNode.camera
-    else { return CGPoint() }
-    
-    let projectionMatrix = camera.projectionTransform
-    var updatedProjectionMatrix = projectionMatrix
-    if (updatedProjectionMatrix.m11 == updatedProjectionMatrix.m22) {
-        updatedProjectionMatrix.m11 = updatedProjectionMatrix.m11 * Float(arScreen)
-    }
-    let viewMatrix = SCNMatrix4Invert(cameraNode.worldTransform)
-    
-    let v4 = SCNVector4(x: v.x, y: v.y, z: v.z, w: 1.0)
-    let vCamPos = matMul(viewMatrix, v4)
-    let vClip = matMul(updatedProjectionMatrix, vCamPos)
-    let vClipNorm = SCNVector3(x: vClip.x / vClip.w, y: vClip.y / vClip.w, z: vClip.z / vClip.w)
-    
-    
-    /*==================================================================
-     =          From clipping-coords to screen-relative-coords         =
-     =================================================================*/
-
-//    Clipping-space is clipped off where it reaches over the device-bounds
-//    (At least when projection-matrix accounts for aspect-ratio)
-//
-//                     device-screen
-//    ┌────────────┬───────────────────┬─────────────┐ clipping-space
-//    │            │         ▲         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │   X = scene_w / (scene_h * 2) = 0.28125
-//    │            │         │         │             │
-//    │            │         │         │             │
-// -1 │◄───────────┼─────────┼─────────X────────────►│ 1
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         │         │             │
-//    │            │         ▼         │             │
-//    └────────────┴───────────────────┴─────────────┘
-    
-    var xClipMin = -1.0
-    var xClipMax =  1.0
-    var yClipMin = -1.0
-    var yClipMax =  1.0
-    if scene_w > scene_h { // landscape-orientation
-        yClipMin = -scene_h / (scene_w * 2.0)
-        yClipMax =  scene_h / (scene_w * 2.0)
-    } else {
-        xClipMin = -scene_w / (scene_h * 2.0)
-        xClipMax =  scene_w / (scene_h * 2.0)
-    }
-    let xClipRange = xClipMax - xClipMin
-    let yClipRange = yClipMax - yClipMin
-    let xScreenRel = (Double(vClipNorm.x) - xClipMin) / xClipRange
-    let yScreenRel = (Double(vClipNorm.y) - yClipMin) / yClipRange
-    
-    
-    /*==================================================================
-     =          From screen-relative-coords to img-relative-coords     =
-     =================================================================*/
-
-//    ┌──────────────┐ ▲ 1
-//    │              │ │
-//    │              │ │
-//    ├───────────1─▲┤ │ 1.0 - delta = 0.8
-//    │             ││ │
-//    │             ││ │
-//    │             ││ │
-//    │          0.5││ │ 0.5
-//    │             ││ │
-//    │             ││ │
-//    │             ││ │
-//    ├───────────0─┴┤ │ delta = 0.2
-//    │              │ │
-//    │              │ │
-//    └──────────────┘ │ 0
-    
-    var xOffset = 0.0
-    var yOffset = 0.0
-    if scene_w > scene_h { // landscape
-        let uPerPixImg = 1.0 / img_h
-        let img_w_u = img_w * uPerPixImg
-        let uPerPixScreen = 1.0 / scene_h
-        let scene_w_u = scene_w * uPerPixScreen
-        let delta = (scene_w_u - img_w_u) / 2.0
-        xOffset = delta
-    } else {
-        let uPerPixImg = 1.0 / img_w
-        let img_h_u = img_h * uPerPixImg
-        let uPerPixScreen = 1.0 / scene_w
-        let scene_h_u = scene_h * uPerPixScreen
-        let delta = (scene_h_u - img_h_u) / 2.0
-        yOffset = delta
-    }
-    
-    let xImgRel = (Double(xScreenRel) - xOffset) / (1.0 - 2.0 * xOffset)
-    let yImgRel = (Double(yScreenRel) - yOffset) / (1.0 - 2.0 * yOffset)
-    
-    return CGPoint(
-        x: xImgRel,
-        y: yImgRel
-    )
-}
-
-private func obsProjToImageCoords(point: CGPoint, observation: VNFaceObservation) -> CGPoint {
-    let projected = VNImagePointForFaceLandmarkPoint(
-        vector_float2(x: Float(point.x), y: Float(point.y)),
-        observation.boundingBox,
-        1, 1 // Int(image.size.width), Int(image.size.height)
-    )
-    return projected
-}
 
 private func vectorDiff(_ v1: CGPoint, _ v2: CGPoint) -> Float {
     return Float(pow(v1.x - v2.x, 2.0) + pow(v1.y - v2.y, 2.0))
