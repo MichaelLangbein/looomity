@@ -92,7 +92,7 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
 }
 
 
-func screen2image(_ pScreenRel: CGPoint, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ sceneWidth: CGFloat, _ sceneHeight: CGFloat) -> CGPoint {
+func screen2image(_ pScreenRel: CGPoint, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ screenWidth: CGFloat, _ screenHeight: CGFloat) -> CGPoint {
     
     //    ┌──────────────┐ ▲ 1
     //    │              │ │
@@ -113,19 +113,19 @@ func screen2image(_ pScreenRel: CGPoint, _ imageWidth: CGFloat, _ imageHeight: C
     
     var xOffset = 0.0
     var yOffset = 0.0
-    if sceneWidth > sceneHeight { // landscape
+    if screenWidth > screenHeight { // landscape
         let uPerPixImg = 1.0 / imageWidth
         let img_w_u = imageHeight * uPerPixImg
-        let uPerPixScreen = 1.0 / sceneHeight
-        let scene_w_u = sceneWidth * uPerPixScreen
-        let delta = (scene_w_u - img_w_u) / 2.0
+        let uPerPixScreen = 1.0 / screenHeight
+        let screen_w_u = screenWidth * uPerPixScreen
+        let delta = (screen_w_u - img_w_u) / 2.0
         xOffset = delta
     } else {
         let uPerPixImg = 1.0 / imageWidth
         let img_h_u = imageHeight * uPerPixImg
-        let uPerPixScreen = 1.0 / sceneWidth
-        let scene_h_u = sceneHeight * uPerPixScreen
-        let delta = (scene_h_u - img_h_u) / 2.0
+        let uPerPixScreen = 1.0 / screenWidth
+        let screen_h_u = screenHeight * uPerPixScreen
+        let delta = (screen_h_u - img_h_u) / 2.0
         yOffset = delta
     }
     
@@ -194,6 +194,11 @@ func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFl
 
 
 
+func interpolate(_ x: CGFloat, _ x0: CGFloat, _ x1: CGFloat, _ y0: CGFloat, _ y1: CGFloat) -> CGFloat {
+    let fraction = (x - x0) / (x1 - x0)
+    let y = y0 + fraction * (y1 - y0)
+    return y
+}
 
 func scene2imagePerspective(
     _ point: SCNVector3,
@@ -201,13 +206,25 @@ func scene2imagePerspective(
     _ sceneWidth: CGFloat, _ sceneHeight: CGFloat,
     _ cameraWorldTransform: SCNMatrix4, _ cameraProjectionTransform: SCNMatrix4) -> CGPoint {
     
-    let screenHeight = sceneHeight
-    let screenWidth = sceneWidth
-    
-    let clippingPos = scene2clipping(point, cameraWorldTransform, cameraProjectionTransform)
-    let screenPos = clipping2screen(clippingPos, screenWidth, screenHeight)
-    let imgPos = screen2image(screenPos, imageWidth, imageHeight, screenWidth, screenHeight)
-    return imgPos
+            
+//        var cameraProjectionTransformWithAR = cameraProjectionTransform
+//        if  cameraProjectionTransformWithAR.m11 ==  cameraProjectionTransformWithAR.m22 {
+//            let ar = Float(sceneWidth / sceneHeight)
+//            cameraProjectionTransformWithAR.m11 *= ar
+//        }
+        
+        let clippingPos = scene2clipping(point, cameraWorldTransform, cameraProjectionTransform)
+            
+        let xImg = interpolate(CGFloat(clippingPos.x), -0.5, 0.5, 0.0, 1.0)
+        let hImgClipping = imageHeight / imageWidth
+        let yClipMin: CGFloat = -hImgClipping / 2.0
+        let yClipMax: CGFloat =  hImgClipping / 2.0
+        let yImg = interpolate(CGFloat(clippingPos.y), yClipMin, yClipMax, 0.0, 1.0)
+        return CGPoint(x: xImg, y: yImg)
+        
+//    let screenPos = clipping2screen(clippingPos, screenWidth, screenHeight)
+//    let imgPos = screen2image(screenPos, imageWidth, imageHeight, screenWidth, screenHeight)
+//    return imgPos
 }
 
 

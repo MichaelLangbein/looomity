@@ -236,36 +236,9 @@ struct HeadView: View {
         }
     }
     
-    @State var cameraZOnStartMove: Float?
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
         self.fullViewScale = gesture.scale
         return
-        
-        guard let rootNode = view.scene?.rootNode else { return }
-        guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
-        guard let camera = cameraNode.camera else { return }
-        let ortho = camera.usesOrthographicProjection
-        
-        switch gesture.state {
-        case .began:
-            cameraZOnStartMove = cameraNode.position.z // ortho ? Float(camera.orthographicScale) :
-        case .changed:
-            guard let z = cameraZOnStartMove else { return }
-            var scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
-            scaleFactor = min(10, max(0.1, scaleFactor)) // must not go below 0.1 or above 10
-            cameraNode.position.z =  z * scaleFactor
-            let f = ortho ? Float(camera.focalLength / 12.0) : camera.projectionTransform.m11
-            camera.orthographicScale = Double(cameraNode.position.z / f)
-        case .ended:
-            cameraZOnStartMove = nil
-        case .cancelled, .failed:
-            cameraNode.position.z = cameraZOnStartMove!
-            camera.orthographicScale = Double(cameraZOnStartMove!)
-            cameraZOnStartMove = nil
-        default:
-            return
-        }
-        
     }
     
     @State var positionOnStartMove: SCNVector3?
@@ -299,37 +272,17 @@ struct HeadView: View {
         }
     }
     
-    @State var globalPositionOnStartMove: SCNVector3?
+
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         let translation = gesture.translation(in: view)
         switch gesture.state {
         case .changed:
             self.fullViewOffset.width = translation.x
-            self.fullViewOffset.height =  translation.y
+            self.fullViewOffset.height = translation.y
         default:
             return
         }
         return
-        
-        guard let scene = view.scene else { return }
-        guard let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true) else { return }
-        
-        switch gesture.state {
-        case .began:
-            globalPositionOnStartMove = cameraNode.position
-        case .changed:
-            guard let startPos = globalPositionOnStartMove else { return }
-            let translation = gesture.translation(in: view)  // in pixels
-            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width)  * 4.0 * cameraNode.position.z
-            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 4.0 * cameraNode.position.z
-        case .ended:
-            globalPositionOnStartMove = nil
-        case .cancelled, .failed:
-            cameraNode.position = globalPositionOnStartMove!
-            globalPositionOnStartMove = nil
-        default:
-            return
-        }
     }
 
     func focusOnObservation(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
@@ -441,32 +394,32 @@ struct HeadView: View {
             nodes.append(fOptimised)
             
             #if DEBUG
-//            for point in __getAllPoints(observation: observation) {
-//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-//                box.firstMaterial?.diffuse.contents = Color(.yellow)
-//                let node = SCNNode(geometry: box)
-//                let imagePoint = landmark2image(point, observation.boundingBox)
-//                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
-//                node.position = scenePoint
-//                scene.rootNode.addChildNode(node)
-//            }
-            
-            
-            let cameraNode = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)!
-            for name in ["eyebrow_left_r", "eyebrow_right_l", "left_eye_left", "left_eye_right", "right_eye_left", "right_eye_right", "nose_center", "mouth_center", "mouth_left", "mouth_right", "chin"] {
-                let scenePos = fOptimised.childNode(withName: name, recursively: true)!.position
-                let imgPos = scene2imagePerspective(scenePos,
-                                                    CGFloat(image.cgImage!.width), CGFloat(image.cgImage!.height),
-                                                    view.frame.width, view.frame.height,
-                                                    cameraNode!.worldTransform, cameraNode!.camera!.projectionTransform)
-                let projectedScenePos = image2scene(imgPos, image.cgImage!.width, image.cgImage!.height)
-                
+            for point in __getAllPoints(observation: observation) {
                 let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-                box.firstMaterial?.diffuse.contents = Color(.green)
+                box.firstMaterial?.diffuse.contents = Color(.yellow)
                 let node = SCNNode(geometry: box)
-                node.position = projectedScenePos
+                let imagePoint = landmark2image(point, observation.boundingBox)
+                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
+                node.position = scenePoint
                 scene.rootNode.addChildNode(node)
             }
+            
+            
+//            let cameraNode = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)!
+//            for name in ["eyebrow_left_r", "eyebrow_right_l", "left_eye_left", "left_eye_right", "right_eye_left", "right_eye_right", "nose_center", "mouth_center", "mouth_left", "mouth_right", "chin"] {
+//                let scenePos = fOptimised.childNode(withName: name, recursively: true)!.position
+//                let imgPos = scene2imagePerspective(scenePos,
+//                                                    CGFloat(image.cgImage!.width), CGFloat(image.cgImage!.height),
+//                                                    view.frame.width, view.frame.height,
+//                                                    cameraNode!.worldTransform, cameraNode!.camera!.projectionTransform)
+//                let projectedScenePos = image2scene(imgPos, image.cgImage!.width, image.cgImage!.height)
+//                
+//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+//                box.firstMaterial?.diffuse.contents = Color(.green)
+//                let node = SCNNode(geometry: box)
+//                node.position = projectedScenePos
+//                scene.rootNode.addChildNode(node)
+//            }
             #endif
         }
         
