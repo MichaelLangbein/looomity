@@ -22,6 +22,21 @@ struct SKVTask {
 }
 
 
+/**
+ # Gesture sources
+ Gestures may be recognised at to levels:
+ - inside the scenekit scene (as recognised through `SceneKitView.onPinch` etc.)
+ - in the parent HeadView (as recognised through `view.gesture`)
+ 
+ # Gesture handling
+ We want most gestures to be handled by scenekit
+ with a few exceptions:
+ - Pan while no model selected:
+    - move the view, not the camera inside the scene (`.scaleEffect(fullViewScale)`)
+ - Pinch while no model selected:
+     - scale the view instead of moving the camera inside the scene (`.offset(fullViewOffset)`)
+ */
+
 struct HeadView: View {
 
     // Image
@@ -37,6 +52,9 @@ struct HeadView: View {
     @Binding var activeFace: UUID?
     
     let unfocussedOpacity = 0.5
+    
+    @State var fullViewScale = 1.0
+    @State var fullViewOffset = CGSize.zero
 
     var body: some View {
             SceneKitView(
@@ -63,13 +81,18 @@ struct HeadView: View {
                 },
                 onUIInit: { skc in
                     unfocusObservation(nodes: skc.nodes)
-//                    print("UIInit")
                 },
                 onUIUpdate: { skc in
                     update(skc: skc, nodes: skc.nodes)
-//                    print("UIUpdate")
                 }
             )
+            .scaleEffect(fullViewScale)
+            .offset(fullViewOffset)
+            .gesture(MagnificationGesture().onChanged { scale in
+                self.fullViewScale = scale
+            })
+//            .gesture(DragGest) @TODO: is there no two-finger pan gesture?
+        
     }
     
     @State var lastOpacity: Double = 1.0
@@ -190,7 +213,7 @@ struct HeadView: View {
     @State var scaleOnStartMove: SCNVector3?
     func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else {
-            scaleSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
+             scaleSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
         
@@ -215,6 +238,9 @@ struct HeadView: View {
     
     @State var cameraZOnStartMove: Float?
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
+        self.fullViewScale = gesture.scale
+        return
+        
         guard let rootNode = view.scene?.rootNode else { return }
         guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
         guard let camera = cameraNode.camera else { return }
@@ -245,7 +271,7 @@ struct HeadView: View {
     @State var positionOnStartMove: SCNVector3?
     func moveInPlane(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else {
-            panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
+             panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
         guard
@@ -275,6 +301,16 @@ struct HeadView: View {
     
     @State var globalPositionOnStartMove: SCNVector3?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+        let translation = gesture.translation(in: view)
+        switch gesture.state {
+        case .changed:
+            self.fullViewOffset.width = translation.x
+            self.fullViewOffset.height =  translation.y
+        default:
+            return
+        }
+        return
+        
         guard let scene = view.scene else { return }
         guard let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true) else { return }
         
@@ -391,8 +427,7 @@ struct HeadView: View {
             let headHeightPerWidth: Float = 1.3
             let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
             let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
-            let orthoFaceCorrection: Float = self.usesOrthographicCam ? 0.25 * wImg : 0.0  // simulating some jaw-protrusion even if in ortho-view
-            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor * (1.0 + orthoFaceCorrection), z: scaleFactor )
+            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             f.opacity = self.unfocussedOpacity
@@ -406,13 +441,30 @@ struct HeadView: View {
             nodes.append(fOptimised)
             
             #if DEBUG
-            for point in __getAllPoints(observation: observation) {
+//            for point in __getAllPoints(observation: observation) {
+//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
+//                box.firstMaterial?.diffuse.contents = Color(.yellow)
+//                let node = SCNNode(geometry: box)
+//                let imagePoint = landmark2image(point, observation.boundingBox)
+//                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
+//                node.position = scenePoint
+//                scene.rootNode.addChildNode(node)
+//            }
+            
+            
+            let cameraNode = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)!
+            for name in ["eyebrow_left_r", "eyebrow_right_l", "left_eye_left", "left_eye_right", "right_eye_left", "right_eye_right", "nose_center", "mouth_center", "mouth_left", "mouth_right", "chin"] {
+                let scenePos = fOptimised.childNode(withName: name, recursively: true)!.position
+                let imgPos = scene2imagePerspective(scenePos,
+                                                    CGFloat(image.cgImage!.width), CGFloat(image.cgImage!.height),
+                                                    view.frame.width, view.frame.height,
+                                                    cameraNode!.worldTransform, cameraNode!.camera!.projectionTransform)
+                let projectedScenePos = image2scene(imgPos, image.cgImage!.width, image.cgImage!.height)
+                
                 let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-                box.firstMaterial?.diffuse.contents = Color(.yellow)
+                box.firstMaterial?.diffuse.contents = Color(.green)
                 let node = SCNNode(geometry: box)
-                let imagePoint = landmark2image(point, observation.boundingBox)
-                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
-                node.position = scenePoint
+                node.position = projectedScenePos
                 scene.rootNode.addChildNode(node)
             }
             #endif

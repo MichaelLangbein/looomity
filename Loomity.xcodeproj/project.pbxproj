@@ -51,6 +51,7 @@
 		3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F794295C8A5B00744841 /* TutorialView.swift */; };
 		3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F796295C8A5B00744841 /* HeadView.swift */; };
 		3E45B2C62981DBAD00A6DD52 /* loomisNewDebugging.scn in Resources */ = {isa = PBXBuildFile; fileRef = 3E45B2C52981DBAD00A6DD52 /* loomisNewDebugging.scn */; };
+		3E4BE0132982DE1400CB5CEE /* ProjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4BE0122982DE1400CB5CEE /* ProjectionTests.swift */; };
 		3E4EEB74297A6ECD001E8313 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4EEB73297A6ECD001E8313 /* ProductsView.swift */; };
 		3E66139F296754D400C44098 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E66139E296754D400C44098 /* PurchaseManager.swift */; };
 		3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */; };
@@ -123,6 +124,7 @@
 		3E42F794295C8A5B00744841 /* TutorialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		3E42F796295C8A5B00744841 /* HeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
 		3E45B2C52981DBAD00A6DD52 /* loomisNewDebugging.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = loomisNewDebugging.scn; sourceTree = "<group>"; };
+		3E4BE0122982DE1400CB5CEE /* ProjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectionTests.swift; sourceTree = "<group>"; };
 		3E4EEB73297A6ECD001E8313 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
 		3E66139E296754D400C44098 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = LoomityStoreTest.storekit; path = Loomity/LoomityStoreTest.storekit; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				3E42F725295C86B600744841 /* BoxPlacementTests.swift */,
 				3E42F726295C86B600744841 /* GradientDescentTests.swift */,
 				3E37361F297DBB2500DB6C8B /* GradientDescentIntegrationTests.swift */,
+				3E4BE0122982DE1400CB5CEE /* ProjectionTests.swift */,
 			);
 			path = LoomityTests;
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3E42F70D295C866E00744841 /* LoomityTests.swift in Sources */,
+				3E4BE0132982DE1400CB5CEE /* ProjectionTests.swift in Sources */,
 				3E42F72C295C86BC00744841 /* GradientDescentTests.swift in Sources */,
 				3E42F72B295C86BC00744841 /* BoxPlacementTests.swift in Sources */,
 				3E373620297DBB2500DB6C8B /* GradientDescentIntegrationTests.swift in Sources */,

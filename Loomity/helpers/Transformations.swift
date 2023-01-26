@@ -77,11 +77,11 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
     var yClipMin = -1.0
     var yClipMax =  1.0
     if screenWidth > screenHeight { // landscape-orientation
-        yClipMin = -screenHeight / (screenWidth * 2.0)
-        yClipMax =  screenHeight / (screenWidth * 2.0)
+        yClipMin = -screenHeight / (screenWidth)
+        yClipMax =  screenHeight / (screenWidth)
     } else {
-        xClipMin = -screenWidth / (screenHeight * 2.0)
-        xClipMax =  screenWidth / (screenHeight * 2.0)
+        xClipMin = -screenWidth / (screenHeight)
+        xClipMax =  screenWidth / (screenHeight)
     }
     let xClipRange = xClipMax - xClipMin
     let yClipRange = yClipMax - yClipMin
@@ -173,7 +173,7 @@ func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int, _ orth
  which likely occurs on faces far off to the edges of the scene.
  Not a problem for ortho-view, though!
  */
-func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ ortho: Bool = true) -> CGPoint {
+func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat) -> CGPoint {
     // @TODO: correction if not orthographic view
     
     let xScene = point.x
@@ -195,14 +195,18 @@ func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFl
 
 
 
-func scene2imageLong(_ point: SCNVector3, _ sceneWidth: CGFloat, _ sceneHeight: CGFloat, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ cameraWorldTransform: SCNMatrix4, _ cameraProjectionTransform: SCNMatrix4) -> CGPoint {
+func scene2imagePerspective(
+    _ point: SCNVector3,
+    _ imageWidth: CGFloat, _ imageHeight: CGFloat,
+    _ sceneWidth: CGFloat, _ sceneHeight: CGFloat,
+    _ cameraWorldTransform: SCNMatrix4, _ cameraProjectionTransform: SCNMatrix4) -> CGPoint {
     
     let screenHeight = sceneHeight
     let screenWidth = sceneWidth
     
     let clippingPos = scene2clipping(point, cameraWorldTransform, cameraProjectionTransform)
     let screenPos = clipping2screen(clippingPos, screenWidth, screenHeight)
-    let imgPos = screen2image(screenPos, imageWidth, imageHeight, sceneWidth, sceneHeight)
+    let imgPos = screen2image(screenPos, imageWidth, imageHeight, screenWidth, screenHeight)
     return imgPos
 }
 

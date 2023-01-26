@@ -110,7 +110,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         let camera = SCNCamera()
         camera.zNear = 0.01
         camera.zFar = 100
-        camera.usesOrthographicProjection = true  // using ortho-view by default now - less confusing during panning.
+        camera.usesOrthographicProjection = false  // using ortho-view by default now - less confusing during panning.
         camera.projectionDirection = width > height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)

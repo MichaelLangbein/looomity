@@ -22,7 +22,7 @@ struct HeadControllerView: View {
     @StateObject var taskQueue = Queue<SKVTask>()
     @State var opacity = 0.75
     @State var activeFace: UUID?
-    @State var usesOrthographicCam = true
+    @State var usesOrthographicCam = false
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""

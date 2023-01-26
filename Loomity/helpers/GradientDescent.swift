@@ -197,6 +197,10 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
         j += 1
     }
 
+    #if DEBUG
+    print("Completed gradient descent after \(j) operations")
+    #endif
+    
     return bestXSoFar
 }
 
@@ -229,18 +233,30 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
     let imageWidth = image.size.width
     let imageHeight = image.size.height
     
+    guard
+        let scene = sceneView.scene,
+        let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true),
+        let camera = cameraNode.camera
+    else { return 0.0 }
+    
+    let screenWidth = sceneView.frame.width
+    let screenHeight = sceneView.frame.height
+    
+    let cameraWordTransform = cameraNode.worldTransform
+    let cameraProjectionTransform = camera.projectionTransform
+    
     // project those points
-    let leftEyeBrowProjected  = scene2image(eyeBrowL.worldPosition, imageWidth, imageHeight)
-    let rightEyeBrowProjected = scene2image(eyeBrowR.worldPosition, imageWidth, imageHeight)
-    let leftEyeLProjected     = scene2image(leftEyeL.worldPosition, imageWidth, imageHeight)
-    let leftEyeRProjected     = scene2image(leftEyeR.worldPosition, imageWidth, imageHeight)
-    let rightEyeLProjected    = scene2image(rightEyeL.worldPosition, imageWidth, imageHeight)
-    let rightEyeRProjected    = scene2image(rightEyeR.worldPosition, imageWidth, imageHeight)
-    let noseProjected         = scene2image(nose.worldPosition, imageWidth, imageHeight)
-    let mouthProjected        = scene2image(mouth.worldPosition, imageWidth, imageHeight)
-    let mouthLProjected       = scene2image(mouthL.worldPosition, imageWidth, imageHeight)
-    let mouthRProjected       = scene2image(mouthR.worldPosition, imageWidth, imageHeight)
-    let chinProjected         = scene2image(chin.worldPosition, imageWidth, imageHeight)
+    let leftEyeBrowProjected  = scene2imagePerspective(eyeBrowL.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let rightEyeBrowProjected = scene2imagePerspective(eyeBrowR.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let leftEyeLProjected     = scene2imagePerspective(leftEyeL.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let leftEyeRProjected     = scene2imagePerspective(leftEyeR.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let rightEyeLProjected    = scene2imagePerspective(rightEyeL.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let rightEyeRProjected    = scene2imagePerspective(rightEyeR.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let noseProjected         = scene2imagePerspective(nose.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let mouthProjected        = scene2imagePerspective(mouth.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let mouthLProjected       = scene2imagePerspective(mouthL.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let mouthRProjected       = scene2imagePerspective(mouthR.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
+    let chinProjected         = scene2imagePerspective(chin.worldPosition, imageWidth, imageHeight, screenWidth, screenHeight, cameraWordTransform, cameraProjectionTransform)
 
     // get important points from image
     guard let landmarks = observation.landmarks else { return 0.0 }
