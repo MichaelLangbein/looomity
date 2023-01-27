@@ -56,6 +56,14 @@ struct HeadView: View {
     @State var fullViewScale = 1.0
     @State var fullViewOffset = CGSize.zero
 
+    var sceneKitInteractionOngoing: Bool {
+        return (
+            rollOnMoveStart == nil && eulerAnglesOnStartMove == nil &&
+            scaleOnStartMove == nil && globalScaleOnStartMove == nil &&
+            positionOnStartMove == nil && globalPanLastValue == nil
+        )
+    }
+
     var body: some View {
             SceneKitView(
                 screen_width: UIScreen.main.bounds.width,
@@ -90,9 +98,10 @@ struct HeadView: View {
             .scaleEffect(fullViewScale)
             .offset(fullViewOffset)
 //            .gesture(MagnificationGesture().onChanged { scale in
-//                self.fullViewScale = scale
-//            })  @TODO: first make sure that this gesture and an ongoing scenekit-gesture dont happen at the same time.
-//            .gesture(DragGest) @TODO: is there no two-finger pan gesture?
+//                if !sceneKitInteractionOngoing {
+//                    fullViewScale = scale
+//                }
+//            })
         
     }
     
@@ -237,8 +246,21 @@ struct HeadView: View {
         }
     }
     
+    @State var globalScaleOnStartMove: CGFloat? = nil
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
-        self.fullViewScale = gesture.scale
+        switch gesture.state {
+        case .began:
+            globalScaleOnStartMove = self.fullViewScale
+        case .changed:
+            self.fullViewScale = (globalScaleOnStartMove ?? 1.0) * gesture.scale
+        case .ended:
+            globalScaleOnStartMove = nil
+        case .failed, .cancelled:
+            self.fullViewScale = globalScaleOnStartMove ?? 1.0
+            globalScaleOnStartMove = nil
+        default:
+            return
+        }
         return
     }
     
@@ -273,13 +295,25 @@ struct HeadView: View {
         }
     }
     
-
+    @State var globalPanLastValue: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         let translation = gesture.translation(in: view)
         switch gesture.state {
+        case .began:
+            globalPanLastValue = translation
         case .changed:
-            self.fullViewOffset.width = translation.x
-            self.fullViewOffset.height = translation.y
+            let lastValue = globalPanLastValue ?? CGPoint(x: 0.0, y: 0.0)
+            let deltaX = translation.x - lastValue.x
+            let deltaY = translation.y - lastValue.y
+            self.fullViewOffset.width += deltaX
+            self.fullViewOffset.height += deltaY
+            globalPanLastValue = translation
+        case .ended:
+            globalPanLastValue = nil
+        case .cancelled, .failed:
+            self.fullViewOffset.width = globalPanLastValue?.x ?? 0.0
+            self.fullViewOffset.height = globalPanLastValue?.y ?? 0.0
+            globalPanLastValue = nil
         default:
             return
         }
@@ -339,20 +373,11 @@ struct HeadView: View {
     
     func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
 
-        // loading model
-        #if DEBUG
-        print("Loading debugging model")
-        let modelName = "loomisNewDebugging.scn"
-        #else
         let modelName = "loomisNew.usdz"
-        #endif
         guard let loadedScene = SCNScene(named: modelName) else { return [] }
         let figure = loadedScene.rootNode
         
         var nodes: [SCNNode] = []
-        
-        // Normally here we'd have to account for `image.imageOrientation != .up`
-        // But this is already fixed manually after taking the image in the image-picker
         
         let ar = image.size.width / image.size.height
         let width = 2.0
@@ -371,7 +396,7 @@ struct HeadView: View {
             let roll  = Float(truncating: observation.roll!)
             let pitch = Float(truncating: observation.pitch!)
             let yaw   = Float(truncating: observation.yaw!)
-
+            
             let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
             
             let f = figure.clone()
@@ -389,39 +414,16 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
-//            scene.rootNode.addChildNode(f.clone())
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-            nodes.append(fOptimised)
-            
-            #if DEBUG
-            for point in __getAllPoints(observation: observation) {
-                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-                box.firstMaterial?.diffuse.contents = Color(.yellow)
-                let node = SCNNode(geometry: box)
-                let imagePoint = landmark2image(point, observation.boundingBox)
-                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
-                node.position = scenePoint
-                scene.rootNode.addChildNode(node)
+
+            // @Todo: where is this weird behaviour coming from?
+            if !usesOrthographicCam {
+                let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
+                fOptimised.position.y -= weirdCorrectionFactor
             }
-            
-            
-//            let cameraNode = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)!
-//            for name in ["eyebrow_left_r", "eyebrow_right_l", "left_eye_left", "left_eye_right", "right_eye_left", "right_eye_right", "nose_center", "mouth_center", "mouth_left", "mouth_right", "chin"] {
-//                let scenePos = fOptimised.childNode(withName: name, recursively: true)!.position
-//                let imgPos = scene2imagePerspective(scenePos,
-//                                                    CGFloat(image.cgImage!.width), CGFloat(image.cgImage!.height),
-//                                                    view.frame.width, view.frame.height,
-//                                                    cameraNode!.worldTransform, cameraNode!.camera!.projectionTransform)
-//                let projectedScenePos = image2scene(imgPos, image.cgImage!.width, image.cgImage!.height)
-//                
-//                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-//                box.firstMaterial?.diffuse.contents = Color(.green)
-//                let node = SCNNode(geometry: box)
-//                node.position = projectedScenePos
-//                scene.rootNode.addChildNode(node)
-//            }
-            #endif
+
+            nodes.append(fOptimised)
         }
         
         return nodes

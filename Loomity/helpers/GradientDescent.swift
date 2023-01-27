@@ -48,10 +48,11 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
     func f(x: [Float]) -> Float {
         head.position.x = x[0]
         head.position.y = x[1]
-        // optimisation works best when we only focus on the most important paras.
-        // seems to struggle with scale in particular.
+        // Optimisation works best when we only focus on the most important paras.
+        // Seems to struggle with scale in particular.
+        // (That's probably because no landmarks on ears, hair etc.)
 //        head.eulerAngles.x = x[2]
-//        head.eulerAngles.y = x[3]
+//        head.eulerAngles.y = x[2]
 //        head.eulerAngles.z = x[4]
 //        head.scale.x = x[2]
 //        head.scale.y = x[2]
@@ -60,12 +61,17 @@ func gradientDescent(sceneView: SCNView, head: SCNNode, observation: VNFaceObser
         return s
     }
     let initial = [head.position.x, head.position.y]
+    print("Optimisation - Initial: \(initial)")
     let optimal = rand_gd(f: f, initial: initial)
     head.position.x = optimal[0]
     head.position.y = optimal[1]
 //    head.scale.x = optimal[2]
 //    head.scale.y = optimal[2]
 //    head.scale.z = optimal[2]
+//    head.eulerAngles.x = optimal[2]
+//    head.eulerAngles.y = optimal[2]
+//    head.eulerAngles.z = optimal[4]
+    print("Optimisation - Optimal: \(optimal)")
     return head
 }
 
@@ -256,20 +262,20 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
         let outerLipsLandmark    = landmarks.outerLips,
         let medianLandmark       = landmarks.medianLine
     else { return 0.0 }
-    let leftEyeBrowObs  = rightMostPoint(leftEyeBrowLandmark.normalizedPoints)
-    let rightEyeBrowObs = leftMostPoint(rightEyeBrowLandmark.normalizedPoints)
-    let leftEyeLObs     = leftMostPoint(leftEyeLandmark.normalizedPoints)
-    let leftEyeRObs     = rightMostPoint(leftEyeLandmark.normalizedPoints)
-    let rightEyeLObs    = leftMostPoint(rightEyeLandmark.normalizedPoints)
-    let rightEyeRObs    = rightMostPoint(rightEyeLandmark.normalizedPoints)
-    let noseObs         = centerPoint(noseCrestLandmark.normalizedPoints)
-    let mouthObs        = centerPoint(outerLipsLandmark.normalizedPoints)
-    let mouthLObs       = leftMostPoint(outerLipsLandmark.normalizedPoints)
-    let mouthRObs       = rightMostPoint(outerLipsLandmark.normalizedPoints)
-    let chinObs         = lowestPoint(medianLandmark.normalizedPoints)
+    let eyeBrowLObs  = rightMostPoint(leftEyeBrowLandmark.normalizedPoints)
+    let eyeBrowRObs  = leftMostPoint(rightEyeBrowLandmark.normalizedPoints)
+    let leftEyeLObs  = leftMostPoint(leftEyeLandmark.normalizedPoints)
+    let leftEyeRObs  = rightMostPoint(leftEyeLandmark.normalizedPoints)
+    let rightEyeLObs = leftMostPoint(rightEyeLandmark.normalizedPoints)
+    let rightEyeRObs = rightMostPoint(rightEyeLandmark.normalizedPoints)
+    let noseObs      = centerPoint(noseCrestLandmark.normalizedPoints)
+    let mouthObs     = centerPoint(outerLipsLandmark.normalizedPoints)
+    let mouthLObs    = leftMostPoint(outerLipsLandmark.normalizedPoints)
+    let mouthRObs    = rightMostPoint(outerLipsLandmark.normalizedPoints)
+    let chinObs      = lowestPoint(medianLandmark.normalizedPoints)
     
-    let modelPoints =       [eyeBrowL,       eyeBrowR,        leftEyeL,    leftEyeR,    rightEyeL,    rightEyeR,    nose,    mouth,    mouthL,    mouthR,    chin]
-    let observationPoints = [leftEyeBrowObs, rightEyeBrowObs, leftEyeLObs, leftEyeRObs, rightEyeLObs, rightEyeRObs, noseObs, mouthObs, mouthLObs, mouthRObs, chinObs]
+    let modelPoints =       [eyeBrowL,    eyeBrowR,    leftEyeL,    leftEyeR,    rightEyeL,    rightEyeR,    nose,    mouth,    mouthL,    mouthR,    chin]
+    let observationPoints = [eyeBrowLObs, eyeBrowRObs, leftEyeLObs, leftEyeRObs, rightEyeLObs, rightEyeRObs, noseObs, mouthObs, mouthLObs, mouthRObs, chinObs]
     
     var s: Float = 0.0
     for i in 0..<modelPoints.count {
@@ -282,7 +288,10 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
         let obsScene = image2scene(obsImg, Int(imageWidth), Int(imageHeight))
         let obsClip = scene2clipping(obsScene, cameraWordTransform, cameraProjectionTransform)
         
-        let diff = vectorDiff(modelClip, obsClip)
+        var diff = vectorDiff(modelClip, obsClip)
+        if modelPoint.name == "chin" {
+            diff *= 3.0 // extra weight for chin, because few landmarks in lower face.
+        }
         s += diff
     }
     
