@@ -36,9 +36,26 @@ final class ProjectionTests: XCTestCase {
             m41: 0, m42: 0, m43: -1, m44: 0
         )
         
+        // 1st test: known point
+        
+        let x_scene = SCNVector3(0.75, 0.0, 0.0)
+        let x_clip = scene2clipping(x_scene, cameraWorldTransform, cameraProjectionTransform)
+        
+        let y_obs = CGPoint(x: 0.5, y: 0.5)
+        let bbox_obs = CGRect(x: 0.5, y: 0.25, width: 0.5, height: 0.5)
+        let y_img = landmark2image(y_obs, bbox_obs)
+        let y_scene = image2scene(y_img, Int(imageWidth), Int(imageHeight))
+        let y_clip = scene2clipping(y_scene, cameraWorldTransform, cameraProjectionTransform)
+
+        _assertCloseTo(Double(x_clip.x), Double(y_clip.x))
+        _assertCloseTo(Double(x_clip.y), Double(y_clip.y))
+        
+        
+        // 2nd test: more complicated point
+        
         let point_scene = SCNVector3(x: 0.5, y: 0.5, z: 0.5)
         let point_clip = scene2clipping(point_scene, cameraWorldTransform, cameraProjectionTransform)
-        
+
         let observation_img = CGPoint(x: 0.79, y: 0.66)
         let observation_scene = image2scene(observation_img, Int(imageWidth), Int(imageHeight))
         let observation_clip = scene2clipping(observation_scene, cameraWorldTransform, cameraProjectionTransform)

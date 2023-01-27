@@ -58,9 +58,9 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
     //    │            │         │         │             │
     //    │            │         │         │             │
     //    │            │         │         │             │
-    //    │            │         │         │             │   X = scene_w / (scene_h * 2) = 0.28125
-    //    │            │         │         │             │
-    //    │            │         │         │             │
+    //    │            │         │         │             │   X = w_clip / 2
+    //    │            │         │         │             │       w_clip = h_clip * ar
+    //    │            │         │         │             │                h_clip = 2
     // -1 │◄───────────┼─────────┼─────────X────────────►│ 1
     //    │            │         │         │             │
     //    │            │         │         │             │
@@ -72,16 +72,21 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
     //    │            │         ▼         │             │
     //    └────────────┴───────────────────┴─────────────┘
     
+    let ar = screenWidth / screenHeight
     var xClipMin = -1.0
     var xClipMax =  1.0
     var yClipMin = -1.0
     var yClipMax =  1.0
     if screenWidth > screenHeight { // landscape-orientation
-        yClipMin = -screenHeight / (screenWidth)
-        yClipMax =  screenHeight / (screenWidth)
+        let wClip = 2.0
+        let hClip = wClip / ar
+        yClipMin = -hClip / 2.0
+        yClipMax =  hClip / 2.0
     } else {
-        xClipMin = -screenWidth / (screenHeight)
-        xClipMax =  screenWidth / (screenHeight)
+        let hClip = 2.0
+        let wClip = hClip * ar
+        xClipMin = -wClip / 2.0
+        xClipMax =  wClip / 2.0
     }
     let xClipRange = xClipMax - xClipMin
     let yClipRange = yClipMax - yClipMin
@@ -273,3 +278,42 @@ func obsBboxCenter2Scene(boundingBox: CGRect, imageWidth: CGFloat, imageHeight: 
     return cWorld
 }
 
+
+
+func fitImageIntoScene(width_screen: CGFloat, height_screen: CGFloat, width_img: CGFloat, height_img: CGFloat) -> CGSize {
+    // verified to work correctly.
+    
+    let ar_screen = width_screen / height_screen
+    let ar_img = width_img / height_img
+    var w_img_clip: CGFloat = 1.0
+    var h_img_clip: CGFloat = 1.0
+    
+//        Assumes that clipping space is fully contained within the screen
+//        and reaches values over 1 along the screen's longer side.
+//        if width > height {
+//            let h_screen_clip: CGFloat = 2.0
+//            let w_screen_clip = h_screen_clip * ar_screen
+//            h_img_clip = h_screen_clip
+//            w_img_clip = h_img_clip * ar_img
+//        } else {
+//            let w_screen_clip: CGFloat = 2.0
+//            let h_screen_clip = w_screen_clip / ar_screen
+//            w_img_clip = w_screen_clip
+//            h_img_clip = w_img_clip / ar_img
+//        }
+    
+//      Assumes that clipping space bleeds out of the screen's shorter side and is clipped off
+    if width_screen > height_screen {
+        let w_screen_clip: CGFloat = 2.0
+        let h_screen_clip = w_screen_clip / ar_screen
+        h_img_clip = h_screen_clip
+        w_img_clip = h_img_clip * ar_img
+    } else {
+        let h_screen_clip: CGFloat = 2.0
+        let w_screen_clip = h_screen_clip * ar_screen
+        w_img_clip = w_screen_clip
+        h_img_clip = w_img_clip / ar_img
+    }
+    
+    return CGSize(width: w_img_clip, height: h_img_clip)
+}

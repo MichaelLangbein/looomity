@@ -58,9 +58,10 @@ struct HeadView: View {
 
     var body: some View {
             SceneKitView(
-                width: Int(UIScreen.main.bounds.width),     // Int(image.size.width),
-                height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
-                ar: Float(image.size.width / image.size.height),
+                screen_width: UIScreen.main.bounds.width,
+                screen_height: UIScreen.main.bounds.height,
+                image_width: image.size.width,
+                image_height: image.size.height,
                 loadNodes: { view, scene, camera in
                     return self.getNodes(view: view, scene: scene)
                 },
@@ -88,9 +89,9 @@ struct HeadView: View {
             )
             .scaleEffect(fullViewScale)
             .offset(fullViewOffset)
-            .gesture(MagnificationGesture().onChanged { scale in
-                self.fullViewScale = scale
-            })
+//            .gesture(MagnificationGesture().onChanged { scale in
+//                self.fullViewScale = scale
+//            })  @TODO: first make sure that this gesture and an ongoing scenekit-gesture dont happen at the same time.
 //            .gesture(DragGest) @TODO: is there no two-finger pan gesture?
         
     }

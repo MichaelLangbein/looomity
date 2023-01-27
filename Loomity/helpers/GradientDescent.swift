@@ -193,6 +193,9 @@ func rand_gd(f: ([Float]) -> Float, initial: [Float], maxRand: Float = 0.01) -> 
             x[i] = x[i] - delta
         }
         currentChange = size(dfdx)
+        if currentChange == 0 {
+            print("Zero change in iteration \(j)")
+        }
         
         j += 1
     }
@@ -272,7 +275,7 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
     for i in 0..<modelPoints.count {
         
         let modelPoint = modelPoints[i]
-        let modelClip = scene2clipping(modelPoint.position, cameraWordTransform, cameraProjectionTransform)
+        let modelClip = scene2clipping(modelPoint.worldPosition, cameraWordTransform, cameraProjectionTransform)
         
         let obsPoint = observationPoints[i]
         let obsImg = landmark2image(obsPoint, observation.boundingBox)

@@ -47,9 +47,10 @@ final class GradientDescentIntegrationTests: XCTestCase {
         let image = UIImage(named: "TestImage")!
         
         let sceneController = SceneController(
-            width: 400,
-            height: 600,
-            ar: Float(image.size.width / image.size.height),
+            screen_width: 400,
+            screen_height: 600,
+            image_width: image.size.width,
+            image_height: image.size.height,
             loadNodes: { view, scene, camera in
                 let loadedScene = SCNScene(named: "loomisNew.usdz")!
                 let figure = loadedScene.rootNode

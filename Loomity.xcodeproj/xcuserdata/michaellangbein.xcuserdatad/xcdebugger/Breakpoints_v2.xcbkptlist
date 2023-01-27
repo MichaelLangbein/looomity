@@ -14,8 +14,8 @@
             filePath = "Loomity/helpers/Transformations.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "screen2image(_:_:_:_:_:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -23,25 +23,8 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "16ABD16A-1881-4EA8-8363-F2DCE1184E28"
-            shouldBeEnabled = "No"
-            condition = "i == 10"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Loomity/helpers/GradientDescent.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
-            landmarkName = "sse(sceneView:head:observation:image:)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "77FE9383-617B-403A-B10F-2231964F6287"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Loomity/helpers/GradientDescent.swift"
@@ -57,7 +40,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "D11E5C1C-5117-42DF-95D9-51E0E858FC2D"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Loomity/helpers/GradientDescent.swift"
