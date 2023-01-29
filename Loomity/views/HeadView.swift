@@ -52,19 +52,15 @@ struct HeadView: View {
     @Binding var activeFace: UUID?
     
     let unfocussedOpacity = 0.5
-    
-    @State var fullViewScale = 1.0
-    @State var fullViewOffset = CGSize.zero
-
-    var sceneKitInteractionOngoing: Bool {
-        return (
-            rollOnMoveStart == nil && eulerAnglesOnStartMove == nil &&
-            scaleOnStartMove == nil && globalScaleOnStartMove == nil &&
-            positionOnStartMove == nil && globalPanLastValue == nil
-        )
-    }
 
     var body: some View {
+        ZStack {
+//            Button {
+//                
+//            } label: {
+//                Text("Re-center")
+//            }
+            
             SceneKitView(
                 screen_width: UIScreen.main.bounds.width,
                 screen_height: UIScreen.main.bounds.height,
@@ -95,13 +91,8 @@ struct HeadView: View {
                     update(skc: skc, nodes: skc.nodes)
                 }
             )
-            .scaleEffect(fullViewScale)
-            .offset(fullViewOffset)
-//            .gesture(MagnificationGesture().onChanged { scale in
-//                if !sceneKitInteractionOngoing {
-//                    fullViewScale = scale
-//                }
-//            })
+        }
+
         
     }
     
@@ -246,18 +237,27 @@ struct HeadView: View {
         }
     }
     
-    @State var globalScaleOnStartMove: CGFloat? = nil
+
+    @State var lastScale: CGFloat?
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
         switch gesture.state {
         case .began:
-            globalScaleOnStartMove = self.fullViewScale
+            lastScale = 1.0
         case .changed:
-            self.fullViewScale = (globalScaleOnStartMove ?? 1.0) * gesture.scale
+            guard let lastScale = lastScale else { return }
+            guard let camera = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)?.camera else { return }
+            let deltaScale = gesture.scale - lastScale
+            let newScale = 1.0 + deltaScale
+            self.lastScale = newScale
+            camera.projectionTransform = SCNMatrix4Mult(
+                camera.projectionTransform,
+                SCNMatrix4Scale(SCNMatrix4Identity, Float(newScale), Float(newScale), 1)
+            )
+//            view.transform = CGAffineTransformScale(view.transform, newScale, newScale)
         case .ended:
-            globalScaleOnStartMove = nil
+            lastScale = nil
         case .failed, .cancelled:
-            self.fullViewScale = globalScaleOnStartMove ?? 1.0
-            globalScaleOnStartMove = nil
+            lastScale = nil
         default:
             return
         }
@@ -270,11 +270,7 @@ struct HeadView: View {
              panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
-        guard
-            let scene = view.scene,
-            let figure = getFigureForId(obsId: obsId, nodes: nodes),
-            let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true)
-        else { return }
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         
         switch gesture.state {
         case .began:
@@ -283,8 +279,8 @@ struct HeadView: View {
             guard let startPos = positionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
                               //  start    + relative translation             * a bit faster * slower when zoomed in
-            figure.position.x = startPos.x + Float(translation.x / image.size.width)  * 4.0  * cameraNode.position.z
-            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0  * cameraNode.position.z
+            figure.position.x = startPos.x + Float(translation.x / image.size.width)  * 4.0 / Float(view.transform.a)
+            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0 / Float(view.transform.a)
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -295,25 +291,27 @@ struct HeadView: View {
         }
     }
     
-    @State var globalPanLastValue: CGPoint?
+    @State var lastOffset: CGSize?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        let translation = gesture.translation(in: view)
         switch gesture.state {
         case .began:
-            globalPanLastValue = translation
+            lastOffset = CGSize(width: 0, height: 0)
         case .changed:
-            let lastValue = globalPanLastValue ?? CGPoint(x: 0.0, y: 0.0)
-            let deltaX = translation.x - lastValue.x
-            let deltaY = translation.y - lastValue.y
-            self.fullViewOffset.width += deltaX
-            self.fullViewOffset.height += deltaY
-            globalPanLastValue = translation
+            guard let lastOffset = lastOffset else { return }
+            guard let camera = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)?.camera else { return }
+            let translation = gesture.translation(in: view)
+            let deltaX = translation.x - lastOffset.width
+            let deltaY = translation.y - lastOffset.height
+            self.lastOffset = CGSize(width: deltaX, height: deltaY)
+            camera.projectionTransform = SCNMatrix4Mult(
+                camera.projectionTransform,
+                SCNMatrix4Translate(SCNMatrix4Identity, Float(deltaX), Float(deltaX), 0)
+            )
+//            view.transform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
         case .ended:
-            globalPanLastValue = nil
+            lastOffset = nil
         case .cancelled, .failed:
-            self.fullViewOffset.width = globalPanLastValue?.x ?? 0.0
-            self.fullViewOffset.height = globalPanLastValue?.y ?? 0.0
-            globalPanLastValue = nil
+            lastOffset = nil
         default:
             return
         }
@@ -429,7 +427,6 @@ struct HeadView: View {
         return nodes
     }
 
-    
     func __getAllPoints(observation: VNFaceObservation) -> [CGPoint] {
         var points: [CGPoint] = []
         for point in observation.landmarks!.outerLips!.normalizedPoints {

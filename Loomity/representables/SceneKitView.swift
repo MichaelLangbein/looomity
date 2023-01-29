@@ -85,8 +85,9 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view = UIView(frame: CGRect(x: 0, y: 0, width: self.screen_width, height: self.screen_height))
         let sceneView = makeSceneView()
-        self.view = sceneView
+        self.view.addSubview(sceneView)
         self.sceneView = sceneView
     }
     
@@ -157,13 +158,13 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         pinchRecognizer.delegate = self
         swipeRecognizer.delegate = self
         rotateRecognizer.delegate = self
-        sceneView.addGestureRecognizer(panRecognizer)
-        sceneView.addGestureRecognizer(doublePanRecognizer)
-        sceneView.addGestureRecognizer(tapRecognizer)
-        sceneView.addGestureRecognizer(pinchRecognizer)
-        sceneView.addGestureRecognizer(swipeRecognizer)
-        sceneView.addGestureRecognizer(rotateRecognizer)
-        
+        self.view.addGestureRecognizer(panRecognizer)
+        self.view.addGestureRecognizer(doublePanRecognizer)
+        self.view.addGestureRecognizer(tapRecognizer)
+        self.view.addGestureRecognizer(pinchRecognizer)
+        self.view.addGestureRecognizer(swipeRecognizer)
+        self.view.addGestureRecognizer(rotateRecognizer)
+
         // adding user-defined nodes
         if let load = self.loadNodes {
             self.nodes = load(sceneView, scene, camera)
@@ -181,6 +182,18 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
             let view = self.sceneView
         else { return }
         onRender(renderer, view, self.nodes)
+    }
+    
+    func translateSceneView(tx: CGFloat, ty: CGFloat) {
+        guard let sv = self.sceneView else { return }
+        let initialTransform = sv.transform
+        sv.transform = CGAffineTransformTranslate(initialTransform, tx, ty)
+    }
+    
+    func scaleSceneView(sx: CGFloat, sy: CGFloat) {
+        guard let sv = self.sceneView else { return }
+        let initialTransform = sv.transform
+        sv.transform = CGAffineTransformScale(initialTransform, sx, sy)
     }
     
     public func screenshot() -> UIImage? {
