@@ -121,20 +121,19 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
         
-        let image_size_clip = fitImageIntoScene(width_screen: screen_width, height_screen: screen_height, width_img: image_width, height_img: image_height)
-        let w_img_clip = image_size_clip.width
-        
-//        Image-quad right-most-point: (1 0 0 1)
-//        Same point relative to camera: (1 0 z 1)
-//        |f 0 0 0| |1|    |f|    |f/z|  <-- must be w_img_clip/2 in clipping space
-//        |0 f 0 0| |0|    |0|    |0  |
-//        |0 0 1 0| |z|  = |z|  = |1  |
-//        |0 0 1 0| |1|    |z|    |1  |
-//        Thus f/z = w_img_clip/2
-//        Thus z = 2f/w_img_clip
-
-        let f = camera.projectionTransform.m11
-        let zCam = (2.0 * f) / Float(w_img_clip)
+        let image_size_scene = CGSize(
+            width: 2.0,
+            height: 2.0 * image_height / image_width
+        )
+        let image_size_clip = fitImageIntoClip(
+            width_screen: screen_width, height_screen: screen_height,
+            width_img: image_width, height_img: image_height
+        )
+        let zCam = distanceSoCamSeesAllOfImage(
+            camera: camera,
+            imageSizeClip: image_size_clip,
+            imageSizeScene: image_size_scene
+        )
         camera.orthographicScale = 2.00
         
         cameraNode.position = SCNVector3(x: 0, y: 0, z: zCam)

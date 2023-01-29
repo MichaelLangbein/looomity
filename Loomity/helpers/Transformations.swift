@@ -277,8 +277,10 @@ func obsBboxCenter2Scene(boundingBox: CGRect, imageWidth: CGFloat, imageHeight: 
 }
 
 
-
-func fitImageIntoScene(width_screen: CGFloat, height_screen: CGFloat, width_img: CGFloat, height_img: CGFloat) -> CGSize {
+func fitImageIntoClip(
+    width_screen: CGFloat, height_screen: CGFloat,
+    width_img: CGFloat, height_img: CGFloat
+    ) -> CGSize {
     // verified to work correctly.
     
     let ar_screen = width_screen / height_screen
@@ -314,4 +316,18 @@ func fitImageIntoScene(width_screen: CGFloat, height_screen: CGFloat, width_img:
     }
     
     return CGSize(width: w_img_clip, height: h_img_clip)
+}
+
+
+func distanceSoCamSeesAllOfImage(
+    camera: SCNCamera,
+    imageSizeClip: CGSize,
+    imageSizeScene: CGSize
+) -> Float {
+    let f = camera.projectionTransform.m11
+    let h_scn = imageSizeScene.height
+    let h_clp = imageSizeClip.height
+    let z_scn_cam = f * Float(h_scn / h_clp)
+    // z_scn_cam = f * Float(w_scn / w_clp)
+    return z_scn_cam
 }
