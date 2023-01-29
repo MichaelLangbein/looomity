@@ -57,6 +57,7 @@
 		3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */; };
 		3E706FD129683A23005F5D12 /* FullPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E706FD029683A23005F5D12 /* FullPageView.swift */; };
 		3EA32F95296F575A00E77B61 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA32F94296F575A00E77B61 /* PrivacyView.swift */; };
+		3EAECA3D2986C92F0050A4B6 /* ModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAECA3C2986C92F0050A4B6 /* ModelView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +131,7 @@
 		3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = LoomityStoreTest.storekit; path = Loomity/LoomityStoreTest.storekit; sourceTree = "<group>"; };
 		3E706FD029683A23005F5D12 /* FullPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPageView.swift; sourceTree = "<group>"; };
 		3EA32F94296F575A00E77B61 /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
+		3EAECA3C2986C92F0050A4B6 /* ModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				3E42F77B295C8A5B00744841 /* ImagePickerView.swift */,
+				3EAECA3C2986C92F0050A4B6 /* ModelView.swift */,
 				3E42F77C295C8A5B00744841 /* SceneKitView.swift */,
 				3E42F77D295C8A5B00744841 /* GifView.swift */,
 				3E34CECF2975EA4700D5345C /* CameraView.swift */,
@@ -442,6 +445,7 @@
 				3E42F7A6295C8A5B00744841 /* SelectImageView.swift in Sources */,
 				3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */,
 				3E34CED02975EA4700D5345C /* CameraView.swift in Sources */,
+				3EAECA3D2986C92F0050A4B6 /* ModelView.swift in Sources */,
 				3E42F7A2295C8A5B00744841 /* ImageExtension.swift in Sources */,
 				3E42F799295C8A5B00744841 /* GifView.swift in Sources */,
 				3E3F649D297A9BAA00264524 /* CameraManager.swift in Sources */,

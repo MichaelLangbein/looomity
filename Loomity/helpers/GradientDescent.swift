@@ -285,7 +285,7 @@ func sse(sceneView: SCNView, head: SCNNode, observation: VNFaceObservation, imag
         
         let obsPoint = observationPoints[i]
         let obsImg = landmark2image(obsPoint, observation.boundingBox)
-        let obsScene = image2scene(obsImg, Int(imageWidth), Int(imageHeight))
+        let obsScene = image2scene(obsImg, 2.0, 2.0 * imageHeight / imageWidth)
         let obsClip = scene2clipping(obsScene, cameraWordTransform, cameraProjectionTransform)
         
         var diff = vectorDiff(modelClip, obsClip)

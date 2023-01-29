@@ -157,18 +157,10 @@ func landmark2image(_ point: CGPoint, _ boundingBox: CGRect) -> CGPoint {
 }
 
 
-func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int) -> SCNVector3 {
-    let xImg = Float(point.x)
-    let yImg = Float(point.y)
-
-    let wImgScene: Float = 2.0
-    let ar = Float(imageWidth) / Float(imageHeight)
-    let hImgScene = wImgScene / ar
-
-    let xScene = xImg * wImgScene - 1.0
-    let yScene = (yImg * hImgScene) - (hImgScene / 2.0)
-    let zScene: Float = 0.0
-    return SCNVector3(x: xScene, y: yScene, z: zScene)
+func image2scene(_ point: CGPoint, _ w_img_scene: CGFloat, _ h_img_scene: CGFloat) -> SCNVector3 {
+    let x_scene = interpolate(point.x, 0, 1, -w_img_scene / 2, w_img_scene / 2)
+    let y_scene = interpolate(point.y, 0, 1, -h_img_scene / 2, h_img_scene / 2)
+    return SCNVector3(x_scene, y_scene, 0)
 }
 
 /**

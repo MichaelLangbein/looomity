@@ -129,7 +129,7 @@ struct ToolsView: View {
             }
             VStack(alignment: .leading, spacing: 7.5) {
                 Text("If loomity did not discover a face in your photo, you can **manually add one**.")
-                Text("You can switch between a **perspective** and an **orthographic** view.")
+                Text("You can **re-center** your image to its initial position.")
                 Text("You can **save** your current view to your photo-gallery.")
             }
         }

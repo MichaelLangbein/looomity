@@ -145,6 +145,16 @@ struct HeadView: View {
                 case .recenterView:
                     guard let view = skc.sceneView else { return }
                     view.transform = CGAffineTransformIdentity
+                    // Not that simple. Need to account for screen rotation.
+//                    let w_scr = UIScreen.main.bounds.width
+//                    let h_scr = UIScreen.main.bounds.height
+//                    let w_view = skc.view.frame.width
+//                    let h_view = skc.view.frame.height
+//                    let targetSizeClip = fitImageIntoClip(width_screen: w_scr, height_screen: h_scr, width_img: w_view, height_img: h_view)
+//                    let targetSize = CGSize(width: targetSizeClip.width * w_scr / 2.0, height: targetSizeClip.height * h_scr / 2.0)
+//                    let offsetX = (w_scr - targetSize.width) / 2.0
+//                    let offsetY = (h_scr - targetSize.height) / 2.0
+//                    view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
                 }
             }
             
@@ -242,7 +252,11 @@ struct HeadView: View {
             let newScale = 1.0 + deltaScale
             self.lastScale = gesture.scale
 //            camera.projectionTransform = SCNMatrix4Scale(camera.projectionTransform, Float(newScale), Float(newScale), 1)
-            view.transform = CGAffineTransformScale(view.transform, newScale, newScale)
+            let newTransform = CGAffineTransformScale(view.transform, newScale, newScale)
+            if newTransform.a > 3.0 || newTransform.a < 0.3333 {
+                return
+            }
+            view.transform = newTransform
         case .ended:
             lastScale = nil
         case .failed, .cancelled:
@@ -291,7 +305,11 @@ struct HeadView: View {
             let deltaY = translation.y - lastOffset.y
             self.lastOffset = translation
             // camera.projectionTransform = SCNMatrix4Translate(camera.projectionTransform, Float(deltaXRel), Float(deltaYRel), 0)
-            view.transform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
+            let newTransform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
+            if abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.width || abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.height {
+                return
+            }
+            view.transform = newTransform
         case .ended:
             lastOffset = nil
         case .cancelled, .failed:
