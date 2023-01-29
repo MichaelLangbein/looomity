@@ -13,7 +13,7 @@ import SceneKit
 
 
 enum TaskType {
-    case addNode, removeNode, setOrthographicCam, setPerspectiveCam, takeScreenshot
+    case addNode, removeNode, setOrthographicCam, setPerspectiveCam, takeScreenshot, recenterView
 }
 
 struct SKVTask {
@@ -54,46 +54,36 @@ struct HeadView: View {
     let unfocussedOpacity = 0.5
 
     var body: some View {
-        ZStack {
-//            Button {
-//                
-//            } label: {
-//                Text("Re-center")
-//            }
-            
-            SceneKitView(
-                screen_width: UIScreen.main.bounds.width,
-                screen_height: UIScreen.main.bounds.height,
-                image_width: image.size.width,
-                image_height: image.size.height,
-                loadNodes: { view, scene, camera in
-                    return self.getNodes(view: view, scene: scene)
-                },
-                onTap: { gesture, view, nodes in
-                    focusOnObservation(view: view, gesture: gesture, nodes: nodes)
-                },
-                onPan: { gesture, view, nodes in
-                    lookDirection(view: view, gesture: gesture, nodes: nodes)
-                },
-                onDoublePan: { gesture, view, nodes in
-                    moveInPlane(view: view, gesture: gesture, nodes: nodes)
-                },
-                onPinch: { gesture, view, nodes in
-                    scale(view: view, gesture: gesture, nodes: nodes)
-                },
-                onRotate: { gesture, view, nodes in
-                    rotate(view: view, gesture: gesture, nodes: nodes)
-                },
-                onUIInit: { skc in
-                    unfocusObservation(nodes: skc.nodes)
-                },
-                onUIUpdate: { skc in
-                    update(skc: skc, nodes: skc.nodes)
-                }
-            )
-        }
-
-        
+        SceneKitView(
+            screen_width: UIScreen.main.bounds.width,
+            screen_height: UIScreen.main.bounds.height,
+            image_width: image.size.width,
+            image_height: image.size.height,
+            loadNodes: { view, scene, camera in
+                return self.getNodes(view: view, scene: scene)
+            },
+            onTap: { gesture, view, nodes in
+                focusOnObservation(view: view, gesture: gesture, nodes: nodes)
+            },
+            onPan: { gesture, view, nodes in
+                lookDirection(view: view, gesture: gesture, nodes: nodes)
+            },
+            onDoublePan: { gesture, view, nodes in
+                moveInPlane(view: view, gesture: gesture, nodes: nodes)
+            },
+            onPinch: { gesture, view, nodes in
+                scale(view: view, gesture: gesture, nodes: nodes)
+            },
+            onRotate: { gesture, view, nodes in
+                rotate(view: view, gesture: gesture, nodes: nodes)
+            },
+            onUIInit: { skc in
+                unfocusObservation(nodes: skc.nodes)
+            },
+            onUIUpdate: { skc in
+                update(skc: skc, nodes: skc.nodes)
+            }
+        )
     }
     
     @State var lastOpacity: Double = 1.0
@@ -152,6 +142,9 @@ struct HeadView: View {
                     guard let img = skc.screenshot() else { print("Error: couldn't get screenshot"); return }
                     let imageSaver = ImageSaver(onSuccess: self.onImageSaved, onError: self.onImageSaveError)
                     imageSaver.writeToPhotoAlbum(image: img)
+                case .recenterView:
+                    guard let view = skc.sceneView else { return }
+                    view.transform = CGAffineTransformIdentity
                 }
             }
             
@@ -245,15 +238,11 @@ struct HeadView: View {
             lastScale = 1.0
         case .changed:
             guard let lastScale = lastScale else { return }
-            guard let camera = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)?.camera else { return }
             let deltaScale = gesture.scale - lastScale
             let newScale = 1.0 + deltaScale
-            self.lastScale = newScale
-            camera.projectionTransform = SCNMatrix4Mult(
-                camera.projectionTransform,
-                SCNMatrix4Scale(SCNMatrix4Identity, Float(newScale), Float(newScale), 1)
-            )
-//            view.transform = CGAffineTransformScale(view.transform, newScale, newScale)
+            self.lastScale = gesture.scale
+//            camera.projectionTransform = SCNMatrix4Scale(camera.projectionTransform, Float(newScale), Float(newScale), 1)
+            view.transform = CGAffineTransformScale(view.transform, newScale, newScale)
         case .ended:
             lastScale = nil
         case .failed, .cancelled:
@@ -278,9 +267,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = positionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-                              //  start    + relative translation             * a bit faster * slower when zoomed in
-            figure.position.x = startPos.x + Float(translation.x / image.size.width)  * 4.0 / Float(view.transform.a)
-            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0 / Float(view.transform.a)
+            figure.position.x = startPos.x + Float(translation.x / UIScreen.main.bounds.width)  * 4.0
+            figure.position.y = startPos.y - Float(translation.y / UIScreen.main.bounds.height) * 4.0
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -291,23 +279,19 @@ struct HeadView: View {
         }
     }
     
-    @State var lastOffset: CGSize?
+    @State var lastOffset: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         switch gesture.state {
         case .began:
-            lastOffset = CGSize(width: 0, height: 0)
+            lastOffset = CGPoint(x: 0, y: 0)
         case .changed:
             guard let lastOffset = lastOffset else { return }
-            guard let camera = view.scene?.rootNode.childNode(withName: "Camera", recursively: true)?.camera else { return }
             let translation = gesture.translation(in: view)
-            let deltaX = translation.x - lastOffset.width
-            let deltaY = translation.y - lastOffset.height
-            self.lastOffset = CGSize(width: deltaX, height: deltaY)
-            camera.projectionTransform = SCNMatrix4Mult(
-                camera.projectionTransform,
-                SCNMatrix4Translate(SCNMatrix4Identity, Float(deltaX), Float(deltaX), 0)
-            )
-//            view.transform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
+            let deltaX = translation.x - lastOffset.x
+            let deltaY = translation.y - lastOffset.y
+            self.lastOffset = translation
+            // camera.projectionTransform = SCNMatrix4Translate(camera.projectionTransform, Float(deltaXRel), Float(deltaYRel), 0)
+            view.transform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
         case .ended:
             lastOffset = nil
         case .cancelled, .failed:

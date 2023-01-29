@@ -87,6 +87,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         super.viewDidLoad()
         self.view = UIView(frame: CGRect(x: 0, y: 0, width: self.screen_width, height: self.screen_height))
         let sceneView = makeSceneView()
+        sceneView.antialiasingMode = .multisampling4X
         self.view.addSubview(sceneView)
         self.sceneView = sceneView
     }

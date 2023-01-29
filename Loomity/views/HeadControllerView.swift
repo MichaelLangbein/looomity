@@ -139,6 +139,12 @@ struct HeadControllerView: View {
                     }
                 )
             }
+            
+            Button {
+                taskQueue.enqueue(SKVTask(type: .recenterView))
+            } label: {
+                Text("Re-center")
+            }.buttonStyle(.borderedProminent)
 
             // Save image
             Button {

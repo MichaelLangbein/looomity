@@ -157,9 +157,7 @@ func landmark2image(_ point: CGPoint, _ boundingBox: CGRect) -> CGPoint {
 }
 
 
-func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int, _ ortho: Bool = true) -> SCNVector3 {
-    // @TODO: correction if not orthographic view
-    
+func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int) -> SCNVector3 {
     let xImg = Float(point.x)
     let yImg = Float(point.y)
 
