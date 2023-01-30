@@ -58,9 +58,9 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
     //    │            │         │         │             │
     //    │            │         │         │             │
     //    │            │         │         │             │
-    //    │            │         │         │             │   X = scene_w / (scene_h * 2) = 0.28125
-    //    │            │         │         │             │
-    //    │            │         │         │             │
+    //    │            │         │         │             │   X = w_clip / 2
+    //    │            │         │         │             │       w_clip = h_clip * ar
+    //    │            │         │         │             │                h_clip = 2
     // -1 │◄───────────┼─────────┼─────────X────────────►│ 1
     //    │            │         │         │             │
     //    │            │         │         │             │
@@ -72,16 +72,21 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
     //    │            │         ▼         │             │
     //    └────────────┴───────────────────┴─────────────┘
     
+    let ar = screenWidth / screenHeight
     var xClipMin = -1.0
     var xClipMax =  1.0
     var yClipMin = -1.0
     var yClipMax =  1.0
     if screenWidth > screenHeight { // landscape-orientation
-        yClipMin = -screenHeight / (screenWidth * 2.0)
-        yClipMax =  screenHeight / (screenWidth * 2.0)
+        let wClip = 2.0
+        let hClip = wClip / ar
+        yClipMin = -hClip / 2.0
+        yClipMax =  hClip / 2.0
     } else {
-        xClipMin = -screenWidth / (screenHeight * 2.0)
-        xClipMax =  screenWidth / (screenHeight * 2.0)
+        let hClip = 2.0
+        let wClip = hClip * ar
+        xClipMin = -wClip / 2.0
+        xClipMax =  wClip / 2.0
     }
     let xClipRange = xClipMax - xClipMin
     let yClipRange = yClipMax - yClipMin
@@ -92,7 +97,7 @@ func clipping2screen(_ vClipNorm: SCNVector3, _ screenWidth: CGFloat, _ screenHe
 }
 
 
-func screen2image(_ pScreenRel: CGPoint, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ sceneWidth: CGFloat, _ sceneHeight: CGFloat) -> CGPoint {
+func screen2image(_ pScreenRel: CGPoint, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ screenWidth: CGFloat, _ screenHeight: CGFloat) -> CGPoint {
     
     //    ┌──────────────┐ ▲ 1
     //    │              │ │
@@ -113,19 +118,19 @@ func screen2image(_ pScreenRel: CGPoint, _ imageWidth: CGFloat, _ imageHeight: C
     
     var xOffset = 0.0
     var yOffset = 0.0
-    if sceneWidth > sceneHeight { // landscape
+    if screenWidth > screenHeight { // landscape
         let uPerPixImg = 1.0 / imageWidth
         let img_w_u = imageHeight * uPerPixImg
-        let uPerPixScreen = 1.0 / sceneHeight
-        let scene_w_u = sceneWidth * uPerPixScreen
-        let delta = (scene_w_u - img_w_u) / 2.0
+        let uPerPixScreen = 1.0 / screenHeight
+        let screen_w_u = screenWidth * uPerPixScreen
+        let delta = (screen_w_u - img_w_u) / 2.0
         xOffset = delta
     } else {
         let uPerPixImg = 1.0 / imageWidth
         let img_h_u = imageHeight * uPerPixImg
-        let uPerPixScreen = 1.0 / sceneWidth
-        let scene_h_u = sceneHeight * uPerPixScreen
-        let delta = (scene_h_u - img_h_u) / 2.0
+        let uPerPixScreen = 1.0 / screenWidth
+        let screen_h_u = screenHeight * uPerPixScreen
+        let delta = (screen_h_u - img_h_u) / 2.0
         yOffset = delta
     }
     
@@ -152,20 +157,10 @@ func landmark2image(_ point: CGPoint, _ boundingBox: CGRect) -> CGPoint {
 }
 
 
-func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int, _ ortho: Bool = true) -> SCNVector3 {
-    // @TODO: correction if not orthographic view
-    
-    let xImg = Float(point.x)
-    let yImg = Float(point.y)
-
-    let wImgScene: Float = 2.0
-    let ar = Float(imageWidth) / Float(imageHeight)
-    let hImgScene = wImgScene / ar
-
-    let xScene = xImg * wImgScene - 1.0
-    let yScene = (yImg * hImgScene) - (hImgScene / 2.0)
-    let zScene: Float = 0.0
-    return SCNVector3(x: xScene, y: yScene, z: zScene)
+func image2scene(_ point: CGPoint, _ w_img_scene: CGFloat, _ h_img_scene: CGFloat) -> SCNVector3 {
+    let x_scene = interpolate(point.x, 0, 1, -w_img_scene / 2, w_img_scene / 2)
+    let y_scene = interpolate(point.y, 0, 1, -h_img_scene / 2, h_img_scene / 2)
+    return SCNVector3(x_scene, y_scene, 0)
 }
 
 /**
@@ -173,7 +168,7 @@ func image2scene(_ point: CGPoint, _ imageWidth: Int, _ imageHeight: Int, _ orth
  which likely occurs on faces far off to the edges of the scene.
  Not a problem for ortho-view, though!
  */
-func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ ortho: Bool = true) -> CGPoint {
+func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFloat) -> CGPoint {
     // @TODO: correction if not orthographic view
     
     let xScene = point.x
@@ -194,16 +189,37 @@ func scene2image(_ point: SCNVector3, _ imageWidth: CGFloat, _ imageHeight: CGFl
 
 
 
+func interpolate(_ x: CGFloat, _ x0: CGFloat, _ x1: CGFloat, _ y0: CGFloat, _ y1: CGFloat) -> CGFloat {
+    let fraction = (x - x0) / (x1 - x0)
+    let y = y0 + fraction * (y1 - y0)
+    return y
+}
 
-func scene2imageLong(_ point: SCNVector3, _ sceneWidth: CGFloat, _ sceneHeight: CGFloat, _ imageWidth: CGFloat, _ imageHeight: CGFloat, _ cameraWorldTransform: SCNMatrix4, _ cameraProjectionTransform: SCNMatrix4) -> CGPoint {
+func scene2imagePerspective(
+    _ point: SCNVector3,
+    _ imageWidth: CGFloat, _ imageHeight: CGFloat,
+    _ sceneWidth: CGFloat, _ sceneHeight: CGFloat,
+    _ cameraWorldTransform: SCNMatrix4, _ cameraProjectionTransform: SCNMatrix4) -> CGPoint {
     
-    let screenHeight = sceneHeight
-    let screenWidth = sceneWidth
-    
-    let clippingPos = scene2clipping(point, cameraWorldTransform, cameraProjectionTransform)
-    let screenPos = clipping2screen(clippingPos, screenWidth, screenHeight)
-    let imgPos = screen2image(screenPos, imageWidth, imageHeight, sceneWidth, sceneHeight)
-    return imgPos
+            
+//        var cameraProjectionTransformWithAR = cameraProjectionTransform
+//        if  cameraProjectionTransformWithAR.m11 ==  cameraProjectionTransformWithAR.m22 {
+//            let ar = Float(sceneWidth / sceneHeight)
+//            cameraProjectionTransformWithAR.m11 *= ar
+//        }
+        
+        let clippingPos = scene2clipping(point, cameraWorldTransform, cameraProjectionTransform)
+            
+        let xImg = interpolate(CGFloat(clippingPos.x), -0.5, 0.5, 0.0, 1.0)
+        let hImgClipping = imageHeight / imageWidth
+        let yClipMin: CGFloat = -hImgClipping / 2.0
+        let yClipMax: CGFloat =  hImgClipping / 2.0
+        let yImg = interpolate(CGFloat(clippingPos.y), yClipMin, yClipMax, 0.0, 1.0)
+        return CGPoint(x: xImg, y: yImg)
+        
+//    let screenPos = clipping2screen(clippingPos, screenWidth, screenHeight)
+//    let imgPos = screen2image(screenPos, imageWidth, imageHeight, screenWidth, screenHeight)
+//    return imgPos
 }
 
 
@@ -252,3 +268,58 @@ func obsBboxCenter2Scene(boundingBox: CGRect, imageWidth: CGFloat, imageHeight: 
     return cWorld
 }
 
+
+func fitImageIntoClip(
+    width_screen: CGFloat, height_screen: CGFloat,
+    width_img: CGFloat, height_img: CGFloat
+    ) -> CGSize {
+    // verified to work correctly.
+    
+    let ar_screen = width_screen / height_screen
+    let ar_img = width_img / height_img
+    var w_img_clip: CGFloat = 1.0
+    var h_img_clip: CGFloat = 1.0
+    
+//        Assumes that clipping space is fully contained within the screen
+//        and reaches values over 1 along the screen's longer side.
+//        if width > height {
+//            let h_screen_clip: CGFloat = 2.0
+//            let w_screen_clip = h_screen_clip * ar_screen
+//            h_img_clip = h_screen_clip
+//            w_img_clip = h_img_clip * ar_img
+//        } else {
+//            let w_screen_clip: CGFloat = 2.0
+//            let h_screen_clip = w_screen_clip / ar_screen
+//            w_img_clip = w_screen_clip
+//            h_img_clip = w_img_clip / ar_img
+//        }
+    
+//      Assumes that clipping space bleeds out of the screen's shorter side and is clipped off
+    if width_screen > height_screen {
+        let w_screen_clip: CGFloat = 2.0
+        let h_screen_clip = w_screen_clip / ar_screen
+        h_img_clip = h_screen_clip
+        w_img_clip = h_img_clip * ar_img
+    } else {
+        let h_screen_clip: CGFloat = 2.0
+        let w_screen_clip = h_screen_clip * ar_screen
+        w_img_clip = w_screen_clip
+        h_img_clip = w_img_clip / ar_img
+    }
+    
+    return CGSize(width: w_img_clip, height: h_img_clip)
+}
+
+
+func distanceSoCamSeesAllOfImage(
+    camera: SCNCamera,
+    imageSizeClip: CGSize,
+    imageSizeScene: CGSize
+) -> Float {
+    let f = camera.projectionTransform.m11
+    let h_scn = imageSizeScene.height
+    let h_clp = imageSizeClip.height
+    let z_scn_cam = f * Float(h_scn / h_clp)
+    // z_scn_cam = f * Float(w_scn / w_clp)
+    return z_scn_cam
+}

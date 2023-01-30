@@ -13,9 +13,11 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     
     //---------------- Inputs -------------------------------------//
     // Dimensions
-    var width: Int
-    var height: Int
-    var ar: Float
+    var screen_width: CGFloat
+    var screen_height: CGFloat
+    var image_width: CGFloat
+    var image_height: CGFloat
+    
     // Provide nodes as function of scene, camera
     var loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])?
     // Provide nodes directly
@@ -43,7 +45,8 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     var sceneView: SCNView?
     
     init(
-        width: Int, height: Int, ar: Float,
+        screen_width: CGFloat, screen_height: CGFloat,
+        image_width: CGFloat, image_height: CGFloat,
         loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])? = nil,
         nodes: [SCNNode] = [],
         renderContinuously: Bool = false,
@@ -56,9 +59,10 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil,
         onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil
     ) {
-        self.width = width
-        self.height = height
-        self.ar = ar
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.image_width = image_width
+        self.image_height = image_height
         self.loadNodes = loadNodes
         self.nodes = nodes
         self.renderContinuously = renderContinuously
@@ -81,8 +85,10 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view = UIView(frame: CGRect(x: 0, y: 0, width: self.screen_width, height: self.screen_height))
         let sceneView = makeSceneView()
-        self.view = sceneView
+        sceneView.antialiasingMode = .multisampling4X
+        self.view.addSubview(sceneView)
         self.sceneView = sceneView
     }
     
@@ -100,7 +106,7 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         // Otherwise overwritten by on<Gesture> methods
         sceneView.allowsCameraControl = defaultCameraControl
         // Size
-        sceneView.frame = CGRect(x: 0, y: 0, width: self.width, height: self.height)
+        sceneView.frame = CGRect(x: 0, y: 0, width: self.screen_width, height: self.screen_height)
         
         // Scene
         let scene = SCNScene()
@@ -110,28 +116,24 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         let camera = SCNCamera()
         camera.zNear = 0.01
         camera.zFar = 100
-        camera.usesOrthographicProjection = true  // using ortho-view by default now - less confusing during panning.
-        camera.projectionDirection = width > height ? .horizontal : .vertical
+        camera.usesOrthographicProjection = false  // using ortho-view by default now - less confusing during panning.
+        camera.projectionDirection = screen_width > screen_height ? .horizontal : .vertical
         let cameraNode = SCNNode()
         scene.rootNode.addChildNode(cameraNode)
         
-//        Portrait orientation: x stretches screen
-//        Image-quad right-most-point: (1 0 z 1)
-//        |f 0 0 0| |1|    |f|    |f/z|  <-- must be 1 in clipping space
-//        |0 f 0 0| |0|    |0|    |0  |
-//        |0 0 1 0| |z|  = |z|  = |1  |
-//        |0 0 1 0| |1|    |z|    |1  |
-//        Thus z = f
-//
-//        Landscape orientation: y stretches screen
-//        Image-quad top-most-point: (0 1/ar z 1)
-//        |f 0 0 0| |0   |    |0   |    |0       |
-//        |0 f 0 0| |1/ar|    |f/ar|    |f/(ar*z)| <-- must be 1 in clipping space
-//        |0 0 1 0| |z   |  = |z   |  = |1       |
-//        |0 0 1 0| |1   |    |z   |    |1       |
-//        Thus z = f/ar
-        let f = camera.projectionTransform.m11
-        let zCam = width > height ?    f * 2.0 / self.ar    :    f * 2.0
+        let image_size_scene = CGSize(
+            width: 2.0,
+            height: 2.0 * image_height / image_width
+        )
+        let image_size_clip = fitImageIntoClip(
+            width_screen: screen_width, height_screen: screen_height,
+            width_img: image_width, height_img: image_height
+        )
+        let zCam = distanceSoCamSeesAllOfImage(
+            camera: camera,
+            imageSizeClip: image_size_clip,
+            imageSizeScene: image_size_scene
+        )
         camera.orthographicScale = 2.00
         
         cameraNode.position = SCNVector3(x: 0, y: 0, z: zCam)
@@ -156,13 +158,13 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
         pinchRecognizer.delegate = self
         swipeRecognizer.delegate = self
         rotateRecognizer.delegate = self
-        sceneView.addGestureRecognizer(panRecognizer)
-        sceneView.addGestureRecognizer(doublePanRecognizer)
-        sceneView.addGestureRecognizer(tapRecognizer)
-        sceneView.addGestureRecognizer(pinchRecognizer)
-        sceneView.addGestureRecognizer(swipeRecognizer)
-        sceneView.addGestureRecognizer(rotateRecognizer)
-        
+        self.view.addGestureRecognizer(panRecognizer)
+        self.view.addGestureRecognizer(doublePanRecognizer)
+        self.view.addGestureRecognizer(tapRecognizer)
+        self.view.addGestureRecognizer(pinchRecognizer)
+        self.view.addGestureRecognizer(swipeRecognizer)
+        self.view.addGestureRecognizer(rotateRecognizer)
+
         // adding user-defined nodes
         if let load = self.loadNodes {
             self.nodes = load(sceneView, scene, camera)
@@ -180,6 +182,18 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
             let view = self.sceneView
         else { return }
         onRender(renderer, view, self.nodes)
+    }
+    
+    func translateSceneView(tx: CGFloat, ty: CGFloat) {
+        guard let sv = self.sceneView else { return }
+        let initialTransform = sv.transform
+        sv.transform = CGAffineTransformTranslate(initialTransform, tx, ty)
+    }
+    
+    func scaleSceneView(sx: CGFloat, sy: CGFloat) {
+        guard let sv = self.sceneView else { return }
+        let initialTransform = sv.transform
+        sv.transform = CGAffineTransformScale(initialTransform, sx, sy)
     }
     
     public func screenshot() -> UIImage? {
@@ -280,9 +294,10 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
 struct SceneKitView: UIViewControllerRepresentable {
     
     // Dimensions
-    var width: Int
-    var height: Int
-    var ar: Float
+    var screen_width: CGFloat
+    var screen_height: CGFloat
+    var image_width: CGFloat
+    var image_height: CGFloat
     // Provide nodes as function of scene, camera
     var loadNodes: ((SCNView, SCNScene, SCNCamera) -> [SCNNode])
     // Provide nodes directly
@@ -305,9 +320,10 @@ struct SceneKitView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> SceneController {
         let sc = SceneController(
-            width: width,
-            height: height,
-            ar: ar,
+            screen_width: screen_width,
+            screen_height: screen_height,
+            image_width: image_width,
+            image_height: image_height,
             loadNodes: loadNodes,
             nodes: nodes,
             renderContinuously: renderContinuously,
@@ -336,12 +352,23 @@ struct SceneKitView: UIViewControllerRepresentable {
 
 
 struct PreviewView: View {
+    
+    let width: CGFloat
+    let height: CGFloat
+    let imageWidth: CGFloat
+    let imageHeight: CGFloat
+    
     @State var opacity = 1.0
+    
     var body: some View {
         
-        let plane = SCNNode(geometry: SCNPlane(width: 2.0, height: 1.0))
+        let ar = CGFloat(imageWidth) / CGFloat(imageHeight)
+        let planeW: CGFloat = 2.0
+        let planeH = planeW / ar
+        let plane = SCNNode(geometry: SCNPlane(width: planeW, height: planeH))
         plane.position = SCNVector3(x: 0.0, y: 0.0, z: 0.0)
-        plane.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 30.0 / 255.0, green: 150.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
+//        plane.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 30.0 / 255.0, green: 150.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
+        plane.geometry!.firstMaterial!.diffuse.contents = UIImage(named: "uv_grid")
         
         let bx = SCNNode(geometry: SCNBox(width: 0.2, height: 0.3, length: 0.2, chamferRadius: 0.05))
         bx.geometry!.firstMaterial!.diffuse.contents  = UIColor(red: 125.0 / 255.0, green: 10.0 / 255.0, blue: 30.0 / 255.0, alpha: 1)
@@ -349,7 +376,10 @@ struct PreviewView: View {
         
         return VStack {
             SceneKitView(
-                width: 300, height: 600, ar: 3.0 / 6.0,
+                screen_width: width,
+                screen_height: height,
+                image_width: imageWidth,
+                image_height: imageHeight,
                  loadNodes: { view, scene, camera in
                      return [plane, bx]
                  },
@@ -364,6 +394,7 @@ struct PreviewView: View {
                      node.addAnimation(createPopAnimation(), forKey: "pop")
                  }
             )
+//            .frame(width: CGFloat(width), height: CGFloat(height))
             .border(.red)
             
             Slider(value: $opacity, in: 0.0 ... 1.0)
@@ -374,7 +405,13 @@ struct PreviewView: View {
 
 struct SceneKitView_Previews: PreviewProvider {
     static var previews: some View {
-        PreviewView()
+        let width: CGFloat = 900
+        let height: CGFloat = 500
+        let imageWidth: CGFloat = 200
+        let imageHeight: CGFloat = 300
+        
+        PreviewView(width: width, height: height, imageWidth: imageWidth, imageHeight: imageHeight)
+            .previewInterfaceOrientation(width > height ? .landscapeLeft : .portrait)
     }
 }
 

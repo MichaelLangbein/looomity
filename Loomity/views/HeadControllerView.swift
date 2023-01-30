@@ -20,9 +20,9 @@ struct HeadControllerView: View {
     
     @State var showHelp = false
     @StateObject var taskQueue = Queue<SKVTask>()
-    @State var opacity = 0.75
+    @State var opacity = 0.65
     @State var activeFace: UUID?
-    @State var usesOrthographicCam = true
+    @State var usesOrthographicCam = false
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
@@ -139,6 +139,12 @@ struct HeadControllerView: View {
                     }
                 )
             }
+            
+            Button {
+                taskQueue.enqueue(SKVTask(type: .recenterView))
+            } label: {
+                Text("Center").frame(maxWidth: .infinity)
+            }.buttonStyle(.borderedProminent)
 
             // Save image
             Button {

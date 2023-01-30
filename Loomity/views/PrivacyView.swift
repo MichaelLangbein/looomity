@@ -13,7 +13,7 @@ struct PrivacyView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Loomity does **not collect any user-data** at all.")
                 Text("As such, no data is shared with third parties, either.")
-                Text("We strongly believe that an app should not collect any user-data that it doesn't need.")
+                Text("We believe that an app should not collect any user-data that it doesn't need.")
                 Text("We also have no servers where any of your data is retained.")
                 Text("")
                 Text("You can also find our privacy-policy [online](https://codeandcolors.net/loomity/).")

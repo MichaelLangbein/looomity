@@ -13,7 +13,7 @@ import SceneKit
 
 
 enum TaskType {
-    case addNode, removeNode, setOrthographicCam, setPerspectiveCam, takeScreenshot
+    case addNode, removeNode, setOrthographicCam, setPerspectiveCam, takeScreenshot, recenterView
 }
 
 struct SKVTask {
@@ -21,6 +21,21 @@ struct SKVTask {
     var payload: UUID?
 }
 
+
+/**
+ # Gesture sources
+ Gestures may be recognised at to levels:
+ - inside the scenekit scene (as recognised through `SceneKitView.onPinch` etc.)
+ - in the parent HeadView (as recognised through `view.gesture`)
+ 
+ # Gesture handling
+ We want most gestures to be handled by scenekit
+ with a few exceptions:
+ - Pan while no model selected:
+    - move the view, not the camera inside the scene (`.scaleEffect(fullViewScale)`)
+ - Pinch while no model selected:
+     - scale the view instead of moving the camera inside the scene (`.offset(fullViewOffset)`)
+ */
 
 struct HeadView: View {
 
@@ -39,37 +54,36 @@ struct HeadView: View {
     let unfocussedOpacity = 0.5
 
     var body: some View {
-            SceneKitView(
-                width: Int(UIScreen.main.bounds.width),     // Int(image.size.width),
-                height: Int(UIScreen.main.bounds.height),   // Int(image.size.height),
-                ar: Float(image.size.width / image.size.height),
-                loadNodes: { view, scene, camera in
-                    return self.getNodes(view: view, scene: scene)
-                },
-                onTap: { gesture, view, nodes in
-                    focusOnObservation(view: view, gesture: gesture, nodes: nodes)
-                },
-                onPan: { gesture, view, nodes in
-                    lookDirection(view: view, gesture: gesture, nodes: nodes)
-                },
-                onDoublePan: { gesture, view, nodes in
-                    moveInPlane(view: view, gesture: gesture, nodes: nodes)
-                },
-                onPinch: { gesture, view, nodes in
-                    scale(view: view, gesture: gesture, nodes: nodes)
-                },
-                onRotate: { gesture, view, nodes in
-                    rotate(view: view, gesture: gesture, nodes: nodes)
-                },
-                onUIInit: { skc in
-                    unfocusObservation(nodes: skc.nodes)
-//                    print("UIInit")
-                },
-                onUIUpdate: { skc in
-                    update(skc: skc, nodes: skc.nodes)
-//                    print("UIUpdate")
-                }
-            )
+        SceneKitView(
+            screen_width: UIScreen.main.bounds.width,
+            screen_height: UIScreen.main.bounds.height,
+            image_width: image.size.width,
+            image_height: image.size.height,
+            loadNodes: { view, scene, camera in
+                return self.getNodes(view: view, scene: scene)
+            },
+            onTap: { gesture, view, nodes in
+                focusOnObservation(view: view, gesture: gesture, nodes: nodes)
+            },
+            onPan: { gesture, view, nodes in
+                lookDirection(view: view, gesture: gesture, nodes: nodes)
+            },
+            onDoublePan: { gesture, view, nodes in
+                moveInPlane(view: view, gesture: gesture, nodes: nodes)
+            },
+            onPinch: { gesture, view, nodes in
+                scale(view: view, gesture: gesture, nodes: nodes)
+            },
+            onRotate: { gesture, view, nodes in
+                rotate(view: view, gesture: gesture, nodes: nodes)
+            },
+            onUIInit: { skc in
+                unfocusObservation(nodes: skc.nodes)
+            },
+            onUIUpdate: { skc in
+                update(skc: skc, nodes: skc.nodes)
+            }
+        )
     }
     
     @State var lastOpacity: Double = 1.0
@@ -128,6 +142,40 @@ struct HeadView: View {
                     guard let img = skc.screenshot() else { print("Error: couldn't get screenshot"); return }
                     let imageSaver = ImageSaver(onSuccess: self.onImageSaved, onError: self.onImageSaveError)
                     imageSaver.writeToPhotoAlbum(image: img)
+                case .recenterView:
+                    guard let view = skc.sceneView else { return }
+                    // Not that simple. Need to account for screen rotation.
+                    //view.transform = CGAffineTransformIdentity
+
+                    let w_scr = UIScreen.main.bounds.width
+                    let h_scr = UIScreen.main.bounds.height
+                    let w_view = view.frame.width
+                    let h_view = view.frame.height
+
+                    // both screen and view are landscape
+                    if w_scr >= h_scr && w_view >= h_view {
+                        view.transform = CGAffineTransformIdentity
+                    }
+                    
+                    // both screen and view are portrait
+                    else if w_scr <= h_scr && w_view <= h_view {
+                        view.transform = CGAffineTransformIdentity
+                    }
+                    
+                    // screen portrait, scene landscape
+                    else if w_scr <= h_scr && w_view >= h_view {
+                        let offsetX = (w_scr - w_view) / 2.0
+                        let offsetY = (h_scr - h_view) / 2.0
+                        view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
+                    }
+                    
+                    // screen landscape, scene portrait
+                    else if w_scr >= h_scr && w_view <= h_view {
+                        let offsetX = (w_scr - w_view) / 2.0
+                        let offsetY = (h_scr - h_view) / 2.0
+                        view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
+                    }
+                    
                 }
             }
             
@@ -190,7 +238,7 @@ struct HeadView: View {
     @State var scaleOnStartMove: SCNVector3?
     func scale(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else {
-            scaleSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
+             scaleSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
         
@@ -213,46 +261,43 @@ struct HeadView: View {
         }
     }
     
-    @State var cameraZOnStartMove: Float?
+
+    @State var lastScale: CGFloat?
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
-        guard let rootNode = view.scene?.rootNode else { return }
-        guard let cameraNode = rootNode.childNode(withName: "Camera", recursively: true) else { return }
-        guard let camera = cameraNode.camera else { return }
-        let ortho = camera.usesOrthographicProjection
-        
         switch gesture.state {
         case .began:
-            cameraZOnStartMove = cameraNode.position.z // ortho ? Float(camera.orthographicScale) :
+            lastScale = 1.0
         case .changed:
-            guard let z = cameraZOnStartMove else { return }
-            var scaleFactor = pow( 1.0 / Float(gesture.scale), 1.0)
-            scaleFactor = min(10, max(0.1, scaleFactor)) // must not go below 0.1 or above 10
-            cameraNode.position.z =  z * scaleFactor
-            let f = ortho ? Float(camera.focalLength / 12.0) : camera.projectionTransform.m11
-            camera.orthographicScale = Double(cameraNode.position.z / f)
+            guard let lastScale = lastScale else { return }
+            let deltaScale = gesture.scale - lastScale
+            let newScale = 1.0 + deltaScale
+            self.lastScale = gesture.scale
+            let newTransform = CGAffineTransformScale(view.transform, newScale, newScale)
+            if (
+                // scale is growing                && already deep in
+                (newTransform.a > view.transform.a && newTransform.a > 3.0) ||
+                (newTransform.a < view.transform.a && newTransform.a < 0.3333)
+            ) {
+                return
+            }
+            view.transform = newTransform
         case .ended:
-            cameraZOnStartMove = nil
-        case .cancelled, .failed:
-            cameraNode.position.z = cameraZOnStartMove!
-            camera.orthographicScale = Double(cameraZOnStartMove!)
-            cameraZOnStartMove = nil
+            lastScale = nil
+        case .failed, .cancelled:
+            lastScale = nil
         default:
             return
         }
-        
+        return
     }
     
     @State var positionOnStartMove: SCNVector3?
     func moveInPlane(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         guard let obsId = activeFace else {
-            panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
+             panSceneAndBackground(view: view, gesture: gesture, nodes: nodes)
             return
         }
-        guard
-            let scene = view.scene,
-            let figure = getFigureForId(obsId: obsId, nodes: nodes),
-            let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true)
-        else { return }
+        guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         
         switch gesture.state {
         case .began:
@@ -260,9 +305,8 @@ struct HeadView: View {
         case .changed:
             guard let startPos = positionOnStartMove else { return }
             let translation = gesture.translation(in: view)  // in pixels
-                              //  start    + relative translation             * a bit faster * slower when zoomed in
-            figure.position.x = startPos.x + Float(translation.x / image.size.width)  * 4.0  * cameraNode.position.z
-            figure.position.y = startPos.y - Float(translation.y / image.size.height) * 4.0  * cameraNode.position.z
+            figure.position.x = startPos.x + Float(translation.x / UIScreen.main.bounds.width)  * 4.0
+            figure.position.y = startPos.y - Float(translation.y / UIScreen.main.bounds.height) * 4.0
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -273,27 +317,34 @@ struct HeadView: View {
         }
     }
     
-    @State var globalPositionOnStartMove: SCNVector3?
+    @State var lastOffset: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        guard let scene = view.scene else { return }
-        guard let cameraNode = scene.rootNode.childNode(withName: "Camera", recursively: true) else { return }
-        
         switch gesture.state {
         case .began:
-            globalPositionOnStartMove = cameraNode.position
+            lastOffset = CGPoint(x: 0, y: 0)
         case .changed:
-            guard let startPos = globalPositionOnStartMove else { return }
-            let translation = gesture.translation(in: view)  // in pixels
-            cameraNode.position.x = startPos.x - Float(translation.x / image.size.width)  * 4.0 * cameraNode.position.z
-            cameraNode.position.y = startPos.y + Float(translation.y / image.size.height) * 4.0 * cameraNode.position.z
+            guard let lastOffset = lastOffset else { return }
+            let translation = gesture.translation(in: view)
+            let deltaX = translation.x - lastOffset.x
+            let deltaY = translation.y - lastOffset.y
+            self.lastOffset = translation
+            let newTransform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
+            if (
+                // tx is growing                               && going out of bounds
+                (abs(newTransform.tx) > abs(view.transform.tx) && abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.width) ||
+                (abs(newTransform.ty) > abs(view.transform.ty) && abs(newTransform.ty) > 0.5 * UIScreen.main.bounds.height)
+            ) {
+                return
+            }
+            view.transform = newTransform
         case .ended:
-            globalPositionOnStartMove = nil
+            lastOffset = nil
         case .cancelled, .failed:
-            cameraNode.position = globalPositionOnStartMove!
-            globalPositionOnStartMove = nil
+            lastOffset = nil
         default:
             return
         }
+        return
     }
 
     func focusOnObservation(view: SCNView, gesture: UIGestureRecognizer, nodes: [SCNNode]) {
@@ -349,20 +400,11 @@ struct HeadView: View {
     
     func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
 
-        // loading model
-        #if DEBUG
-        print("Loading debugging model")
-        let modelName = "loomisNewDebugging.scn"
-        #else
         let modelName = "loomisNew.usdz"
-        #endif
         guard let loadedScene = SCNScene(named: modelName) else { return [] }
         let figure = loadedScene.rootNode
         
         var nodes: [SCNNode] = []
-        
-        // Normally here we'd have to account for `image.imageOrientation != .up`
-        // But this is already fixed manually after taking the image in the image-picker
         
         let ar = image.size.width / image.size.height
         let width = 2.0
@@ -381,7 +423,7 @@ struct HeadView: View {
             let roll  = Float(truncating: observation.roll!)
             let pitch = Float(truncating: observation.pitch!)
             let yaw   = Float(truncating: observation.yaw!)
-
+            
             let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
             
             let f = figure.clone()
@@ -391,8 +433,7 @@ struct HeadView: View {
             let headHeightPerWidth: Float = 1.3
             let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
             let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
-            let orthoFaceCorrection: Float = self.usesOrthographicCam ? 0.25 * wImg : 0.0  // simulating some jaw-protrusion even if in ortho-view
-            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor * (1.0 + orthoFaceCorrection), z: scaleFactor )
+            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
             f.opacity = self.unfocussedOpacity
@@ -400,28 +441,21 @@ struct HeadView: View {
             setValueRecursively(node: f, val: "figure", key: "type")
             setValueRecursively(node: f, val: observation.uuid, key: "observationId")
             applyPopAnimation(node: f)
-//            scene.rootNode.addChildNode(f.clone())
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-            nodes.append(fOptimised)
-            
-            #if DEBUG
-            for point in __getAllPoints(observation: observation) {
-                let box = SCNBox(width: 0.01, height: 0.01, length: 0.01, chamferRadius: 0)
-                box.firstMaterial?.diffuse.contents = Color(.yellow)
-                let node = SCNNode(geometry: box)
-                let imagePoint = landmark2image(point, observation.boundingBox)
-                let scenePoint = image2scene(imagePoint, image.cgImage!.width, image.cgImage!.height)
-                node.position = scenePoint
-                scene.rootNode.addChildNode(node)
+
+            // @Todo: where is this weird behaviour coming from?
+            if !usesOrthographicCam {
+                let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
+                fOptimised.position.y -= weirdCorrectionFactor
             }
-            #endif
+
+            nodes.append(fOptimised)
         }
         
         return nodes
     }
 
-    
     func __getAllPoints(observation: VNFaceObservation) -> [CGPoint] {
         var points: [CGPoint] = []
         for point in observation.landmarks!.outerLips!.normalizedPoints {
