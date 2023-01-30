@@ -144,17 +144,38 @@ struct HeadView: View {
                     imageSaver.writeToPhotoAlbum(image: img)
                 case .recenterView:
                     guard let view = skc.sceneView else { return }
-                    view.transform = CGAffineTransformIdentity
                     // Not that simple. Need to account for screen rotation.
-//                    let w_scr = UIScreen.main.bounds.width
-//                    let h_scr = UIScreen.main.bounds.height
-//                    let w_view = skc.view.frame.width
-//                    let h_view = skc.view.frame.height
-//                    let targetSizeClip = fitImageIntoClip(width_screen: w_scr, height_screen: h_scr, width_img: w_view, height_img: h_view)
-//                    let targetSize = CGSize(width: targetSizeClip.width * w_scr / 2.0, height: targetSizeClip.height * h_scr / 2.0)
-//                    let offsetX = (w_scr - targetSize.width) / 2.0
-//                    let offsetY = (h_scr - targetSize.height) / 2.0
-//                    view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
+                    //view.transform = CGAffineTransformIdentity
+
+                    let w_scr = UIScreen.main.bounds.width
+                    let h_scr = UIScreen.main.bounds.height
+                    let w_view = view.frame.width
+                    let h_view = view.frame.height
+
+                    // both screen and view are landscape
+                    if w_scr >= h_scr && w_view >= h_view {
+                        view.transform = CGAffineTransformIdentity
+                    }
+                    
+                    // both screen and view are portrait
+                    else if w_scr <= h_scr && w_view <= h_view {
+                        view.transform = CGAffineTransformIdentity
+                    }
+                    
+                    // screen portrait, scene landscape
+                    else if w_scr <= h_scr && w_view >= h_view {
+                        let offsetX = (w_scr - w_view) / 2.0
+                        let offsetY = (h_scr - h_view) / 2.0
+                        view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
+                    }
+                    
+                    // screen landscape, scene portrait
+                    else if w_scr >= h_scr && w_view <= h_view {
+                        let offsetX = (w_scr - w_view) / 2.0
+                        let offsetY = (h_scr - h_view) / 2.0
+                        view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
+                    }
+                    
                 }
             }
             
@@ -251,9 +272,12 @@ struct HeadView: View {
             let deltaScale = gesture.scale - lastScale
             let newScale = 1.0 + deltaScale
             self.lastScale = gesture.scale
-//            camera.projectionTransform = SCNMatrix4Scale(camera.projectionTransform, Float(newScale), Float(newScale), 1)
             let newTransform = CGAffineTransformScale(view.transform, newScale, newScale)
-            if newTransform.a > 3.0 || newTransform.a < 0.3333 {
+            if (
+                // scale is growing                && already deep in
+                (newTransform.a > view.transform.a && newTransform.a > 3.0) ||
+                (newTransform.a < view.transform.a && newTransform.a < 0.3333)
+            ) {
                 return
             }
             view.transform = newTransform
@@ -304,9 +328,12 @@ struct HeadView: View {
             let deltaX = translation.x - lastOffset.x
             let deltaY = translation.y - lastOffset.y
             self.lastOffset = translation
-            // camera.projectionTransform = SCNMatrix4Translate(camera.projectionTransform, Float(deltaXRel), Float(deltaYRel), 0)
             let newTransform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
-            if abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.width || abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.height {
+            if (
+                // tx is growing                               && going out of bounds
+                (abs(newTransform.tx) > abs(view.transform.tx) && abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.width) ||
+                (abs(newTransform.ty) > abs(view.transform.ty) && abs(newTransform.ty) > 0.5 * UIScreen.main.bounds.height)
+            ) {
                 return
             }
             view.transform = newTransform
