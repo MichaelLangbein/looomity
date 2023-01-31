@@ -99,6 +99,7 @@ struct HeadControllerView: View {
         }
         .onRotate { newOrientation in
             orientation = newOrientation
+            taskQueue.enqueue(SKVTask(type: .recenterView))
         }
     }
     

@@ -152,18 +152,22 @@ struct HeadView: View {
                     let w_view = view.frame.width
                     let h_view = view.frame.height
                     let size_scene0 = CGSize(width: w_view, height: h_view)
-                    let size_image0 = fitInto(self.image.size, size_scene0)
+                    let size_image0 = fitInto(inner: self.image.size, outer: size_scene0)
                     let size_screen = CGSize(width: w_scr, height: h_scr)
                     
-                    let size_image1 = fitInto(size_image0, size_screen)
-                    let size_scene1 = fitAround(size_scene0, size_image1)
+                    let size_image1 = fitInto(inner: size_image0, outer: size_screen)
+                    let size_scene1 = fitAround(outer: size_scene0, inner: size_image1)
                     
-                    let deltaX = (size_screen.width - size_scene1.width) / 2.0
-                    let deltaY = (size_screen.height - size_scene1.height) / 2.0
-                    let scaleX = size_scene1.width / size_scene0.width
-                    let scaleY = size_scene1.height / size_scene0.height
+                    let centerX = size_screen.width / 2.0
+                    let centerY = size_screen.height / 2.0
+                    let scaleX = (size_scene1.width / size_scene0.width)
+                    let scaleY = (size_scene1.height / size_scene0.height)
 
-                    view.transform = CGAffineTransformScale(CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY), scaleX, scaleY)
+                    // IMPORTANT: don't translate a view with CGAffineTransform. Use center instead.
+                    // Cite: Use this property to scale or rotate the view's frame rectangle within its superview's coordinate system. (To change the position of the view, modify the center property instead.) The default value of this property is CGAffineTransformIdentity.
+                    // ALSO IMPORTANT: When the value of view.transform is anything other than the identity transform, the value in the frame property is undefined and should be ignored.
+                    view.transform = CGAffineTransformScale(view.transform, scaleX, scaleY)
+                    view.center = CGPoint(x: centerX, y: centerY)
                 }
             }
             
@@ -305,30 +309,26 @@ struct HeadView: View {
         }
     }
     
-    @State var lastOffset: CGPoint?
+    @State var centerOnStartMove: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
         switch gesture.state {
         case .began:
-            lastOffset = CGPoint(x: 0, y: 0)
+            centerOnStartMove = view.center
         case .changed:
-            guard let lastOffset = lastOffset else { return }
+            guard let centerOnStart = centerOnStartMove else { return }
             let translation = gesture.translation(in: view)
-            let deltaX = translation.x - lastOffset.x
-            let deltaY = translation.y - lastOffset.y
-            self.lastOffset = translation
-            let newTransform = CGAffineTransformTranslate(view.transform, deltaX, deltaY)
-            if (
-                // tx is growing                               && going out of bounds
-                (abs(newTransform.tx) > abs(view.transform.tx) && abs(newTransform.tx) > 0.5 * UIScreen.main.bounds.width) ||
-                (abs(newTransform.ty) > abs(view.transform.ty) && abs(newTransform.ty) > 0.5 * UIScreen.main.bounds.height)
-            ) {
+            let centerNew = CGPoint(x: centerOnStart.x + translation.x, y: centerOnStart.y + translation.y)
+            let centerScreen = CGPoint(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.0)
+            if abs(centerNew.x) > UIScreen.main.bounds.width * 0.75 || abs(centerNew.y) > UIScreen.main.bounds.height * 0.75 {
                 return
             }
-            view.transform = newTransform
+            view.center = centerNew
         case .ended:
-            lastOffset = nil
+            centerOnStartMove = nil
         case .cancelled, .failed:
-            lastOffset = nil
+            guard let centerOnStart = centerOnStartMove else { return }
+            view.center = centerOnStart
+            centerOnStartMove = nil
         default:
             return
         }
