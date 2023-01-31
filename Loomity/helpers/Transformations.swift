@@ -269,6 +269,26 @@ func obsBboxCenter2Scene(boundingBox: CGRect, imageWidth: CGFloat, imageHeight: 
 }
 
 
+/*
+* Grow inner until either w or h (first of them) matches outer.
+*/
+func fitInto(inner: CGSize, outer: CGSize) -> CGSize {
+        let sx = outer.width / inner.width
+        let sy = outer.height / inner.height
+        let s = min(sx, sy)
+        return CGSize(width: s * inner.width, height: s * inner.height)
+}
+
+/*
+* Shrink outer until either w or h (first of them) matches inner.
+*/
+func fitAround(outer: CGSize, inner: CGSize) -> CGSize {
+        let sx = inner.width / outer.width
+        let sy = inner.height / outer.height
+        let s = max(sx, sy)
+        return CGSize(width: s * outer.width, height: s * outer.height)
+}
+
 func fitImageIntoClip(
     width_screen: CGFloat, height_screen: CGFloat,
     width_img: CGFloat, height_img: CGFloat

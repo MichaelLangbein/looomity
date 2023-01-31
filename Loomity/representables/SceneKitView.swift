@@ -197,8 +197,31 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     }
     
     public func screenshot() -> UIImage? {
-        guard let view = self.sceneView else { return nil }
-        return view.snapshot()
+        // this will save full sceneView, including white borders where the screen was bigger than the image
+        guard let sceneView = self.sceneView else { return nil }
+        let sceneViewImage = sceneView.snapshot()
+        
+        // we can crop the image like this: https://www.advancedswift.com/crop-image/
+        let imageSize = fitInto(inner: CGSize(width: self.image_width, height: self.image_height), outer: sceneViewImage.size)
+        let xOffset = (sceneViewImage.size.width - imageSize.width) / 2.0
+        let yOffset = (sceneViewImage.size.height - imageSize.height) / 2.0
+        let cropRect = CGRect(
+            x: xOffset,
+            y: yOffset,
+            width: imageSize.width,
+            height: imageSize.height
+        ).integral
+        guard
+            let sourceCGImage = sceneViewImage.cgImage,
+            let croppedCGImage = sourceCGImage.cropping(to: cropRect)
+        else { return sceneViewImage }
+        
+        let croppedImage = UIImage(
+            cgImage: croppedCGImage,
+            scale: sceneViewImage.imageRendererFormat.scale,
+            orientation: sceneViewImage.imageOrientation
+        )
+        return croppedImage
     }
     
     public func objectOpacity(_ opacity: Double) {
