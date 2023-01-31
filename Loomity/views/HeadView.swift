@@ -151,31 +151,19 @@ struct HeadView: View {
                     let h_scr = UIScreen.main.bounds.height
                     let w_view = view.frame.width
                     let h_view = view.frame.height
+                    let size_scene0 = CGSize(width: w_view, height: h_view)
+                    let size_image0 = fitInto(self.image.size, size_scene0)
+                    let size_screen = CGSize(width: w_scr, height: h_scr)
+                    
+                    let size_image1 = fitInto(size_image0, size_screen)
+                    let size_scene1 = fitAround(size_scene0, size_image1)
+                    
+                    let deltaX = (size_screen.width - size_scene1.width) / 2.0
+                    let deltaY = (size_screen.height - size_scene1.height) / 2.0
+                    let scaleX = size_scene1.width / size_scene0.width
+                    let scaleY = size_scene1.height / size_scene0.height
 
-                    // both screen and view are landscape
-                    if w_scr >= h_scr && w_view >= h_view {
-                        view.transform = CGAffineTransformIdentity
-                    }
-                    
-                    // both screen and view are portrait
-                    else if w_scr <= h_scr && w_view <= h_view {
-                        view.transform = CGAffineTransformIdentity
-                    }
-                    
-                    // screen portrait, scene landscape
-                    else if w_scr <= h_scr && w_view >= h_view {
-                        let offsetX = (w_scr - w_view) / 2.0
-                        let offsetY = (h_scr - h_view) / 2.0
-                        view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
-                    }
-                    
-                    // screen landscape, scene portrait
-                    else if w_scr >= h_scr && w_view <= h_view {
-                        let offsetX = (w_scr - w_view) / 2.0
-                        let offsetY = (h_scr - h_view) / 2.0
-                        view.transform = CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY)
-                    }
-                    
+                    view.transform = CGAffineTransformScale(CGAffineTransformTranslate(CGAffineTransformIdentity, offsetX, offsetY), scaleX, scaleY)
                 }
             }
             
