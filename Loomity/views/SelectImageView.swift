@@ -27,33 +27,34 @@ struct SelectImageView: View {
                 }
                 
                 else {
-                    Spacer()
-                    
-                    if let image = self.image {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFit()
-                    } else {
-                        Image(systemName: "person.crop.rectangle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
-                            .foregroundColor(.gray)
+                    ZStack {
+                        if let image = self.image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            Image(systemName: "person.crop.rectangle.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
+                                .foregroundColor(.gray)
+                        }
+                        
+                        VStack {
+                            Spacer()
+                            VStack {
+                                HStack {
+                                    Button("Gallery", action: pickFromGallery).foregroundColor(.white).buttonStyle(.borderedProminent)
+                                    Button("Camera", action: pickFromCamera).foregroundColor(.white).buttonStyle(.borderedProminent)
+                                    if let img = image {
+                                        NavigationLink(destination: AnalysisView(image: img)) {
+                                            Text("Loomify").foregroundColor(.white)
+                                        }.buttonStyle(.borderedProminent)
+                                    }
+                                }.padding()
+                            }.textBox()
+                        }
                     }
-                    
-                    Spacer()
-                    
-                    VStack {
-                        HStack {
-                            Button("Gallery", action: pickFromGallery).foregroundColor(.white).buttonStyle(.borderedProminent)
-                            Button("Camera", action: pickFromCamera).foregroundColor(.white).buttonStyle(.borderedProminent)
-                            if let img = image {
-                                NavigationLink(destination: AnalysisView(image: img)) {
-                                    Text("Loomify").foregroundColor(.white)
-                                }.buttonStyle(.borderedProminent)
-                            }
-                        }.padding()
-                    }.textBox()
                 }
             }
         }
