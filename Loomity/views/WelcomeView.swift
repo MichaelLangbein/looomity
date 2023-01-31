@@ -38,7 +38,7 @@ struct WelcomeView: View {
                                 .shadow(radius: 5)
     //                            .opacity(0.5)
                             
-                            Image("logo_alpha")
+                            Image("logo_alpha2")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
                                 .frame(maxWidth: 200, maxHeight: 200)

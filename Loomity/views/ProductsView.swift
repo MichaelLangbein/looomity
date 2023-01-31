@@ -51,7 +51,7 @@ struct TrialProductView: View {
     var body: some View {
         ProductView(
             title: product.displayName,
-            logo: "logo_trial_light",
+            logo: "logo_trial_light2",
             active: state == .newUser || state == .inTrialOngoing
         ) {
             switch state {
@@ -93,7 +93,7 @@ struct OneTimeProductView: View {
     var body: some View {
         ProductView(
             title: "One-time purchase",
-            logo: "logo_full_light",
+            logo: "logo_full_light2",
             active: state != .hasBought
         ) {
             switch state {
