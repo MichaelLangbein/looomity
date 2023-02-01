@@ -10,9 +10,10 @@ import SwiftUI
 
 struct ImagePickerView: UIViewControllerRepresentable {
     @Binding var image: UIImage?
-    @Binding var show: Bool
     // select .camera here to get the image from the camera
     var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    @Environment(\.presentationMode) var presentation
+
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
@@ -39,12 +40,16 @@ struct ImagePickerView: UIViewControllerRepresentable {
                 } else {
                     parent.image = image
                 }
+                parent.presentation.wrappedValue.dismiss()
             }
-            parent.show = false
         }
         
+//        , UINavigationBarDelegate
+//        func navigationBar(_ navigationBar: UINavigationBar, shouldPush item: UINavigationItem) -> Bool {
+//        }
+        
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.show = false
+            parent.presentation.wrappedValue.dismiss()
         }
     }
     
@@ -56,19 +61,10 @@ struct ImagePickerView: UIViewControllerRepresentable {
 
 struct PickerContainerView: View {
     @State var image: UIImage?
-    @State var presented = false
     
     var body: some View {
         VStack {
-            if presented {
-                ImagePickerView(image: $image, show: $presented)
-            }
-            else if let img = image {
-                Image(uiImage: img).resizable().scaledToFit()
-            }
-            Button("Open picker") {
-                presented = true
-            }
+            ImagePickerView(image: $image)
         }
     }
 }

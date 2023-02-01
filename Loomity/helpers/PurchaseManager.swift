@@ -87,7 +87,7 @@ enum PurchaseState {
     }
     
     func loadProducts() async throws {
-        guard !self.productsLoaded else { return }
+        if self.productsLoaded { return }
         let products = try await Product.products(for: [freeTrialID, oneTimePurchaseID])
         for product in products {
             self.products[product.id] = product
