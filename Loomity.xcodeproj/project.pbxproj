@@ -127,6 +127,7 @@
 		3E45B2C52981DBAD00A6DD52 /* loomisNewDebugging.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = loomisNewDebugging.scn; sourceTree = "<group>"; };
 		3E4BE0122982DE1400CB5CEE /* ProjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectionTests.swift; sourceTree = "<group>"; };
 		3E4EEB73297A6ECD001E8313 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
+		3E5108FE2989D3EB00F6598C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3E66139E296754D400C44098 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		3E706FCC29682E1F005F5D12 /* LoomityStoreTest.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = LoomityStoreTest.storekit; path = Loomity/LoomityStoreTest.storekit; sourceTree = "<group>"; };
 		3E706FD029683A23005F5D12 /* FullPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPageView.swift; sourceTree = "<group>"; };
@@ -185,6 +186,7 @@
 		3E42F6FA295C866C00744841 /* Loomity */ = {
 			isa = PBXGroup;
 			children = (
+				3E5108FE2989D3EB00F6598C /* Info.plist */,
 				3E42F6FB295C866C00744841 /* LoomityApp.swift */,
 				3E1BF40D295C8CC000B8947A /* Assets.xcassets */,
 				3E45B2C52981DBAD00A6DD52 /* loomisNewDebugging.scn */,
@@ -631,11 +633,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Loomity/Preview Content\"";
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Loomity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Loomity;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This will allow you to analyze photos from your camera.";
@@ -666,11 +669,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Loomity/Preview Content\"";
 				DEVELOPMENT_TEAM = LD3D7VUY6P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Loomity/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Loomity;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This will allow you to analyze photos from your camera.";

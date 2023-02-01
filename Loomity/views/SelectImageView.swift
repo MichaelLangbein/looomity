@@ -9,69 +9,52 @@ import SwiftUI
 
 struct SelectImageView: View {
     @State var image: UIImage?;
-    @State var showSelectOptions = false
-    @State var showImagePicker = false
-    @State var showCamera = false
     
     var body: some View {
         FullPageView {
-            VStack(alignment: .center) {
-                
-                if (showImagePicker || showCamera) {
-                    if (showImagePicker) {
-                        ImagePickerView(image: $image, show: $showImagePicker, sourceType: .photoLibrary)
-                    }
-                    if (showCamera) {
-                        CustomCameraView(capturedImage: $image, isDisplayed: $showCamera)
-                    }
+            ZStack {
+                if let image = self.image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                } else {
+                    Image(systemName: "person.crop.rectangle.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
+                        .foregroundColor(.gray)
                 }
                 
-                else {
-                    ZStack {
-                        if let image = self.image {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFit()
-                        } else {
-                            Image(systemName: "person.crop.rectangle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .padding(min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4.0)
-                                .foregroundColor(.gray)
+                VStack {
+                    Spacer()
+                    HStack {
+                        NavigationLink(destination: ImagePickerView(image: $image, sourceType: .photoLibrary)) {
+                            Text("Gallery")
+                                .frame(maxWidth: .infinity)
                         }
+                        .buttonStyle(.borderedProminent)
+
+                        NavigationLink(destination: CustomCameraView(capturedImage: $image)) {
+                            Text("Camera")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
                         
-                        VStack {
-                            Spacer()
-                            VStack {
-                                HStack {
-                                    Button("Gallery", action: pickFromGallery).foregroundColor(.white).buttonStyle(.borderedProminent)
-                                    Button("Camera", action: pickFromCamera).foregroundColor(.white).buttonStyle(.borderedProminent)
-                                    if let img = image {
-                                        NavigationLink(destination: AnalysisView(image: img)) {
-                                            Text("Loomify").foregroundColor(.white)
-                                        }.buttonStyle(.borderedProminent)
-                                    }
-                                }.padding()
-                            }.textBox()
+                        if let img = image {
+                            NavigationLink(destination: AnalysisView(image: img)) {
+                                Text("Loomify")
+                                    .frame(maxWidth: .infinity)
+                            }.buttonStyle(.borderedProminent)
                         }
                     }
+                    .padding()
+                    .background(.gray.opacity(0.4))
+                    .cornerRadius(15)
+                    .padding()
                 }
             }
         }
         .navigationBarTitle("Select image", displayMode: .inline)
-    }
-    
-    
-    func pickFromGallery() {
-        showImagePicker = true
-    }
-    
-    func pickFromCamera() {
-        showCamera = true
-    }
-    
-    func toAnalysis() {
-        
     }
 }
 

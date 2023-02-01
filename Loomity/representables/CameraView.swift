@@ -115,9 +115,11 @@ struct CameraRepresentableView: UIViewControllerRepresentable {
 struct CustomCameraView: View {
     
     @Binding var capturedImage: UIImage?
-    @Binding var isDisplayed: Bool
     private let cameraManager = CameraManager()
     @State var hasTwoCameras = false
+    @State var canUseFlash = false
+    @State var usesFlash = false
+    @Environment(\.presentationMode) var presentation
     
     var body: some View {
         ZStack {
@@ -125,29 +127,32 @@ struct CustomCameraView: View {
                 switch result {
                 case .success(let photo):
                     self.capturedImage = photo
-                    self.isDisplayed = false
+                    presentation.wrappedValue.dismiss()
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             }
             
             VStack {
+                
                 Spacer()
                 
                 HStack(alignment: .center) {
                     
                     Button {
-                        isDisplayed = false
+                        usesFlash.toggle()
                     } label: {
-                        Image(systemName: "arrowshape.turn.up.backward.circle")
+                        Image(systemName: usesFlash ? "bolt" : "bolt.slash")
                             .font(.system(size: 40))
                             .foregroundColor(.white)
                     }
+                    .disabled(!canUseFlash)
+
                     
                     Spacer()
                     
                     Button {
-                        cameraManager.capturePhoto()
+                        cameraManager.capturePhoto(flash: usesFlash)
                     } label: {
                         Image(systemName: "circle")
                             .font(.system(size: 72))
@@ -158,7 +163,9 @@ struct CustomCameraView: View {
                     Spacer()
                     
                     Button {
-                        cameraManager.switchCamera()
+                        cameraManager.switchCamera { newCamera in
+                            self.canUseFlash = newCamera.hasFlash
+                        }
                     } label: {
                         Image(systemName: "arrow.triangle.2.circlepath.camera")
                             .font(.system(size: 40))
@@ -170,8 +177,9 @@ struct CustomCameraView: View {
                 .padding(.trailing)
             }
         }.onAppear {
-            if self.cameraManager.frontDevice != nil && self.cameraManager.backDevice != nil {
-                self.hasTwoCameras = true
+            self.hasTwoCameras = cameraManager.hasTwoCams()
+            if let activeCamera = cameraManager.getCurrentDevice() {
+                self.canUseFlash = activeCamera.hasFlash
             }
         }
     }
@@ -207,7 +215,7 @@ struct CameraPreviewView: View {
                 }
                 .padding()
                 .sheet(isPresented: $isPresented, content: {
-                    CustomCameraView(capturedImage: $capturedImage, isDisplayed: $isPresented)
+                    CustomCameraView(capturedImage: $capturedImage)
                 })
             }
         }

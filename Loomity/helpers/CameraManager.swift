@@ -8,8 +8,35 @@
 import AVFoundation
 import UIKit
 
+/*
+┌───────────────┐
+│ Preview Layer │         output.capturePhoto(settings) -> delegate
+└───────────────┘
+        ▲                        ▲ ▲
+        │                        │ │
+        └────────────┬───────────┘ │
+       .video        │             │
+                     │             │          ┌────────────┐
+                     │             └──────────┤  Settings  │ (user-provided AVCapturePhotoSettings)
+                    ┌┴┐                       └────────────┘
+                    │ │ output: AVCapturePhotoOutput
+                    │ │
+               ┌────┴─┴────┐
+               │  Session  │: AVCaptureSession
+               └────┬─┬────┘
+                    │ │
+                    │ │ input: AVCaptureDeviceInput
+                    └▲┘
+                     │
+                     │
+        ┌────────────┘
+        │               ◄─────┐
+        │                     │
+        │                     │
+  ┌─────┴──────┐       ┌──────┴────┐
+  │  Device1   │       │ Device2   │
+  └────────────┘       └───────────┘
 
-/**
  Shared between CustomCameraView (from where it gets user-inputs)
  and CameraController (from where it gets ui-events and to which it gives its previewLayer)
  
@@ -35,17 +62,20 @@ class CameraManager: ObservableObject {
     let previewLayer = AVCaptureVideoPreviewLayer()
 
     func start(delegate: AVCapturePhotoCaptureDelegate, onError: @escaping (Error?) -> ()) {
-        self.delegate = delegate
-        self.detectCameras()
         self.checkPermissions { permission in
-            guard permission else { return }
+            guard permission else {
+                onError(CameraManagerError.noRightsToCamera)
+                return
+            }
+            self.delegate = delegate
+            self.detectCameras()
             DispatchQueue.global(qos: .background).async { [weak self] in
                 self?.setupCamera(handleError: onError)
             }
         }
     }
     
-    func switchCamera() {
+    func switchCamera(onSuccess: ((AVCaptureDevice) -> ())? ) {
         let newDevicePosition: AVCaptureDevice.Position = self.devicePosition == .back ?  .front :  .back
         guard
             let newDevice = self.getDevice(position: newDevicePosition),
@@ -59,20 +89,33 @@ class CameraManager: ObservableObject {
                 session.addInput(newInput)
             }
             self.devicePosition = newDevicePosition
+            
+            if let os = onSuccess {
+                os(newDevice)
+            }
         } catch {
             print(error)
         }
     }
     
-    func capturePhoto(with settings: AVCapturePhotoSettings = AVCapturePhotoSettings()) {
-        guard
-            let videoToPhotoConnection = output.connection(with: .video),
-            let videoToPreviewConnection = previewLayer.connection
-        else {
-            output.capturePhoto(with: settings, delegate: self.delegate!)
-            return
+    func capturePhoto(flash: Bool) {
+        
+        // Settings
+        let settings = AVCapturePhotoSettings()
+        if let device = getCurrentDevice() {
+            if device.hasFlash {
+                settings.flashMode = flash ? .on : .off
+            }
         }
-        videoToPhotoConnection.videoOrientation = videoToPreviewConnection.videoOrientation
+        
+        // Display preview if possible
+        if let videoToPhotoConnection = output.connection(with: .video) {
+            if let videoToPreviewConnection = previewLayer.connection {
+                videoToPhotoConnection.videoOrientation = videoToPreviewConnection.videoOrientation
+            }
+        }
+        
+        // Take picture
         output.capturePhoto(with: settings, delegate: self.delegate!)
     }
         
@@ -115,7 +158,7 @@ class CameraManager: ObservableObject {
         }
     }
     
-    private func getDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+    func getDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
         switch position {
         case .front:
             return self.frontDevice
@@ -128,7 +171,11 @@ class CameraManager: ObservableObject {
         }
     }
     
-    private func getCurrentDevice() -> AVCaptureDevice? {
+    func hasTwoCams() -> Bool {
+        return self.backDevice != nil && self.frontDevice != nil
+    }
+    
+    func getCurrentDevice() -> AVCaptureDevice? {
         if self.devicePosition == .front && self.frontDevice != nil {
             return self.frontDevice
         }
@@ -178,4 +225,9 @@ class CameraManager: ObservableObject {
         }
             
     }
+}
+
+
+enum CameraManagerError: Error {
+    case noRightsToCamera
 }
