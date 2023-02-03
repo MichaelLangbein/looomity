@@ -16,24 +16,10 @@ enum AnalysisState {
 struct AnalysisView: View {
     
     let image: UIImage
-    @State var currentState: AnalysisState = .ongoing
-    @State var observations: [VNFaceObservation] = []
     @State var showHelp = false
     
     var body: some View {
-        VStack {
-            if currentState == .ongoing {
-                AnalysisOngoingView(image: image)
-            } else {
-                HeadControllerView(image: image, observations: observations)
-            }
-        }
-        .onAppear {
-            detectFacesWithLandmarks(uiImage: image) { obs in
-                observations = obs
-                currentState = .done
-            }
-        }
+        HeadControllerView(image: image)
     }
 }
 

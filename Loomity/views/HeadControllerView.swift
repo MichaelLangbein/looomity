@@ -12,17 +12,15 @@ struct HeadControllerView: View {
     
     // Image
     var image: UIImage
-    // Parameters for detected faces
-    var observations: [VNFaceObservation]
 
     // Function that allows us to go back programmatically
     @Environment(\.dismiss) var dismiss
     
+    @State var observations: [VNFaceObservation] = []
     @State var showHelp = false
     @StateObject var taskQueue = Queue<SKVTask>()
     @State var opacity = 0.65
     @State var activeFace: UUID?
-    @State var usesOrthographicCam = false
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
@@ -36,7 +34,7 @@ struct HeadControllerView: View {
                 image: image,
                 observations: observations,
                 taskQueue: taskQueue,
-                usesOrthographicCam: usesOrthographicCam,
+                usesOrthographicCam: false,
                 onImageSaved: onImageSaved,
                 onImageSaveError: onImageSaveError,
                 opacity: $opacity,
@@ -81,8 +79,13 @@ struct HeadControllerView: View {
             }
         }
         .onAppear {
-            if self.observations.count < 1 {
-                self.alertNoFacesDetected = true
+            print("HeadController: starting detection of faces ...")
+            detectFacesWithLandmarks(uiImage: self.image) { observations in
+                print("... HeadController has detected \(observations.count) faces")
+                self.observations = observations
+                if self.observations.count < 1 {
+                    self.alertNoFacesDetected = true
+                }
             }
         }
         .alert(
@@ -174,26 +177,7 @@ struct HeadControllerView: View {
 
 struct HeadControllerView_Previews: PreviewProvider {
     static var previews: some View {
-        
-        
-        let observation1 = VNFaceObservation(
-            requestRevision: 0,
-            boundingBox: CGRect(x: 0.545, y: 0.276, width: 0.439, height: 0.436),
-            roll: 0.138,
-            yaw: -0.482,
-            pitch: 0.112
-        )
-        
-        let observation2 = VNFaceObservation(
-            requestRevision: 0,
-            boundingBox: CGRect(x: 0.218, y: 0.248, width: 0.382, height: 0.379),
-            roll: -0.216,
-            yaw: 0.121,
-            pitch: 0.151
-        )
-        
         let img = UIImage(named: "TestImage2")!
-        
-        HeadControllerView(image: img, observations: [observation1, observation2])
+        HeadControllerView(image: img)
     }
 }

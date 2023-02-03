@@ -341,7 +341,29 @@ struct SceneKitView: UIViewControllerRepresentable {
     var onUIInit: ((SceneController) -> Void)?
     var onUIUpdate: ((SceneController) -> Void)?
     
+    init(screen_width: CGFloat, screen_height: CGFloat, image_width: CGFloat, image_height: CGFloat, loadNodes: @escaping (SCNView, SCNScene, SCNCamera) -> [SCNNode], nodes: [SCNNode], renderContinuously: Bool = false, defaultCameraControl: Bool = false, onRender: ((SCNSceneRenderer, SCNView, [SCNNode]) -> Void)? = nil, onTap: ((UITapGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil, onPan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil, onDoublePan: ((UIPanGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil, onSwipe: ((UISwipeGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil, onPinch: ((UIPinchGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil, onRotate: ((UIRotationGestureRecognizer, SCNView, [SCNNode]) -> Void)? = nil, onUIInit: ((SceneController) -> Void)? = nil, onUIUpdate: ((SceneController) -> Void)? = nil) {
+        print("Init SceneKitView")
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.image_width = image_width
+        self.image_height = image_height
+        self.loadNodes = loadNodes
+        self.nodes = nodes
+        self.renderContinuously = renderContinuously
+        self.defaultCameraControl = defaultCameraControl
+        self.onRender = onRender
+        self.onTap = onTap
+        self.onPan = onPan
+        self.onDoublePan = onDoublePan
+        self.onSwipe = onSwipe
+        self.onPinch = onPinch
+        self.onRotate = onRotate
+        self.onUIInit = onUIInit
+        self.onUIUpdate = onUIUpdate
+    }
+    
     func makeUIViewController(context: Context) -> SceneController {
+        print("Creating SceneController")
         let sc = SceneController(
             screen_width: screen_width,
             screen_height: screen_height,
@@ -366,6 +388,7 @@ struct SceneKitView: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: SceneController, context: Context) {
+        print("Updating SceneController")
         if onUIUpdate != nil {
             onUIUpdate!(uiViewController)
         }
@@ -403,9 +426,10 @@ struct PreviewView: View {
                 screen_height: height,
                 image_width: imageWidth,
                 image_height: imageHeight,
-                 loadNodes: { view, scene, camera in
+                loadNodes: { view, scene, camera in
                      return [plane, bx]
                  },
+                nodes: [],
                  renderContinuously: true,
                  onRender: { renderer, view, nodes in
                      plane.opacity = opacity

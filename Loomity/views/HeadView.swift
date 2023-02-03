@@ -22,21 +22,6 @@ struct SKVTask {
 }
 
 
-/**
- # Gesture sources
- Gestures may be recognised at to levels:
- - inside the scenekit scene (as recognised through `SceneKitView.onPinch` etc.)
- - in the parent HeadView (as recognised through `view.gesture`)
- 
- # Gesture handling
- We want most gestures to be handled by scenekit
- with a few exceptions:
- - Pan while no model selected:
-    - move the view, not the camera inside the scene (`.scaleEffect(fullViewScale)`)
- - Pinch while no model selected:
-     - scale the view instead of moving the camera inside the scene (`.offset(fullViewOffset)`)
- */
-
 struct HeadView: View {
 
     // Image
@@ -52,6 +37,18 @@ struct HeadView: View {
     @Binding var activeFace: UUID?
     
     let unfocussedOpacity = 0.5
+    
+    init(image: UIImage, observations: [VNFaceObservation], taskQueue: Queue<SKVTask> = Queue<SKVTask>(), usesOrthographicCam: Bool, onImageSaved: @escaping () -> Void, onImageSaveError: @escaping (Error) -> Void, opacity: Binding<Double>, activeFace: Binding<UUID?>) {
+        print("Init HeadView with \(observations.count) observations")
+        self.image = image
+        self.observations = observations
+        self.taskQueue = taskQueue
+        self.usesOrthographicCam = usesOrthographicCam
+        self.onImageSaved = onImageSaved
+        self.onImageSaveError = onImageSaveError
+        self._opacity = opacity
+        self._activeFace = activeFace
+    }
 
     var body: some View {
         SceneKitView(
@@ -62,6 +59,7 @@ struct HeadView: View {
             loadNodes: { view, scene, camera in
                 return self.getNodes(view: view, scene: scene)
             },
+            nodes: [],
             onTap: { gesture, view, nodes in
                 focusOnObservation(view: view, gesture: gesture, nodes: nodes)
             },
@@ -88,6 +86,45 @@ struct HeadView: View {
     
     @State var lastOpacity: Double = 1.0
     func update(skc: SceneController, nodes: [SCNNode]) {
+        
+        let modelName = "loomisNew.usdz"
+        guard let loadedScene = SCNScene(named: modelName) else { return }
+        let figure = loadedScene.rootNode
+        for observation in observations {
+            
+            // Unwrapping face-detection parameters
+            let roll  = Float(truncating: observation.roll!)
+            let pitch = Float(truncating: observation.pitch!)
+            let yaw   = Float(truncating: observation.yaw!)
+            
+            let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
+            
+            let f = figure.clone()
+            
+            // we only use width for scale factor because face-detection doesn't include forehead,
+            // rendering the height-value useless for scaling.
+            let headHeightPerWidth: Float = 1.3
+            let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
+            let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
+            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
+            f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
+            f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
+            f.opacity = self.unfocussedOpacity
+            f.setValue(observation.uuid, forKey: "root")
+            setValueRecursively(node: f, val: "figure", key: "type")
+            setValueRecursively(node: f, val: observation.uuid, key: "observationId")
+            applyPopAnimation(node: f)
+            
+            let fOptimised = gradientDescent(sceneView: skc.sceneView!, head: f, observation: observation, image: self.image)
+
+            // @Todo: where is this weird behaviour coming from?
+            if !usesOrthographicCam {
+                let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
+                fOptimised.position.y -= weirdCorrectionFactor
+            }
+
+            skc.
+        }
         
         for node in nodes {
             guard let type = node.value(forKey: "type") else { continue }
@@ -387,11 +424,7 @@ struct HeadView: View {
     }
     
     func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
-
-        let modelName = "loomisNew.usdz"
-        guard let loadedScene = SCNScene(named: modelName) else { return [] }
-        let figure = loadedScene.rootNode
-        
+        print("HeadView: getNodes called")
         var nodes: [SCNNode] = []
         
         let ar = image.size.width / image.size.height
@@ -404,43 +437,6 @@ struct HeadView: View {
         imagePlane.setValue("ImagePlane", forKey: "type")
         
         nodes.append(imagePlane)
-        
-        for observation in observations {
-            
-            // Unwrapping face-detection parameters
-            let roll  = Float(truncating: observation.roll!)
-            let pitch = Float(truncating: observation.pitch!)
-            let yaw   = Float(truncating: observation.yaw!)
-            
-            let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
-            
-            let f = figure.clone()
-            
-            // we only use width for scale factor because face-detection doesn't include forehead,
-            // rendering the height-value useless for scaling.
-            let headHeightPerWidth: Float = 1.3
-            let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
-            let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
-            f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
-            f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
-            f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
-            f.opacity = self.unfocussedOpacity
-            f.setValue(observation.uuid, forKey: "root")
-            setValueRecursively(node: f, val: "figure", key: "type")
-            setValueRecursively(node: f, val: observation.uuid, key: "observationId")
-            applyPopAnimation(node: f)
-            
-            let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-
-            // @Todo: where is this weird behaviour coming from?
-            if !usesOrthographicCam {
-                let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
-                fOptimised.position.y -= weirdCorrectionFactor
-            }
-
-            nodes.append(fOptimised)
-        }
-        
         return nodes
     }
 
@@ -536,7 +532,6 @@ struct PrevV: View {
     
     let queue = Queue<SKVTask>()
     
-    @State var useOrtho = false
     @State var activeFace: UUID? = nil
     @State var opacity = 1.0
     
@@ -545,7 +540,7 @@ struct PrevV: View {
             image: img,
             observations: [observation1, observation2],
             taskQueue: queue,
-            usesOrthographicCam: useOrtho,
+            usesOrthographicCam: false,
             onImageSaved: {},
             onImageSaveError: { error in return },
             opacity: $opacity,
