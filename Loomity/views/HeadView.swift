@@ -416,9 +416,9 @@ struct HeadView: View {
         for observation in observations {
             
             // Unwrapping face-detection parameters
-            let roll  = Float(truncating: observation.roll!)
-            let pitch = Float(truncating: observation.pitch!)
-            let yaw   = Float(truncating: observation.yaw!)
+            let roll  = Float(truncating: observation.roll ?? 0.0)
+            let pitch = Float(truncating: observation.pitch ?? 0.0) - 0.1  // face-observations are systematically too low
+            let yaw   = Float(truncating: observation.yaw ?? 0.0)
             
             let cWorld = obsBboxCenter2Scene(boundingBox: observation.boundingBox, imageWidth: image.size.width, imageHeight: image.size.height)
             

@@ -23,26 +23,27 @@ struct WelcomeView: View {
                     // To prevent `navigationViewTitle` to overlap with logo.
                      Spacer(minLength: UIScreen.main.bounds.height * 0.18)
                     
-                    if self.orientation != .landscapeLeft && self.orientation != .landscapeRight {
-                        ZStack {
-                            Rectangle()
-                                .fill(LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        Color(.systemBackground), .accentColor
-                                    ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ))
-                                .frame(maxWidth: 200, maxHeight: 200)
-                                .cornerRadius(30)
-                                .shadow(radius: 5)
-    //                            .opacity(0.5)
-                            
-                            Image("logo_alpha2")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
-                                .frame(maxWidth: 200, maxHeight: 200)
-                                .padding(.trailing)
+                    if orientation != .landscapeLeft && orientation != .landscapeRight {
+                        if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+                            ZStack {
+                                Rectangle()
+                                    .fill(LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color(.systemBackground), .accentColor
+                                        ]),
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    ))
+                                    .frame(maxWidth: 200, maxHeight: 200)
+                                    .cornerRadius(30)
+                                    .shadow(radius: 5)
+                                
+                                Image("logo_alpha2")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
+                                    .frame(maxWidth: 200, maxHeight: 200)
+                                    .padding(.trailing)
+                            }
                         }
                     }
 
@@ -74,8 +75,10 @@ struct WelcomeView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     
                     
-                    if self.orientation != .landscapeLeft && self.orientation != .landscapeRight {
-                        Spacer()
+                    if orientation != .landscapeLeft && orientation != .landscapeRight {
+                        if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+                            Spacer()
+                        }
                     }
                     
 //                    TrialView()
@@ -93,6 +96,7 @@ struct WelcomeView: View {
                         Spacer()
                     }
                     .padding()
+                    .padding(.bottom)
                 }
                 .sheet(isPresented: $showTutorial) {
                     TutorialView(show: $showTutorial)

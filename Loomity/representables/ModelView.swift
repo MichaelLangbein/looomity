@@ -452,7 +452,6 @@ class ModelController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     }
     
     private func getFirstHit(view: SCNView, gesture: UIGestureRecognizer) -> SCNNode? {
-        let location = gesture.location(in: self.mainScene)
         return nodes[0]
     }
     

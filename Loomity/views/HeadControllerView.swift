@@ -43,20 +43,7 @@ struct HeadControllerView: View {
                 activeFace: $activeFace
             ).ignoresSafeArea()
             
-            if orientation == .landscapeRight || orientation == .landscapeLeft {
-                HStack {
-                    Spacer()
-                    VStack {
-                        controlButtons
-                        opacitySlider
-                    }
-                    .frame(width: 0.2 * UIScreen.main.bounds.width)
-                    .padding()
-                    .background(.background.opacity(0.7)) // (.gray.opacity(0.2))
-                    .cornerRadius(15)
-                }
-            }
-            else {
+            if orientation != .landscapeRight && orientation != .landscapeLeft && orientation != .faceDown && orientation != .faceUp {
                 VStack {
                     Spacer()
                     VStack {
@@ -65,6 +52,19 @@ struct HeadControllerView: View {
                             controlButtons
                         }
                     }
+                    .padding()
+                    .background(.background.opacity(0.7)) // (.gray.opacity(0.2))
+                    .cornerRadius(15)
+                }
+            }
+            else {
+                HStack {
+                    Spacer()
+                    VStack {
+                        controlButtons
+                        opacitySlider
+                    }
+                    .frame(width: 0.2 * UIScreen.main.bounds.width)
                     .padding()
                     .background(.background.opacity(0.7)) // (.gray.opacity(0.2))
                     .cornerRadius(15)

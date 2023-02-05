@@ -134,42 +134,18 @@ struct ProductsView: View {
             ZStack {
                 if purchaseManager.productsLoaded {
                     
-                    
-                    if (self.orientation == .landscapeLeft || self.orientation == .landscapeRight) {
-                        VStack {
-                            HStack {
-                                if let trialProduct = purchaseManager.products[freeTrialID] {
-                                    TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
-                                        self.purchaseProduct(product: trialProduct)
-                                    }
-                                    .frame(maxHeight: .infinity)
-                                }
-                                if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
-                                    OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
-                                        self.purchaseProduct(product: oneTimeProduct)
-                                    }
-                                    .frame(maxHeight: .infinity)
-                                }
-
-                            }.fixedSize(horizontal: false, vertical: true)
-                            restoreButton
+                    if orientation == .faceUp {
+                        if UIScreen.main.bounds.width < UIScreen.main.bounds.height {
+                            productsVertical
+                        } else {
+                            productsHorizontal
                         }
                     }
-                    
+                    else if orientation != .landscapeLeft && orientation != .landscapeRight {
+                        productsVertical
+                    }
                     else {
-                        VStack {
-                            if let trialProduct = purchaseManager.products[freeTrialID] {
-                                TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
-                                    self.purchaseProduct(product: trialProduct)
-                                }
-                            }
-                            if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
-                                OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
-                                    self.purchaseProduct(product: oneTimeProduct)
-                                }
-                            }
-                            restoreButton
-                        }
+                        productsHorizontal
                     }
 
                     
@@ -183,6 +159,44 @@ struct ProductsView: View {
             .onRotate { orientation in
                 self.orientation = orientation
             }
+    }
+    
+    
+    var productsVertical: some View {
+        VStack {
+            if let trialProduct = purchaseManager.products[freeTrialID] {
+                TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
+                    self.purchaseProduct(product: trialProduct)
+                }
+            }
+            if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
+                OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
+                    self.purchaseProduct(product: oneTimeProduct)
+                }
+            }
+            restoreButton
+        }
+    }
+    
+    var productsHorizontal: some View {
+        VStack {
+            HStack {
+                if let trialProduct = purchaseManager.products[freeTrialID] {
+                    TrialProductView(product: trialProduct, state: purchaseManager.purchaseState, trialDaysRemaining: purchaseManager.trialDaysRemaining) {
+                        self.purchaseProduct(product: trialProduct)
+                    }
+                    .frame(maxHeight: .infinity)
+                }
+                if let oneTimeProduct = purchaseManager.products[oneTimePurchaseID] {
+                    OneTimeProductView(product: oneTimeProduct, state: purchaseManager.purchaseState) {
+                        self.purchaseProduct(product: oneTimeProduct)
+                    }
+                    .frame(maxHeight: .infinity)
+                }
+
+            }.fixedSize(horizontal: false, vertical: true)
+            restoreButton
+        }
     }
     
     func purchaseProduct(product: Product) {
