@@ -20,14 +20,14 @@ struct HeadControllerView: View {
     
     @State var showHelp = false
     @StateObject var taskQueue = Queue<SKVTask>()
-    @State var opacity = 0.65
+    @State var opacity = 0.75
     @State var activeFace: UUID?
     @State var usesOrthographicCam = false
     @State var imageSaved = false
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
     @State var alertNoFacesDetected = false
-    @State var orientation = UIDeviceOrientation.unknown
+    @State var orientation: UIDeviceOrientation = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? .landscapeLeft : .portrait
     
     var body: some View {
         ZStack {
@@ -74,6 +74,8 @@ struct HeadControllerView: View {
         }
         .navigationBarTitle("Analysis", displayMode: .inline)
         .toolbar {
+            removeModelButton
+            
             Button {
                 showHelp = true
             } label: {
@@ -92,7 +94,7 @@ struct HeadControllerView: View {
                 Button("Continue") {}
                 Button("Pick another photo") { dismiss() }
             },
-            message: {Text("However, you can always place a model manually by tapping on 'Add model'.")}
+            message: {Text("However, you can always place a model manually by tapping on the **+** symbol (in the top right corner).")}
         )
         .sheet(isPresented: $showHelp) {
             TutorialView(show: $showHelp)
@@ -113,34 +115,36 @@ struct HeadControllerView: View {
     }
     
     @State var showRemoveModelModal = false
+    @ViewBuilder var removeModelButton: some View {
+        // Add or remove model
+        if activeFace == nil {
+            Button {
+                taskQueue.enqueue(SKVTask(type: .addNode))
+            } label: {
+                Image(systemName: "plus.circle")
+            }
+                
+        }
+        else {
+            Button {
+                self.showRemoveModelModal = true
+            } label: {
+                Image(systemName: "minus.circle")
+                    .foregroundColor(.red)
+            }
+            .alert(
+                "Do you really want to remove this model?",
+                isPresented: $showRemoveModelModal,
+                actions: {
+                    Button("Remove") { taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace)) }
+                    Button("Cancel") { showRemoveModelModal = false }
+                }
+            )
+        }
+    }
+    
     var controlButtons: some View {
         Group {
-            // Add or remove model
-            if activeFace == nil {
-                Button {
-                    taskQueue.enqueue(SKVTask(type: .addNode))
-                } label: {
-                    Text("Add model").frame(maxWidth: .infinity)
-                }.buttonStyle(.borderedProminent)
-                    
-            }
-            if activeFace != nil {
-                Button {
-                    self.showRemoveModelModal = true
-                } label: {
-                    Text("Remove model").frame(maxWidth: .infinity)
-                }
-//                .buttonStyle(.bordered)
-                .alert(
-                    "Do you really want to remove this model?",
-                    isPresented: $showRemoveModelModal,
-                    actions: {
-                        Button("Remove") { taskQueue.enqueue(SKVTask(type: .removeNode, payload: activeFace)) }
-                        Button("Cancel") { showRemoveModelModal = false }
-                    }
-                )
-            }
-            
             Button {
                 taskQueue.enqueue(SKVTask(type: .recenterView))
             } label: {
@@ -175,7 +179,6 @@ struct HeadControllerView: View {
 struct HeadControllerView_Previews: PreviewProvider {
     static var previews: some View {
         
-        
         let observation1 = VNFaceObservation(
             requestRevision: 0,
             boundingBox: CGRect(x: 0.545, y: 0.276, width: 0.439, height: 0.436),
@@ -194,6 +197,8 @@ struct HeadControllerView_Previews: PreviewProvider {
         
         let img = UIImage(named: "TestImage2")!
         
-        HeadControllerView(image: img, observations: [observation1, observation2])
+        NavigationView {
+            HeadControllerView(image: img, observations: [observation1, observation2])
+        }
     }
 }

@@ -179,21 +179,9 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         guard
             let onRender = self.onRender,
-            let view = self.sceneView
+            let sceneView = self.sceneView
         else { return }
-        onRender(renderer, view, self.nodes)
-    }
-    
-    func translateSceneView(tx: CGFloat, ty: CGFloat) {
-        guard let sv = self.sceneView else { return }
-        let initialTransform = sv.transform
-        sv.transform = CGAffineTransformTranslate(initialTransform, tx, ty)
-    }
-    
-    func scaleSceneView(sx: CGFloat, sy: CGFloat) {
-        guard let sv = self.sceneView else { return }
-        let initialTransform = sv.transform
-        sv.transform = CGAffineTransformScale(initialTransform, sx, sy)
+        onRender(renderer, sceneView, self.nodes)
     }
     
     public func screenshot() -> UIImage? {
@@ -222,15 +210,6 @@ class SceneController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
             orientation: sceneViewImage.imageOrientation
         )
         return croppedImage
-    }
-    
-    public func objectOpacity(_ opacity: Double) {
-        for node in nodes {
-            guard let type = node.value(forKey: "type") as? String else { continue }
-            if type == "figure" {
-                node.opacity = opacity
-            }
-        }
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
