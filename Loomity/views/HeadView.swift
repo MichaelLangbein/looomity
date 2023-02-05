@@ -314,13 +314,13 @@ struct HeadView: View {
     
     @State var centerOnStartMove: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
-        let view = view.superview ?? view
+        let superview = view.superview ?? view
         switch gesture.state {
         case .began:
-            centerOnStartMove = view.center
+            centerOnStartMove = superview.center
         case .changed:
             guard let centerOnStart = centerOnStartMove else { return }
-            let translation = gesture.translation(in: view)
+            let translation = gesture.translation(in: superview)
             let centerNew = CGPoint(x: centerOnStart.x + translation.x, y: centerOnStart.y + translation.y)
             if abs(centerNew.x) > UIScreen.main.bounds.width * 0.75 || abs(centerNew.y) > UIScreen.main.bounds.height * 0.75 {
                 return
