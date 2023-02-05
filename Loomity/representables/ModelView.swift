@@ -453,16 +453,7 @@ class ModelController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     
     private func getFirstHit(view: SCNView, gesture: UIGestureRecognizer) -> SCNNode? {
         let location = gesture.location(in: self.mainScene)
-        let locationRel = CGPoint(x: location.x / self.mainScene.frame.width, y: location.y / self.mainScene.frame.height)
         return nodes[0]
-//        let locationScene = screen2scene()
-//        let hits:
-//        let node = hits.first(where: {
-//            ($0.value(forKey: "type") != nil)           &&
-//            ($0.value(forKey: "observationId") != nil)  &&
-//            ($0.opacity > 0.0)
-//        })
-//        return node
     }
     
     private func getNewFaceModel(scene: SCNScene?) -> SCNNode {

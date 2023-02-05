@@ -118,20 +118,25 @@ struct ToolsView: View {
     var body: some View {
         TutorialPageView(show: $show, title: "More tools") {
             Text("There are a few additional tools to help you.")
-            if colorScheme == .light {
-                Image("ui_cropped")
-                    .resizable()
-                    .scaledToFit()
-            } else {
-                Image("ui_cropped_dark")
-                    .resizable()
-                    .scaledToFit()
-            }
-            VStack(alignment: .leading, spacing: 7.5) {
+            Text("")
+            
+            HStack {
                 Text("If loomity did not discover a face in your photo, you can **manually add one**.")
-                Text("You can **re-center** your image to its initial position.")
-                Text("You can **save** your current view to your photo-gallery.")
+                Image(systemName: "plus.circle")
+                                .font(.system(size: 30))
+                    .foregroundColor(.accentColor)
             }
+            
+            HStack {
+                Text("You can **re-center** your image to its initial position.")
+                Button("Center", action: {}).buttonStyle(.borderedProminent).foregroundColor(.white)
+            }
+
+            HStack {
+                Text("You can **save** your current view to your photo-gallery.")
+                Button("Save image", action: {}).buttonStyle(.borderedProminent).foregroundColor(.white)
+            }
+
         }
     }
 }
@@ -187,7 +192,8 @@ struct TutorialView: View {
 struct TutPrev: View {
     @State var show = true
     var body: some View {
-        TutorialView(show: $show)
+//        TutorialView(show: $show)
+        ToolsView(show: $show)
     }
 }
 
