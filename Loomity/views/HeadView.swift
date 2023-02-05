@@ -428,7 +428,7 @@ struct HeadView: View {
             // rendering the height-value useless for scaling.
             let headHeightPerWidth: Float = 1.3
             let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
-            let scaleFactor = 4.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
+            let scaleFactor = 4.3 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
@@ -440,6 +440,12 @@ struct HeadView: View {
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
             fOptimised.filters = [monochrome]
+            
+            // @Todo: where is this weird behaviour coming from?
+            if !usesOrthographicCam {
+                let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
+                fOptimised.position.y -= weirdCorrectionFactor
+            }
 
             nodes.append(fOptimised)
         }
