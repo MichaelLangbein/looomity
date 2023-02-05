@@ -59,13 +59,17 @@ struct TrialProductView: View {
                 VStack (alignment: .leading, spacing: 7.5) {
                     Text("\u{2022} Use Loomity for 7 days without restrictions.")
                     Text("\u{2022} No worries, we won't automatically convert your trial into a subscription.")
-                    Button {
-                        onBuyTapped()
-                    } label: {
-                        Text("\(product.displayPrice) - \(product.displayName)")
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                    }.buttonStyle(.borderedProminent)
+                    BlinkView {
+                        Button {
+                            onBuyTapped()
+                        } label: {
+                            Text("\(product.displayName)")
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+
                 }.padding(.leading)
             case .inTrialOngoing:
                 VStack (alignment: .leading) {
@@ -93,7 +97,7 @@ struct OneTimeProductView: View {
     var body: some View {
         ProductView(
             title: "One-time purchase",
-            logo: "logo_full_light2",
+            logo: "logo_full_light4",
             active: state != .hasBought
         ) {
             switch state {
@@ -107,7 +111,8 @@ struct OneTimeProductView: View {
                         Text("\(product.displayPrice) - \(product.displayName)")
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                    }.buttonStyle(.borderedProminent)
+                    }
+                    .buttonStyle(.borderedProminent)
                 }.padding(.leading)
             case .hasBought:
                 Text("Thanks for buying Loomity!").padding(.leading)
@@ -122,8 +127,7 @@ struct OneTimeProductView: View {
 
 struct ProductsView: View {
     @EnvironmentObject var purchaseManager: PurchaseManager
-    @State var purchaseOngoing = false
-    @State var orientation: UIDeviceOrientation = .unknown
+    @State var orientation: UIDeviceOrientation = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? .landscapeLeft : .portrait
     
     var body: some View {
         FullPageView {
@@ -150,8 +154,6 @@ struct ProductsView: View {
                             }.fixedSize(horizontal: false, vertical: true)
                             restoreButton
                         }
-                        .saturation(self.purchaseOngoing ? 0.0 : 1.0)
-                        .opacity(self.purchaseOngoing ? 0.7 : 1.0)
                     }
                     
                     else {
@@ -168,8 +170,6 @@ struct ProductsView: View {
                             }
                             restoreButton
                         }
-                        .saturation(self.purchaseOngoing ? 0.0 : 1.0)
-                        .opacity(self.purchaseOngoing ? 0.7 : 1.0)
                     }
 
                     
@@ -177,9 +177,6 @@ struct ProductsView: View {
                     Text("Loading ...")
                 }
                 
-                if purchaseOngoing {
-                    ProgressView()
-                }
             }
 
         }.navigationBarTitle("Products", displayMode: .inline)
@@ -189,11 +186,9 @@ struct ProductsView: View {
     }
     
     func purchaseProduct(product: Product) {
-        self.purchaseOngoing = true
         Task {
             do {
                 try await self.purchaseManager.purchase(product)
-                purchaseOngoing = false
             } catch {
                 print(error)
             }
@@ -225,9 +220,14 @@ struct ProductStateView: View {
                 switch purchaseManager.purchaseState {
                 case .newUser:
                     Text("Welcome to Loomity!")
-                    NavigationLink(destination: ProductsView()) {
-                        Text("Start your free trial")
-                    }.buttonStyle(.borderedProminent).foregroundColor(.white)
+                    BlinkView {
+                        NavigationLink(destination: ProductsView()) {
+                            Text("Start your free trial")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .foregroundColor(.white)
+                    }
+                    
                 case .inTrialOngoing:
                     Text("Trial-period: \(purchaseManager.trialDaysRemaining ?? 0) days remaining.")
                     NavigationLink(destination: ProductsView()) {
@@ -235,9 +235,14 @@ struct ProductStateView: View {
                     }.buttonStyle(.borderedProminent).foregroundColor(.white)
                 case .inTrialOver:
                     Text("Your free trial has ended.")
-                    NavigationLink(destination: ProductsView()) {
-                        Text("Buy now")
-                    }.buttonStyle(.borderedProminent).foregroundColor(.white)
+                    BlinkView {
+                        NavigationLink(destination: ProductsView()) {
+                            Text("Buy now")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .foregroundColor(.white)
+                    }
+                    
                 case .hasBought:
                     Text("Thanks for buying Loomity. Happy sketching!")
                 default:

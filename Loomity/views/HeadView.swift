@@ -50,6 +50,8 @@ struct HeadView: View {
     var onImageSaveError: (Error) -> Void
     @Binding var opacity: Double
     @Binding var activeFace: UUID?
+    private let monochrome = CIFilter(name: "CIColorMonochrome", parameters: ["inputColor": CIColor(string: "white")])!
+//    private let gaussian = CIFilter(name: "CIGaussianBlur")!
     
     let unfocussedOpacity = 0.5
 
@@ -204,8 +206,8 @@ struct HeadView: View {
         guard let obsId = activeFace else { return }
         
         guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
-        
-        let translation = gesture.translation(in: view)
+
+        let translation = gesture.translation(in: view.superview ?? view)
         
         switch gesture.state {
         case .began:
@@ -213,9 +215,9 @@ struct HeadView: View {
         case .changed:
             guard let initial = eulerAnglesOnStartMove else { return }
             // pitch = rotation about x
-            figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(initial.x)
+            figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.height) + Float(initial.x)
             // yaw = rotation about y
-            figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(initial.y)
+            figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.width) + Float(initial.y)
         case .ended:
             eulerAnglesOnStartMove = nil
         case .cancelled, .failed:
@@ -265,10 +267,11 @@ struct HeadView: View {
             let newScale = 1.0 + deltaScale
             self.lastScale = gesture.scale
             let newTransform = CGAffineTransformScale(view.transform, newScale, newScale)
+//            print("Scale: \(newTransform.a) --- Center: \(view.center)")
             if (
                 // scale is growing                && already deep in
-                (newTransform.a > view.transform.a && newTransform.a > 3.0) ||
-                (newTransform.a < view.transform.a && newTransform.a < 0.3333)
+                (newTransform.a > view.transform.a && newTransform.a > 4.0) ||
+                (newTransform.a < view.transform.a && newTransform.a < 0.25)
             ) {
                 return
             }
@@ -311,6 +314,7 @@ struct HeadView: View {
     
     @State var centerOnStartMove: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+        let view = view.superview ?? view
         switch gesture.state {
         case .began:
             centerOnStartMove = view.center
@@ -318,7 +322,6 @@ struct HeadView: View {
             guard let centerOnStart = centerOnStartMove else { return }
             let translation = gesture.translation(in: view)
             let centerNew = CGPoint(x: centerOnStart.x + translation.x, y: centerOnStart.y + translation.y)
-            let centerScreen = CGPoint(x: UIScreen.main.bounds.width / 2.0, y: UIScreen.main.bounds.height / 2.0)
             if abs(centerNew.x) > UIScreen.main.bounds.width * 0.75 || abs(centerNew.y) > UIScreen.main.bounds.height * 0.75 {
                 return
             }
@@ -339,23 +342,28 @@ struct HeadView: View {
         let node = getFirstHit(view: view, gesture: gesture)
         if node == nil {
             unfocusObservation(nodes: nodes)
+            guard let planeNode = view.scene?.rootNode.childNode(withName: "ImagePlane", recursively: true) else { return }
+            applyPopAnimation(node: planeNode, minScale: 0.97, maxScale: 1.03, duration: 0.35)
             return
         }
         let type = node!.value(forKey: "type") as! String
         let obsId = node!.value(forKey: "observationId") as! UUID
         if type == "figure" {
-            focusObservation(obsId: obsId, nodes: nodes)
+            focusObservation(view: view, obsId: obsId, nodes: nodes)
         } else {
             unfocusObservation(nodes: nodes)
+            guard let planeNode = view.scene?.rootNode.childNode(withName: "ImagePlane", recursively: true) else { return }
+            applyPopAnimation(node: planeNode, minScale: 0.97, maxScale: 1.03, duration: 0.35)
         }
     }
     
-    func focusObservation(obsId: UUID, nodes: [SCNNode]) {
+    func focusObservation(view: SCNView, obsId: UUID, nodes: [SCNNode]) {
         if self.activeFace == obsId { return }
         unfocusObservation(nodes: nodes)
         guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: self.opacity)
         applyPopAnimation(node: figure)
+        figure.filters = []
         self.activeFace = obsId
     }
 
@@ -363,6 +371,7 @@ struct HeadView: View {
         guard let activeFace = self.activeFace else { return }
         guard let figure = getFigureForId(obsId: activeFace, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: min(self.unfocussedOpacity, self.opacity))
+        figure.filters = [monochrome]
         self.activeFace = nil
     }
     
@@ -387,11 +396,6 @@ struct HeadView: View {
     }
     
     func getNodes(view: SCNView, scene: SCNScene) -> [SCNNode] {
-
-        let modelName = "loomisNew.usdz"
-        guard let loadedScene = SCNScene(named: modelName) else { return [] }
-        let figure = loadedScene.rootNode
-        
         var nodes: [SCNNode] = []
         
         let ar = image.size.width / image.size.height
@@ -404,6 +408,10 @@ struct HeadView: View {
         imagePlane.setValue("ImagePlane", forKey: "type")
         
         nodes.append(imagePlane)
+        
+        let modelName = "loomis.usdz"
+        guard let loadedScene = SCNScene(named: modelName) else { return [] }
+        let figure = loadedScene.rootNode
         
         for observation in observations {
             
@@ -420,7 +428,7 @@ struct HeadView: View {
             // rendering the height-value useless for scaling.
             let headHeightPerWidth: Float = 1.3
             let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
-            let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
+            let scaleFactor = 4.3 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
@@ -431,7 +439,8 @@ struct HeadView: View {
             applyPopAnimation(node: f)
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-
+            fOptimised.filters = [monochrome]
+            
             // @Todo: where is this weird behaviour coming from?
             if !usesOrthographicCam {
                 let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
@@ -443,45 +452,9 @@ struct HeadView: View {
         
         return nodes
     }
-
-    func __getAllPoints(observation: VNFaceObservation) -> [CGPoint] {
-        var points: [CGPoint] = []
-        for point in observation.landmarks!.outerLips!.normalizedPoints {
-            points.append(point);
-        }
-        for point in observation.landmarks!.nose!.normalizedPoints {
-            points.append(point);
-        }
-        for point in observation.landmarks!.leftEye!.normalizedPoints {
-            points.append(point);
-        }
-        for point in observation.landmarks!.rightEye!.normalizedPoints {
-            points.append(point);
-        }
-        for point in observation.landmarks!.leftEyebrow!.normalizedPoints {
-            points.append(point);
-        }
-        for point in observation.landmarks!.rightEyebrow!.normalizedPoints {
-            points.append(point);
-        }
-//        for point in observation.landmarks!.faceContour!.normalizedPoints {
-//            points.append(point);
-//        }
-        for point in observation.landmarks!.medianLine!.normalizedPoints {
-            points.append(point)
-        }
-        return points;
-    }
-
-    func setModelColor(model: SCNNode, color: UIColor) {
-        model.geometry?.firstMaterial?.diffuse.contents = color
-        for child in model.childNodes {
-            setModelColor(model: child, color: color)
-        }
-    }
     
     func getNewFaceModel(scene: SCNScene?) -> SCNNode {
-        let loadedScene = SCNScene(named: "loomisNew.usdz")!
+        let loadedScene = SCNScene(named: "loomis.usdz")!
         let figure = loadedScene.rootNode
         
         var newPosition = SCNVector3(x: 0, y: 0, z: 0)
@@ -508,6 +481,7 @@ struct HeadView: View {
         setValueRecursively(node: f, val: "figure", key: "type")
         setValueRecursively(node: f, val: newUUID, key: "observationId")
         f.opacity = min(self.opacity, self.unfocussedOpacity)
+        
         return f
     }
 }
@@ -538,22 +512,26 @@ struct PrevV: View {
     
     @State var useOrtho = false
     @State var activeFace: UUID? = nil
-    @State var opacity = 1.0
+    @State var opacity = 0.65
     
     var body: some View {
-        HeadView(
-            image: img,
-            observations: [observation1, observation2],
-            taskQueue: queue,
-            usesOrthographicCam: useOrtho,
-            onImageSaved: {},
-            onImageSaveError: { error in return },
-            opacity: $opacity,
-            activeFace: $activeFace
-        ).onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.activeFace = observation2.uuid
-            }
+        ZStack {
+            Color(.black)
+            HeadView(
+                image: img,
+                observations: [observation1, observation2],
+                taskQueue: queue,
+                usesOrthographicCam: useOrtho,
+                onImageSaved: {},
+                onImageSaveError: { error in return },
+                opacity: $opacity,
+                activeFace: $activeFace
+            )
+        }
+        .onAppear {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                self.activeFace = observation2.uuid
+//            }
         }
     }
 }

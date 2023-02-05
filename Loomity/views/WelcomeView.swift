@@ -13,7 +13,7 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject private var purchaseManager: PurchaseManager
     @State var showTutorial = false
-    @State private var orientation = UIDeviceOrientation.unknown
+    @State private var orientation: UIDeviceOrientation = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? .landscapeLeft : .portrait
     
     var body: some View {
         NavigationView {

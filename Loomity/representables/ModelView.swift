@@ -466,7 +466,7 @@ class ModelController: UIViewController, SCNSceneRendererDelegate, UIGestureReco
     }
     
     private func getNewFaceModel(scene: SCNScene?) -> SCNNode {
-        let loadedScene = SCNScene(named: "loomisNew.usdz")!
+        let loadedScene = SCNScene(named: "loomis.usdz")!
         let figure = loadedScene.rootNode
         
         var newPosition = SCNVector3(x: 0, y: 0, z: 0)
