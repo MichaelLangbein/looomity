@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3E1BF40E295C8CC100B8947A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3E1BF40D295C8CC000B8947A /* Assets.xcassets */; };
-		3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E3081FC295DD077003E1C5A /* loomisNew.usdz */; };
 		3E34CED02975EA4700D5345C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E34CECF2975EA4700D5345C /* CameraView.swift */; };
 		3E373620297DBB2500DB6C8B /* GradientDescentIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E37361F297DBB2500DB6C8B /* GradientDescentIntegrationTests.swift */; };
 		3E374FEC296027C0005768C7 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E374FEB296027C0005768C7 /* UIImageExtension.swift */; };
@@ -50,6 +49,7 @@
 		3E42F7AC295C8A5B00744841 /* AnalysisOngoingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */; };
 		3E42F7AD295C8A5B00744841 /* TutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F794295C8A5B00744841 /* TutorialView.swift */; };
 		3E42F7AF295C8A5B00744841 /* HeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E42F796295C8A5B00744841 /* HeadView.swift */; };
+		3E4B2EDF29902F4000555BA6 /* loomis.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3E4B2EDE29902F4000555BA6 /* loomis.usdz */; };
 		3E4BE0132982DE1400CB5CEE /* ProjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4BE0122982DE1400CB5CEE /* ProjectionTests.swift */; };
 		3E4EEB74297A6ECD001E8313 /* ProductsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4EEB73297A6ECD001E8313 /* ProductsView.swift */; };
 		3E66139F296754D400C44098 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E66139E296754D400C44098 /* PurchaseManager.swift */; };
@@ -79,7 +79,6 @@
 
 /* Begin PBXFileReference section */
 		3E1BF40D295C8CC000B8947A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3E3081FC295DD077003E1C5A /* loomisNew.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = loomisNew.usdz; sourceTree = "<group>"; };
 		3E34CECF2975EA4700D5345C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		3E37361F297DBB2500DB6C8B /* GradientDescentIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientDescentIntegrationTests.swift; sourceTree = "<group>"; };
 		3E374FEB296027C0005768C7 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
@@ -124,6 +123,7 @@
 		3E42F793295C8A5B00744841 /* AnalysisOngoingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnalysisOngoingView.swift; sourceTree = "<group>"; };
 		3E42F794295C8A5B00744841 /* TutorialView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialView.swift; sourceTree = "<group>"; };
 		3E42F796295C8A5B00744841 /* HeadView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeadView.swift; sourceTree = "<group>"; };
+		3E4B2EDE29902F4000555BA6 /* loomis.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = loomis.usdz; sourceTree = "<group>"; };
 		3E4BE0122982DE1400CB5CEE /* ProjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectionTests.swift; sourceTree = "<group>"; };
 		3E4EEB73297A6ECD001E8313 /* ProductsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsView.swift; sourceTree = "<group>"; };
 		3E5108FE2989D3EB00F6598C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -189,7 +189,7 @@
 				3E5108FE2989D3EB00F6598C /* Info.plist */,
 				3E42F6FB295C866C00744841 /* LoomityApp.swift */,
 				3E1BF40D295C8CC000B8947A /* Assets.xcassets */,
-				3E3081FC295DD077003E1C5A /* loomisNew.usdz */,
+				3E4B2EDE29902F4000555BA6 /* loomis.usdz */,
 				3E42F73D295C873900744841 /* PanGif.gif */,
 				3E42F73E295C873900744841 /* RotateGif.gif */,
 				3E42F73F295C873900744841 /* ScaleGif.gif */,
@@ -407,8 +407,8 @@
 			files = (
 				3E42F748295C875200744841 /* TODO.md in Resources */,
 				3E42F744295C873900744841 /* RotateGif.gif in Resources */,
-				3E3081FD295DD077003E1C5A /* loomisNew.usdz in Resources */,
 				3E706FCD29682E1F005F5D12 /* LoomityStoreTest.storekit in Resources */,
+				3E4B2EDF29902F4000555BA6 /* loomis.usdz in Resources */,
 				3E42F745295C873900744841 /* ScaleGif.gif in Resources */,
 				3E42F743295C873900744841 /* PanGif.gif in Resources */,
 				3E42F703295C866E00744841 /* Preview Assets.xcassets in Resources */,

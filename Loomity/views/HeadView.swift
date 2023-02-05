@@ -50,8 +50,10 @@ struct HeadView: View {
     var onImageSaveError: (Error) -> Void
     @Binding var opacity: Double
     @Binding var activeFace: UUID?
+    private let monochrome = CIFilter(name: "CIColorMonochrome", parameters: ["inputColor": CIColor(string: "white")])!
+//    private let gaussian = CIFilter(name: "CIGaussianBlur")!
     
-    let unfocussedOpacity = 0.4
+    let unfocussedOpacity = 0.5
 
     var body: some View {
         SceneKitView(
@@ -213,9 +215,9 @@ struct HeadView: View {
         case .changed:
             guard let initial = eulerAnglesOnStartMove else { return }
             // pitch = rotation about x
-            figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.width) + Float(initial.x)
+            figure.eulerAngles.x = Float(4 * .pi * translation.y / image.size.height) + Float(initial.x)
             // yaw = rotation about y
-            figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.height) + Float(initial.y)
+            figure.eulerAngles.y = Float(4 * .pi * translation.x / image.size.width) + Float(initial.y)
         case .ended:
             eulerAnglesOnStartMove = nil
         case .cancelled, .failed:
@@ -265,6 +267,7 @@ struct HeadView: View {
             let newScale = 1.0 + deltaScale
             self.lastScale = gesture.scale
             let newTransform = CGAffineTransformScale(view.transform, newScale, newScale)
+//            print("Scale: \(newTransform.a) --- Center: \(view.center)")
             if (
                 // scale is growing                && already deep in
                 (newTransform.a > view.transform.a && newTransform.a > 4.0) ||
@@ -296,14 +299,9 @@ struct HeadView: View {
             positionOnStartMove = figure.position
         case .changed:
             guard let startPos = positionOnStartMove else { return }
-            let translation = gesture.translation(in: view.superview ?? view)  // in pixels
+            let translation = gesture.translation(in: view)  // in pixels
             figure.position.x = startPos.x + Float(translation.x / UIScreen.main.bounds.width)  * 4.0
             figure.position.y = startPos.y - Float(translation.y / UIScreen.main.bounds.height) * 4.0
-            
-            if let borderPlane = view.scene?.rootNode.childNode(withName: "BorderPlane", recursively: true) {
-                borderPlane.position.x = figure.position.x
-                borderPlane.position.y = figure.position.y
-            }
         case .ended:
             positionOnStartMove = nil
         case .cancelled, .failed:
@@ -316,12 +314,13 @@ struct HeadView: View {
     
     @State var centerOnStartMove: CGPoint?
     func panSceneAndBackground(view: SCNView, gesture: UIPanGestureRecognizer, nodes: [SCNNode]) {
+        let view = view.superview ?? view
         switch gesture.state {
         case .began:
             centerOnStartMove = view.center
         case .changed:
             guard let centerOnStart = centerOnStartMove else { return }
-            let translation = gesture.translation(in: view.superview ?? view)
+            let translation = gesture.translation(in: view)
             let centerNew = CGPoint(x: centerOnStart.x + translation.x, y: centerOnStart.y + translation.y)
             if abs(centerNew.x) > UIScreen.main.bounds.width * 0.75 || abs(centerNew.y) > UIScreen.main.bounds.height * 0.75 {
                 return
@@ -344,7 +343,7 @@ struct HeadView: View {
         if node == nil {
             unfocusObservation(nodes: nodes)
             guard let planeNode = view.scene?.rootNode.childNode(withName: "ImagePlane", recursively: true) else { return }
-            applyPopAnimation(node: planeNode, minScale: 0.95, maxScale: 1.05, duration: 0.3)
+            applyPopAnimation(node: planeNode, minScale: 0.97, maxScale: 1.03, duration: 0.35)
             return
         }
         let type = node!.value(forKey: "type") as! String
@@ -354,7 +353,7 @@ struct HeadView: View {
         } else {
             unfocusObservation(nodes: nodes)
             guard let planeNode = view.scene?.rootNode.childNode(withName: "ImagePlane", recursively: true) else { return }
-            applyPopAnimation(node: planeNode, minScale: 0.95, maxScale: 1.05, duration: 0.3)
+            applyPopAnimation(node: planeNode, minScale: 0.97, maxScale: 1.03, duration: 0.35)
         }
     }
     
@@ -364,21 +363,16 @@ struct HeadView: View {
         guard let figure = getFigureForId(obsId: obsId, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: self.opacity)
         applyPopAnimation(node: figure)
+        figure.filters = []
         self.activeFace = obsId
-        guard let borderPlane = view.scene?.rootNode.childNode(withName: "BorderPlane", recursively: true) else { return }
-        borderPlane.opacity = self.opacity
-        let scaleFactor: Float = 5.0
-        borderPlane.scale = SCNVector3(x: figure.scale.x * scaleFactor, y: (figure.scale.y - 0.3) * scaleFactor, z: figure.scale.z * scaleFactor)
-        borderPlane.position = SCNVector3(x: figure.position.x, y: figure.position.y, z: 0.001)
     }
 
     func unfocusObservation(nodes: [SCNNode]) {
         guard let activeFace = self.activeFace else { return }
         guard let figure = getFigureForId(obsId: activeFace, nodes: nodes) else { return }
         animateAndApplyOpacity(node: figure, toOpacity: min(self.unfocussedOpacity, self.opacity))
+        figure.filters = [monochrome]
         self.activeFace = nil
-        guard let borderPlane = nodes.first(where: { $0.name == "BorderPlane"}) else { return }
-        borderPlane.opacity = 0.0
     }
     
     func getFirstHit(view: SCNView, gesture: UIGestureRecognizer) -> SCNNode? {
@@ -415,14 +409,7 @@ struct HeadView: View {
         
         nodes.append(imagePlane)
         
-        let borderPlane = SCNNode(geometry: SCNPlane(width: 0.8, height: 1))
-        borderPlane.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "borders")
-        setValueRecursively(node: borderPlane, val: "border", key: "type")
-        borderPlane.opacity = 0.0
-        borderPlane.name = "BorderPlane"
-        nodes.append(borderPlane)
-        
-        let modelName = "loomisNew.usdz"
+        let modelName = "loomis.usdz"
         guard let loadedScene = SCNScene(named: modelName) else { return [] }
         let figure = loadedScene.rootNode
         
@@ -441,7 +428,7 @@ struct HeadView: View {
             // rendering the height-value useless for scaling.
             let headHeightPerWidth: Float = 1.3
             let wImg = Float(observation.boundingBox.maxX - observation.boundingBox.minX)
-            let scaleFactor = 3.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
+            let scaleFactor = 4.0 * headHeightPerWidth * (wImg) / figure.boundingSphere.radius
             f.scale = SCNVector3( x: scaleFactor, y: scaleFactor, z: scaleFactor )
             f.eulerAngles = SCNVector3(x: pitch, y: yaw, z: roll)
             f.position = SCNVector3(x: cWorld.x, y: cWorld.y, z: cWorld.z)
@@ -452,13 +439,7 @@ struct HeadView: View {
             applyPopAnimation(node: f)
             
             let fOptimised = gradientDescent(sceneView: view, head: f, observation: observation, image: self.image)
-//            fOptimised.filters = [CIFilter(name: "CIBloom")!]
-
-            // @Todo: where is this weird behaviour coming from?
-            if !usesOrthographicCam {
-                let weirdCorrectionFactor: Float = 0.3 * Float(observation.boundingBox.width)
-                fOptimised.position.y -= weirdCorrectionFactor
-            }
+            fOptimised.filters = [monochrome]
 
             nodes.append(fOptimised)
         }
@@ -467,7 +448,7 @@ struct HeadView: View {
     }
     
     func getNewFaceModel(scene: SCNScene?) -> SCNNode {
-        let loadedScene = SCNScene(named: "loomisNew.usdz")!
+        let loadedScene = SCNScene(named: "loomis.usdz")!
         let figure = loadedScene.rootNode
         
         var newPosition = SCNVector3(x: 0, y: 0, z: 0)

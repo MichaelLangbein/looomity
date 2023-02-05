@@ -52,7 +52,7 @@ final class GradientDescentIntegrationTests: XCTestCase {
             image_width: image.size.width,
             image_height: image.size.height,
             loadNodes: { view, scene, camera in
-                let loadedScene = SCNScene(named: "loomisNew.usdz")!
+                let loadedScene = SCNScene(named: "loomis.usdz")!
                 let figure = loadedScene.rootNode
                 
                 var nodes: [SCNNode] = []

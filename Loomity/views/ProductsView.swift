@@ -97,7 +97,7 @@ struct OneTimeProductView: View {
     var body: some View {
         ProductView(
             title: "One-time purchase",
-            logo: "logo_full_light2",
+            logo: "logo_full_light4",
             active: state != .hasBought
         ) {
             switch state {
