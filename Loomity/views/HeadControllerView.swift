@@ -27,7 +27,6 @@ struct HeadControllerView: View {
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
     @State var alertNoFacesDetected = false
-    @State var orientation: UIDeviceOrientation = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? .landscapeLeft : .portrait
     
     var body: some View {
         ZStack {
@@ -43,7 +42,7 @@ struct HeadControllerView: View {
                 activeFace: $activeFace
             ).ignoresSafeArea()
             
-            if orientation != .landscapeRight && orientation != .landscapeLeft && orientation != .faceDown && orientation != .faceUp {
+            if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
                 VStack {
                     Spacer()
                     VStack {
@@ -100,7 +99,6 @@ struct HeadControllerView: View {
             TutorialView(show: $showHelp)
         }
         .onRotate { newOrientation in
-            orientation = newOrientation
             taskQueue.enqueue(SKVTask(type: .recenterView))
         }
     }

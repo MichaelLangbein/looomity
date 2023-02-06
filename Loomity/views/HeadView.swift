@@ -22,21 +22,6 @@ struct SKVTask {
 }
 
 
-/**
- # Gesture sources
- Gestures may be recognised at to levels:
- - inside the scenekit scene (as recognised through `SceneKitView.onPinch` etc.)
- - in the parent HeadView (as recognised through `view.gesture`)
- 
- # Gesture handling
- We want most gestures to be handled by scenekit
- with a few exceptions:
- - Pan while no model selected:
-    - move the view, not the camera inside the scene (`.scaleEffect(fullViewScale)`)
- - Pinch while no model selected:
-     - scale the view instead of moving the camera inside the scene (`.offset(fullViewOffset)`)
- */
-
 struct HeadView: View {
 
     // Image
@@ -52,6 +37,16 @@ struct HeadView: View {
     @Binding var activeFace: UUID?
     private let monochrome = CIFilter(name: "CIColorMonochrome", parameters: ["inputColor": CIColor(string: "white")])!
 //    private let gaussian = CIFilter(name: "CIGaussianBlur")!
+    private var gestureOngoing: Bool {
+        return (
+            self.rollOnMoveStart != nil ||
+            self.eulerAnglesOnStartMove != nil ||
+            self.scaleOnStartMove != nil ||
+            self.lastScale != nil ||
+            self.positionOnStartMove != nil ||
+            self.centerOnStartMove != nil
+        )
+    }
     
     let unfocussedOpacity = 0.5
 
@@ -145,9 +140,8 @@ struct HeadView: View {
                     let imageSaver = ImageSaver(onSuccess: self.onImageSaved, onError: self.onImageSaveError)
                     imageSaver.writeToPhotoAlbum(image: img)
                 case .recenterView:
+                    if self.gestureOngoing { return }
                     guard let view = skc.sceneView else { return }
-                    // Not that simple. Need to account for screen rotation.
-                    //view.transform = CGAffineTransformIdentity
 
                     let w_scr = UIScreen.main.bounds.width
                     let h_scr = UIScreen.main.bounds.height
@@ -254,7 +248,6 @@ struct HeadView: View {
             return
         }
     }
-    
 
     @State var lastScale: CGFloat?
     func scaleSceneAndBackground(view: SCNView, gesture: UIPinchGestureRecognizer, nodes: [SCNNode]) {
@@ -267,7 +260,6 @@ struct HeadView: View {
             let newScale = 1.0 + deltaScale
             self.lastScale = gesture.scale
             let newTransform = CGAffineTransformScale(view.transform, newScale, newScale)
-//            print("Scale: \(newTransform.a) --- Center: \(view.center)")
             if (
                 // scale is growing                && already deep in
                 (newTransform.a > view.transform.a && newTransform.a > 4.0) ||
@@ -317,7 +309,7 @@ struct HeadView: View {
         let superview = view.superview ?? view
         switch gesture.state {
         case .began:
-            centerOnStartMove = superview.center
+            centerOnStartMove = view.center
         case .changed:
             guard let centerOnStart = centerOnStartMove else { return }
             let translation = gesture.translation(in: superview)

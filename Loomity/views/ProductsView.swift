@@ -127,38 +127,22 @@ struct OneTimeProductView: View {
 
 struct ProductsView: View {
     @EnvironmentObject var purchaseManager: PurchaseManager
-    @State var orientation: UIDeviceOrientation = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? .landscapeLeft : .portrait
     
     var body: some View {
         FullPageView {
             ZStack {
                 if purchaseManager.productsLoaded {
-                    
-                    if orientation == .faceUp {
-                        if UIScreen.main.bounds.width < UIScreen.main.bounds.height {
-                            productsVertical
-                        } else {
-                            productsHorizontal
-                        }
-                    }
-                    else if orientation != .landscapeLeft && orientation != .landscapeRight {
+                    if UIScreen.main.bounds.width < UIScreen.main.bounds.height {
                         productsVertical
-                    }
-                    else {
+                    } else {
                         productsHorizontal
                     }
-
-                    
                 } else {
                     Text("Loading ...")
                 }
-                
             }
 
         }.navigationBarTitle("Products", displayMode: .inline)
-            .onRotate { orientation in
-                self.orientation = orientation
-            }
     }
     
     

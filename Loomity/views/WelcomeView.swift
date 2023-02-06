@@ -13,7 +13,6 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject private var purchaseManager: PurchaseManager
     @State var showTutorial = false
-    @State private var orientation: UIDeviceOrientation = UIScreen.main.bounds.width > UIScreen.main.bounds.height ? .landscapeLeft : .portrait
     
     var body: some View {
         NavigationView {
@@ -23,31 +22,28 @@ struct WelcomeView: View {
                     // To prevent `navigationViewTitle` to overlap with logo.
                      Spacer(minLength: UIScreen.main.bounds.height * 0.18)
                     
-                    if orientation != .landscapeLeft && orientation != .landscapeRight {
-                        if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
-                            ZStack {
-                                Rectangle()
-                                    .fill(LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color(.systemBackground), .accentColor
-                                        ]),
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    ))
-                                    .frame(maxWidth: 200, maxHeight: 200)
-                                    .cornerRadius(30)
-                                    .shadow(radius: 5)
-                                
-                                Image("logo_alpha2")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
-                                    .frame(maxWidth: 200, maxHeight: 200)
-                                    .padding(.trailing)
-                            }
+                    if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+                        ZStack {
+                            Rectangle()
+                                .fill(LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(.systemBackground), .accentColor
+                                    ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ))
+                                .frame(maxWidth: 200, maxHeight: 200)
+                                .cornerRadius(30)
+                                .shadow(radius: 5)
+                            
+                            Image("logo_alpha2")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)  // maintains aspect ratio while scaling.
+                                .frame(maxWidth: 200, maxHeight: 200)
+                                .padding(.trailing)
                         }
                     }
 
-                    
                     VStack (alignment: .center, spacing: 9) {
                         Text("Loomity helps you inspect the proportions of faces in your photos.")
                             .multilineTextAlignment(.center)
@@ -74,14 +70,10 @@ struct WelcomeView: View {
                     .padding(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
                     
-                    
-                    if orientation != .landscapeLeft && orientation != .landscapeRight {
-                        if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
-                            Spacer()
-                        }
+                    if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+                        Spacer()
                     }
                     
-//                    TrialView()
                     ProductStateView()
                     
                     HStack {
@@ -97,13 +89,11 @@ struct WelcomeView: View {
                     }
                     .padding()
                     .padding(.bottom)
+                    .padding(.bottom)
                 }
                 .sheet(isPresented: $showTutorial) {
                     TutorialView(show: $showTutorial)
                 }
-            }
-            .onRotate { orientation in
-                self.orientation = orientation
             }
             .navigationBarTitle("Welcome to Loomity!")
         }.navigationViewStyle(StackNavigationViewStyle())
