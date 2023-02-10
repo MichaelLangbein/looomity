@@ -51,7 +51,7 @@ struct SelectImageView: View {
                     .background(.gray.opacity(0.4))
                     .cornerRadius(15)
                     .padding()
-                }
+                }.frame(maxWidth: maxWidthBig)
             }
         }
         .navigationBarTitle("Select image", displayMode: .inline)

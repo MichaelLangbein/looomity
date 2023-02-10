@@ -13,6 +13,8 @@ import SwiftUI
 struct WelcomeView: View {
     @EnvironmentObject private var purchaseManager: PurchaseManager
     @State var showTutorial = false
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
         NavigationView {
@@ -22,7 +24,8 @@ struct WelcomeView: View {
                     // To prevent `navigationViewTitle` to overlap with logo.
                      Spacer(minLength: UIScreen.main.bounds.height * 0.18)
                     
-                    if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+                    // Logo
+                    if verticalSizeClass == .regular {
                         ZStack {
                             Rectangle()
                                 .fill(LinearGradient(
@@ -44,12 +47,14 @@ struct WelcomeView: View {
                         }
                     }
 
+                    // Banner
                     VStack (alignment: .center, spacing: 9) {
                         Text("Loomity helps you inspect the proportions of faces in your photos.")
                             .multilineTextAlignment(.center)
                     }
                     .textBox()
                     
+                    // Action buttons
                     HStack {
                         NavigationLink(destination: SelectImageView()) {
                             Text("Select image")
@@ -70,12 +75,13 @@ struct WelcomeView: View {
                     .padding(.trailing)
                     .fixedSize(horizontal: false, vertical: true)
                     
-                    if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+                    if verticalSizeClass == .regular {
                         Spacer()
                     }
                     
                     ProductStateView()
                     
+                    // Info links
                     HStack {
                         Spacer()
                         NavigationLink(destination: AboutView()) {
@@ -91,6 +97,7 @@ struct WelcomeView: View {
                     .padding(.bottom)
                     .padding(.bottom)
                 }
+                .frame(maxWidth: maxWidthMedium)
                 .sheet(isPresented: $showTutorial) {
                     TutorialView(show: $showTutorial)
                 }

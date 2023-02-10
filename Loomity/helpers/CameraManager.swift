@@ -75,26 +75,28 @@ class CameraManager: ObservableObject {
         }
     }
     
-    func switchCamera(onSuccess: ((AVCaptureDevice) -> ())? ) {
+    func switchCamera(onSwitch: @escaping (Result<AVCaptureDevice, Error>) -> () ) {
         let newDevicePosition: AVCaptureDevice.Position = self.devicePosition == .back ?  .front :  .back
         guard
             let newDevice = self.getDevice(position: newDevicePosition),
             let session = self.session,
             let currentInput = session.inputs.first
         else { return }
-        session.removeInput(currentInput)
-        do {
-            let newInput = try AVCaptureDeviceInput(device: newDevice)
-            if session.canAddInput(newInput) {
-                session.addInput(newInput)
+        
+        Task(priority: .medium) {  // Don't do Session stuff on the main thread: https://github.com/NextLevel/NextLevel/issues/76
+            session.removeInput(currentInput)
+            do {
+                let newInput = try AVCaptureDeviceInput(device: newDevice)
+                if session.canAddInput(newInput) {
+                    session.addInput(newInput)
+                }
+                self.devicePosition = newDevicePosition
+                
+                onSwitch(.success(newDevice))
+            } catch {
+                onSwitch(.failure(error))
             }
-            self.devicePosition = newDevicePosition
-            
-            if let os = onSuccess {
-                os(newDevice)
-            }
-        } catch {
-            print(error)
+
         }
     }
     
@@ -206,22 +208,24 @@ class CameraManager: ObservableObject {
     private func setupCamera(handleError: @escaping (Error?) -> ()) {
         let session = AVCaptureSession()
         guard let device = self.getCurrentDevice() else { return }
-            
-        do {
-            let input = try AVCaptureDeviceInput(device: device)
-            if session.canAddInput(input) {
-                session.addInput(input)
+        
+        Task(priority: .medium) {   // Don't do Session stuff on the main thread: https://github.com/NextLevel/NextLevel/issues/76
+            do {
+                let input = try AVCaptureDeviceInput(device: device)
+                if session.canAddInput(input) {
+                    session.addInput(input)
+                }
+                if session.canAddOutput(output) {
+                    session.addOutput(output)
+                }
+                previewLayer.videoGravity = .resizeAspectFill
+                previewLayer.session = session
+                session.startRunning()
+                self.session = session
+                
+            } catch {
+                handleError(error)
             }
-            if session.canAddOutput(output) {
-                session.addOutput(output)
-            }
-            previewLayer.videoGravity = .resizeAspectFill
-            previewLayer.session = session
-            session.startRunning()
-            self.session = session
-            
-        } catch {
-            handleError(error)
         }
             
     }

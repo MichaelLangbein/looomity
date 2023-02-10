@@ -31,7 +31,6 @@ func getHeadPosition(
     // But we need the complete projection-matrix here.
     var updatedProjectionTransform = projectionTransform
     if (updatedProjectionTransform.m11 == updatedProjectionTransform.m22) {
-        print("accounting for aspect ratio")
         updatedProjectionTransform.m11 = updatedProjectionTransform.m11 / ar
     }
     

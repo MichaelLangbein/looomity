@@ -119,6 +119,12 @@ struct CustomCameraView: View {
     @State var hasTwoCameras = false
     @State var canUseFlash = false
     @State var usesFlash = false
+
+    @State var errorMessage: String? = nil
+    @State var hasError: Bool = false
+    // Function that allows us to go back programmatically
+    @Environment(\.dismiss) var dismiss
+    // Function that allows ... kinda similar to the above, I guess?
     @Environment(\.presentationMode) var presentation
     
     var body: some View {
@@ -129,7 +135,10 @@ struct CustomCameraView: View {
                     self.capturedImage = photo
                     presentation.wrappedValue.dismiss()
                 case .failure(let error):
-                    print(error.localizedDescription)
+                    Task {
+                        errorMessage = error.localizedDescription
+                        hasError = true
+                    }
                 }
             }
             
@@ -144,7 +153,8 @@ struct CustomCameraView: View {
                     } label: {
                         Image(systemName: usesFlash ? "bolt" : "bolt.slash")
                             .font(.system(size: 40))
-                            .foregroundColor(.white)
+                            .foregroundColor(canUseFlash ? .white : .gray)
+                            .opacity(canUseFlash ? 1.0 : 0.5)
                     }
                     .disabled(!canUseFlash)
 
@@ -163,13 +173,20 @@ struct CustomCameraView: View {
                     Spacer()
                     
                     Button {
-                        cameraManager.switchCamera { newCamera in
-                            self.canUseFlash = newCamera.hasFlash
+                        cameraManager.switchCamera { result in
+                            switch result {
+                            case .success(let newCamera):
+                                self.canUseFlash = newCamera.hasFlash
+                            case .failure(let error):
+                                errorMessage = error.localizedDescription
+                                hasError = true
+                            }
                         }
                     } label: {
                         Image(systemName: "arrow.triangle.2.circlepath.camera")
                             .font(.system(size: 40))
-                            .foregroundColor(.white)
+                            .foregroundColor(canUseFlash ? .white : .gray)
+                            .opacity(canUseFlash ? 1.0 : 0.5)
                     }
                     .disabled(!self.hasTwoCameras)
                 }
@@ -182,6 +199,23 @@ struct CustomCameraView: View {
                 self.canUseFlash = activeCamera.hasFlash
             }
         }
+        .alert(
+            "An error occurred when trying to access the camera.",
+            isPresented: $hasError,
+            actions: {
+//                Button("Try again") {
+//                    errorMessage = nil
+//                    hasError = false
+//                No point in trying again here. Will cause a nil-error.
+//                }
+                Button("Go back") {
+                    errorMessage = nil
+                    hasError = false
+                    dismiss()
+                }
+            },
+            message: {Text((self.errorMessage ?? "") + "\nIs it possible that the app hasn't been allowed to access the camera? (Check in Settings/Loomity - thank you!)")}
+        )
     }
 }
 
@@ -192,8 +226,8 @@ struct CameraPreviewView: View {
     
     var body: some View {
         ZStack {
-            if capturedImage != nil {
-                Image(uiImage: capturedImage!)
+            if let img = capturedImage {
+                Image(uiImage: img)
                     .resizable()
                     .scaledToFit()
                     .ignoresSafeArea()

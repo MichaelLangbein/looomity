@@ -442,6 +442,13 @@ struct HeadView: View {
             nodes.append(fOptimised)
         }
         
+        if observations.count == 1 {
+            DispatchQueue.main.async {
+                let observation = observations[0]
+                focusObservation(view: view, obsId: observation.uuid, nodes: nodes)
+            }
+        }
+        
         return nodes
     }
     

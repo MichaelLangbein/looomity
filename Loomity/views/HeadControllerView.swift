@@ -27,6 +27,7 @@ struct HeadControllerView: View {
     @State var imageSaveError = false
     @State var imageSaveErrorMessage = ""
     @State var alertNoFacesDetected = false
+    @Environment(\.verticalSizeClass) var verticalSizeClass
     
     var body: some View {
         ZStack {
@@ -42,7 +43,7 @@ struct HeadControllerView: View {
                 activeFace: $activeFace
             ).ignoresSafeArea()
             
-            if UIScreen.main.bounds.width <= UIScreen.main.bounds.height {
+            if verticalSizeClass == .regular {
                 VStack {
                     Spacer()
                     VStack {
@@ -52,6 +53,7 @@ struct HeadControllerView: View {
                         }
                     }
                     .padding()
+                    .frame(maxWidth: maxWidthMedium)
                     .background(.background.opacity(0.7)) // (.gray.opacity(0.2))
                     .cornerRadius(15)
                 }

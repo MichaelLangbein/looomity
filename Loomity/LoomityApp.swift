@@ -10,6 +10,8 @@ import SwiftUI
 @main
 struct LoomityApp: App {
     @StateObject private var purchaseManager = PurchaseManager()
+    @State var hasErrorMessage = false
+    @State var errorMessage: String? = nil
     
     init() {
         // applies globally
@@ -32,6 +34,17 @@ struct LoomityApp: App {
         WindowGroup {
             WelcomeView()
                 .environmentObject(purchaseManager)
+                .alert(
+                    "Something went wrong",
+                    isPresented: $hasErrorMessage,
+                    actions: {
+                        Button("OK") {
+                            hasErrorMessage = false
+                            errorMessage = nil
+                        }
+                    },
+                    message: {Text(self.errorMessage ?? "Unknown error on loading products.")}
+                )
                 .task {
                     await purchaseManager.updatePurchasedProducts()
                 }
@@ -39,7 +52,8 @@ struct LoomityApp: App {
                     do {
                         try await purchaseManager.loadProducts()
                     } catch {
-                        print(error)
+                        hasErrorMessage = true
+                        errorMessage = error.localizedDescription
                     }
                 }
         }

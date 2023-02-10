@@ -15,7 +15,7 @@ struct ProductView<Content: View>: View {
     let logo: String
     let active: Bool
     @ViewBuilder var content: Content
-    private let logoDiameter = UIScreen.main.bounds.width * 0.2
+    private let logoDiameter = min(UIScreen.main.bounds.width * 0.2, 100)
     
     var body: some View {
         VStack {
@@ -127,13 +127,18 @@ struct OneTimeProductView: View {
 
 struct ProductsView: View {
     @EnvironmentObject var purchaseManager: PurchaseManager
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @State var hasErrorMessage = false
+    @State var errorMessage: String? = nil
+    // Function that allows us to go back programmatically
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         FullPageView {
             ZStack {
                 if purchaseManager.productsLoaded {
-                    if UIScreen.main.bounds.width < UIScreen.main.bounds.height {
-                        productsVertical
+                    if verticalSizeClass == .regular {
+                        productsVertical.frame(maxWidth: maxWidthMedium)
                     } else {
                         productsHorizontal
                     }
@@ -141,6 +146,22 @@ struct ProductsView: View {
                     Text("Loading ...")
                 }
             }
+            .alert(
+                "Something went wrong",
+                isPresented: $hasErrorMessage,
+                actions: {
+                    Button("Try again") {
+                        hasErrorMessage = false
+                        errorMessage = nil
+                    }
+                    Button("Go back") {
+                        hasErrorMessage = false
+                        errorMessage = nil
+                        dismiss()
+                    }
+                },
+                message: {Text(self.errorMessage ?? "")}
+            )
 
         }.navigationBarTitle("Products", displayMode: .inline)
     }
@@ -188,6 +209,8 @@ struct ProductsView: View {
             do {
                 try await self.purchaseManager.purchase(product)
             } catch {
+                self.hasErrorMessage = true
+                errorMessage = error.localizedDescription
                 print(error)
             }
         }
@@ -199,6 +222,8 @@ struct ProductsView: View {
                 do {
                     try await AppStore.sync()
                 } catch {
+                    self.hasErrorMessage = true
+                    errorMessage = error.localizedDescription
                     print(error)
                 }
             }

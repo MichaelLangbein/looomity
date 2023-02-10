@@ -105,6 +105,7 @@ enum PurchaseState {
         case let .success(.unverified(_, error)):
             // successful purchase but transaction/receipt can't be verified
             // could be a jailbroken phone
+            print(error)
             break
         case .pending:
             // transaction waiting on SCA (strong customer authentication)
@@ -144,7 +145,7 @@ enum PurchaseState {
     // made from another device
     private func observeTransactionUpdates() -> Task<Void, Never> {
         Task(priority: .background) { [unowned self] in
-            for await verificationResult in Transaction.updates {
+            for await _ in Transaction.updates {
                 // using verificationResult directly would be better
                 // but this way works for this tutorial
                 await self.updatePurchasedProducts()
